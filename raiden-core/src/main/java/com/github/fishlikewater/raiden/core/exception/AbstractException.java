@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.raiden.core.constant;
+package com.github.fishlikewater.raiden.core.exception;
+
+import java.io.Serial;
 
 /**
- * {@code CommonConstants}
+ * {@code AbstractException}
  *
  * @author zhangxiang
  * @version 1.0.0
  * @since 2024/04/30
  */
-public interface CommonConstants {
+public abstract class AbstractException  extends RuntimeException {
 
-    String LAMBDA_FUNCTION_NAME = "writeReplace";
-    String BOOLEAN_FIELD_START_WITH = "is";
-    String GET_METHOD_START_WITH = "get";
-    String SET_METHOD_START_WITH = "set";
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+
+
 }
