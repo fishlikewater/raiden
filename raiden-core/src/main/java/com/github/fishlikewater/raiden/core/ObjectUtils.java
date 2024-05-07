@@ -29,13 +29,13 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2024/04/30
  */
-public final class ObjectUtils {
+public final class ObjectUtils extends StrUtil {
 
     public static <T> boolean isNullOrEmpty(T target) {
         if (null == target) {
             return true;
         } else if (target instanceof CharSequence) {
-            return StrUtil.isBlank((CharSequence)target);
+            return isBlank((CharSequence) target);
         } else {
             return isCollectionsSupportType(target) && CollectionUtils.isEmpty(target);
         }
