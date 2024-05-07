@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater;
+package com.github.fishlikewater.raiden.http.core.interceptor;
 
-import com.github.fishlikewater.raiden.core.DateUtils;
-import org.junit.Test;
-
-import java.time.LocalDateTime;
+import com.github.fishlikewater.raiden.http.core.MethodArgsBean;
 
 /**
- * {@code DateTest}
+ * 请求之前处理
  *
- * @author zhangxiang
+ * @author fishlikewater@126.com
+ * @since 2023年09月26日 14:07
  * @version 1.0.0
- * @since 2024/05/07
- */
-public class DateTest {
+ **/
+public interface PredRequest {
 
-    @Test
-    public void testDate() {
-        System.out.println(DateUtils.transfer(LocalDateTime.now()));
-    }
+    /**
+     * 处理请求
+     *
+     * @param methodArgsBean 请求参数
+     */
+    void handler(MethodArgsBean methodArgsBean);
 }

@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater;
+package com.github.fishlikewater.raiden.http.core.annotation;
 
-import com.github.fishlikewater.raiden.core.DateUtils;
-import org.junit.Test;
+import com.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 
-import java.time.LocalDateTime;
+import java.lang.annotation.*;
 
 /**
- * {@code DateTest}
+ * <p>
+ *  拦截器注解
+ * </p>
  *
- * @author zhangxiang
+ * @author fishlikewater@126.com
+ * @since 2023年09月28日 20:30
  * @version 1.0.0
- * @since 2024/05/07
- */
-public class DateTest {
+ **/
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Interceptor {
 
-    @Test
-    public void testDate() {
-        System.out.println(DateUtils.transfer(LocalDateTime.now()));
-    }
+    /** 拦截器类*/
+    Class<? extends HttpClientInterceptor> value();
 }

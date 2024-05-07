@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater;
-
-import com.github.fishlikewater.raiden.core.DateUtils;
-import org.junit.Test;
-
-import java.time.LocalDateTime;
+package com.github.fishlikewater.raiden.http.core.source;
 
 /**
- * {@code DateTest}
+ * <p>
+ *     HttpClient 注册
+ * </p>
  *
- * @author zhangxiang
+ * @author fishlikewater@126.com
+ * @since 2023年09月23日 10:14
  * @version 1.0.0
- * @since 2024/05/07
- */
-public class DateTest {
+ **/
+public interface SourceHttpClientRegister {
 
-    @Test
-    public void testDate() {
-        System.out.println(DateUtils.transfer(LocalDateTime.now()));
-    }
+    /**
+     * 向#{@link SourceHttpClientRegistry}注册数据
+     *
+     * @param registry SourceHttpClientRegistry
+     */
+    void register(SourceHttpClientRegistry registry);
 }

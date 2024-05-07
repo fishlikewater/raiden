@@ -13,24 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater;
+package com.github.fishlikewater.test.domain;
 
-import com.github.fishlikewater.raiden.core.DateUtils;
-import org.junit.Test;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.io.Serial;
+import java.io.Serializable;
 
 /**
- * {@code DateTest}
+ * {@code DemoPayload}
  *
  * @author zhangxiang
+ * @since 2024/03/19
  * @version 1.0.0
- * @since 2024/05/07
  */
-public class DateTest {
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class DemoPayload implements Serializable {
 
-    @Test
-    public void testDate() {
-        System.out.println(DateUtils.transfer(LocalDateTime.now()));
-    }
+    @Serial
+    private static final long serialVersionUID = 1834720647044184466L;
+
+    private String username;
+
+    private String password;
+
 }

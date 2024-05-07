@@ -13,24 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater;
+package com.github.fishlikewater.raiden.http.core;
 
-import com.github.fishlikewater.raiden.core.DateUtils;
-import org.junit.Test;
-
-import java.time.LocalDateTime;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
- * {@code DateTest}
+ * 日志配置
  *
- * @author zhangxiang
+ * @author fishlikewater@126.com
+ * @since 2023年09月25日 14:55
  * @version 1.0.0
- * @since 2024/05/07
- */
-public class DateTest {
+ **/
+@Data
+@Accessors(chain = true)
+public class LogConfig {
 
-    @Test
-    public void testDate() {
-        System.out.println(DateUtils.transfer(LocalDateTime.now()));
+    private boolean enableLog;
+
+    private LogLevel logLevel = LogLevel.BASIC;
+
+    public enum LogLevel {
+
+        // 日志类型
+        BASIC,
+
+        HEADS,
+
+        DETAIL;
     }
 }

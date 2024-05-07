@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater;
+package com.github.fishlikewater.raiden.http.core.annotation;
 
-import com.github.fishlikewater.raiden.core.DateUtils;
-import org.junit.Test;
+import com.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 
-import java.time.LocalDateTime;
+import java.lang.annotation.*;
 
 /**
- * {@code DateTest}
  *
- * @author zhangxiang
+ * @author fishlikewater@126.com
+ * @since 2023年09月28日 20:30
  * @version 1.0.0
- * @since 2024/05/07
- */
-public class DateTest {
+ **/
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface RequireLine {
 
-    @Test
-    public void testDate() {
-        System.out.println(DateUtils.transfer(LocalDateTime.now()));
-    }
+    /** 请求方式 默认GET*/
+    HttpMethod method() default HttpMethod.GET;
+
+    /** 请求路径*/
+    String path() default "";
 }

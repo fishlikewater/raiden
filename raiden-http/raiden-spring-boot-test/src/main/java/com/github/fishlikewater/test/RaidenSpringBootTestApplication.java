@@ -13,24 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater;
+package com.github.fishlikewater.test;
 
-import com.github.fishlikewater.raiden.core.DateUtils;
-import org.junit.Test;
-
-import java.time.LocalDateTime;
+import com.github.fishlikewater.raiden.http.autoconfigure.annotaion.HttpScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * {@code DateTest}
- *
- * @author zhangxiang
- * @version 1.0.0
- * @since 2024/05/07
+ * @author fishlikewater@126.com
  */
-public class DateTest {
+@SpringBootApplication
+@HttpScan("com.github.fishlikewater.test")
+public class RaidenSpringBootTestApplication {
 
-    @Test
-    public void testDate() {
-        System.out.println(DateUtils.transfer(LocalDateTime.now()));
+    public static void main(String[] args) {
+        SpringApplication.run(RaidenSpringBootTestApplication.class, args);
     }
 }

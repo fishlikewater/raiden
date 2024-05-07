@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater;
+package com.github.fishlikewater.raiden.http.autoconfigure;
 
-import com.github.fishlikewater.raiden.core.DateUtils;
-import org.junit.Test;
-
-import java.time.LocalDateTime;
+import com.github.fishlikewater.raiden.http.core.LogConfig;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * {@code DateTest}
+ * <p>
  *
- * @author zhangxiang
+ * </p>
+ *
+ * @author fishlikewater@126.com
+ * @since 2023年09月24日 12:35
  * @version 1.0.0
- * @since 2024/05/07
- */
-public class DateTest {
+ **/
 
-    @Test
-    public void testDate() {
-        System.out.println(DateUtils.transfer(LocalDateTime.now()));
-    }
+@Data
+@ConfigurationProperties("com.raiden.http")
+public class HttpConfigProperties {
+
+    private boolean enableLog;
+
+    private LogConfig.LogLevel logLevel;
 }

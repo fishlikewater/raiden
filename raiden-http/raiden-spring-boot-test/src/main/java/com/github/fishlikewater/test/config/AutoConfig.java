@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater;
+package com.github.fishlikewater.test.config;
 
-import com.github.fishlikewater.raiden.core.DateUtils;
-import org.junit.Test;
-
-import java.time.LocalDateTime;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * {@code DateTest}
+ * {@code config}
+ * 启动注册及配置
  *
- * @author zhangxiang
+ * @author fishlikewater@126.com
+ * @since 2024/03/20
  * @version 1.0.0
- * @since 2024/05/07
  */
-public class DateTest {
+@Configuration
+public class AutoConfig {
 
-    @Test
-    public void testDate() {
-        System.out.println(DateUtils.transfer(LocalDateTime.now()));
-    }
+
+
 }

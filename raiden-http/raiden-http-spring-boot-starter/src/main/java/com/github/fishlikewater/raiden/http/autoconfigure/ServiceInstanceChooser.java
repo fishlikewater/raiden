@@ -13,24 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater;
+package com.github.fishlikewater.raiden.http.autoconfigure;
 
-import com.github.fishlikewater.raiden.core.DateUtils;
-import org.junit.Test;
-
-import java.time.LocalDateTime;
+import java.net.URI;
 
 /**
- * {@code DateTest}
+ * 注册服务选择
  *
- * @author zhangxiang
+ * @author fishlikewater@126.com
+ * @since 2023年09月26日 14:33
  * @version 1.0.0
- * @since 2024/05/07
- */
-public class DateTest {
+ **/
+@FunctionalInterface
+public interface ServiceInstanceChooser {
 
-    @Test
-    public void testDate() {
-        System.out.println(DateUtils.transfer(LocalDateTime.now()));
+    /**
+     * 选择服务实例
+     *
+     * @param serviceId 服务id
+     * @return 服务实例
+     */
+    URI choose(String serviceId);
+
+    class NoValidServiceInstanceChooser implements ServiceInstanceChooser {
+
+        @Override
+        public URI choose(String serviceId) {
+            throw new RuntimeException("没有配置服务选择实现类，请配置它");
+        }
     }
 }
