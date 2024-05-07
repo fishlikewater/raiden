@@ -14,12 +14,13 @@
         <module>raiden-core</module>
         <module>raiden-http</module>
         <module>raiden-timer</module>
+        <module>raiden-docs-spring-boot-stater</module>
     </modules>
 
     <properties>
         <raiden.version>1.0-SNAPSHOT</raiden.version>
         <lombok.version>1.18.30</lombok.version>
-        <spring.boot.version>3.2.3</spring.boot.version>
+        <spring.boot.version>3.2.5</spring.boot.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.release>21</maven.compiler.release>
@@ -100,6 +101,12 @@
             <dependency>
                 <groupId>com.github.fishlikewater</groupId>
                 <artifactId>raiden-core-spring-boot</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-docs-spring-boot-stater</artifactId>
                 <version>${raiden.version}</version>
             </dependency>
         </dependencies>

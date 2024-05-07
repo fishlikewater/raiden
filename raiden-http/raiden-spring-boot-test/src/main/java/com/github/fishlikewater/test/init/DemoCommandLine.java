@@ -54,7 +54,7 @@ public class DemoCommandLine implements CommandLineRunner {
         this.testLocal();
         //this.testFile();
         Thread.sleep(2000);
-        System.exit(0);
+        //System.exit(0);
     }
 
     private void testFile() {

@@ -38,6 +38,11 @@ import java.time.LocalDateTime;
 @RestController
 public class DemoController {
 
+    /**
+     *
+     * @param payload {@code DemoPayload}
+     * @return {@code String}
+     */
     @PatchMapping("/patch")
     public String patch(@RequestBody DemoPayload payload) {
         System.out.println(payload);

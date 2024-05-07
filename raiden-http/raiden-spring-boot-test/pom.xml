@@ -19,6 +19,11 @@
 
         <dependency>
             <groupId>com.github.fishlikewater</groupId>
+            <artifactId>raiden-docs-spring-boot-stater</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.fishlikewater</groupId>
             <artifactId>raiden-http-spring-boot-starter</artifactId>
             <version>${raiden.version}</version>
         </dependency>

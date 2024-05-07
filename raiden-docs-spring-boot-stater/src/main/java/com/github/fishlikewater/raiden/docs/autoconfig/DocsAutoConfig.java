@@ -13,40 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.test.domain;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.io.Serial;
-import java.io.Serializable;
+package com.github.fishlikewater.raiden.docs.autoconfig;
 
 /**
- * {@code DemoPayload}
+ * {@code DocsAutoConfig}
  *
  * @author zhangxiang
- * @since 2024/03/19
  * @version 1.0.0
+ * @since 2024/05/07
  */
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class DemoPayload implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1834720647044184466L;
-
-    /**
-     * 用户名
-     */
-    private String username;
-
-    /**
-     * 密码
-     */
-    private String password;
-
+public class DocsAutoConfig {
 }
