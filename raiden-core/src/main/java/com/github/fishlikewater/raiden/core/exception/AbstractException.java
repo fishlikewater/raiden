@@ -15,6 +15,8 @@
  */
 package com.github.fishlikewater.raiden.core.exception;
 
+import com.github.fishlikewater.raiden.core.ObjectUtils;
+
 import java.io.Serial;
 
 /**
@@ -24,11 +26,60 @@ import java.io.Serial;
  * @version 1.0.0
  * @since 2024/04/30
  */
-public abstract class AbstractException  extends RuntimeException {
+@SuppressWarnings("unused")
+public abstract class AbstractException extends RuntimeException {
+
+    private static final String DEFAULT_MESSAGE = "系统异常";
 
     @Serial
     private static final long serialVersionUID = 1L;
 
+    protected Integer status;
 
+    protected String code;
+
+    protected String message;
+
+    public AbstractException() {
+        super(DEFAULT_MESSAGE);
+        this.status = ExceptionStatusEnum.BAD_REQUEST.status();
+        this.code = ExceptionStatusEnum.BAD_REQUEST.code();
+        this.message = DEFAULT_MESSAGE;
+    }
+
+    public AbstractException(Throwable e) {
+        super(DEFAULT_MESSAGE, e);
+        this.status = ExceptionStatusEnum.BAD_REQUEST.status();
+        this.code = ExceptionStatusEnum.BAD_REQUEST.code();
+        this.message = DEFAULT_MESSAGE;
+    }
+
+    public AbstractException(ExceptionStatusEnum status) {
+        super(status.message());
+        this.status = status.status();
+        this.code = status.code();
+        this.message = status.message();
+    }
+
+    public AbstractException(ExceptionStatusEnum status, String message, Object... args) {
+        super(ObjectUtils.format(message, args));
+        this.status = status.status();
+        this.code = status.code();
+        this.message = ObjectUtils.format(message, args);
+    }
+
+    public AbstractException(String message, Object... args) {
+        super(ObjectUtils.format(message, args));
+        this.status = ExceptionStatusEnum.BAD_REQUEST.status();
+        this.code = ExceptionStatusEnum.BAD_REQUEST.code();
+        this.message = ObjectUtils.format(message, args);
+    }
+
+    public AbstractException(Throwable e, String message, Object... args) {
+        super(ObjectUtils.format(message, args), e);
+        this.status = ExceptionStatusEnum.BAD_REQUEST.status();
+        this.code = ExceptionStatusEnum.BAD_REQUEST.code();
+        this.message = ObjectUtils.format(message, args);
+    }
 
 }

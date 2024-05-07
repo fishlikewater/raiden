@@ -88,6 +88,18 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-core</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-core-spring-boot</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.raiden.core.constant;
+package com.github.fishlikewater;
+
+import com.github.fishlikewater.raiden.core.Snowflake;
+import org.junit.Test;
 
 /**
- * {@code CommonConstants}
+ * {@code SnowflakeTest}
  *
  * @author zhangxiang
  * @version 1.0.0
- * @since 2024/04/30
+ * @since 2024/05/07
  */
-public interface CommonConstants {
+public class SnowflakeTest {
 
-    // ---------------------------------------------------------------- STRING
-
-    String LAMBDA_FUNCTION_NAME = "writeReplace";
-    String BOOLEAN_FIELD_START_WITH = "is";
-    String GET_METHOD_START_WITH = "get";
-    String SET_METHOD_START_WITH = "set";
-
-    // ---------------------------------------------------------------- NUMBER
-
-    long MILLIS_UNIT = 1000L;
-    int TIME_STAMP_LENGTH = 13;
+    @Test
+    public void testSnowflake() {
+        final Snowflake snowflake = new Snowflake(2L, 2L);
+        System.out.println(snowflake.nextId());
+    }
 }

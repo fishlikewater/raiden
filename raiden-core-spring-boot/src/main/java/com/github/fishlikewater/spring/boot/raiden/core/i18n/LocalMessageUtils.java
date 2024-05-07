@@ -29,6 +29,7 @@ import java.util.Locale;
  * @version 1.0.0
  * @since 2024/05/07
  */
+@SuppressWarnings("unused")
 @RequiredArgsConstructor
 public class LocalMessageUtils {
 

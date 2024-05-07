@@ -22,6 +22,7 @@ package com.github.fishlikewater.raiden.core.exception;
  * @version 1.0.0
  * @since 2024/04/30
  */
+@SuppressWarnings("unused")
 public enum ExceptionStatusEnum {
 
     // 请求成功

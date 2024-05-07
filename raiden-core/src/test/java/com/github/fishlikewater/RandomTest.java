@@ -13,26 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.raiden.core.constant;
+package com.github.fishlikewater;
+
+import com.github.fishlikewater.raiden.core.Assert;
+import com.github.fishlikewater.raiden.core.RandomUtils;
+import org.junit.Test;
 
 /**
- * {@code CommonConstants}
+ * {@code RandomTest}
  *
  * @author zhangxiang
  * @version 1.0.0
- * @since 2024/04/30
+ * @since 2024/05/07
  */
-public interface CommonConstants {
+public class RandomTest {
 
-    // ---------------------------------------------------------------- STRING
+    @Test
+    public void testRandomNum() {
+        String randNum = RandomUtils.randNum(6);
+        Assert.isTrue(randNum.length() == 6, "随机数长度不为6");
+    }
 
-    String LAMBDA_FUNCTION_NAME = "writeReplace";
-    String BOOLEAN_FIELD_START_WITH = "is";
-    String GET_METHOD_START_WITH = "get";
-    String SET_METHOD_START_WITH = "set";
-
-    // ---------------------------------------------------------------- NUMBER
-
-    long MILLIS_UNIT = 1000L;
-    int TIME_STAMP_LENGTH = 13;
+    @Test
+    public void testRandomNumAndAlphabet() {
+        String randNum = RandomUtils.randomNumberAndAlphabet(6);
+        Assert.isTrue(randNum.length() == 6, "随机数长度不为6");
+    }
 }

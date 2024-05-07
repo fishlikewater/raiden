@@ -16,6 +16,8 @@
 package com.github.fishlikewater.raiden.core;
 
 import cn.hutool.core.util.StrUtil;
+import org.slf4j.helpers.FormattingTuple;
+import org.slf4j.helpers.MessageFormatter;
 
 import java.util.Collection;
 import java.util.Enumeration;
@@ -29,6 +31,7 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2024/04/30
  */
+@SuppressWarnings("unused")
 public final class ObjectUtils extends StrUtil {
 
     public static <T> boolean isNullOrEmpty(T target) {
@@ -43,6 +46,12 @@ public final class ObjectUtils extends StrUtil {
 
     public static <T> boolean isNotNullOrEmpty(T target) {
         return !isNullOrEmpty(target);
+    }
+
+    static String format(String text, Object... args) {
+        assert null != text;
+        FormattingTuple formattingTuple = MessageFormatter.arrayFormat(text, args);
+        return formattingTuple.getMessage();
     }
 
     private static boolean isCollectionsSupportType(Object target) {
