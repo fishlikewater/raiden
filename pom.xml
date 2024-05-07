@@ -13,6 +13,7 @@
         <module>raiden-core-spring-boot</module>
         <module>raiden-core</module>
         <module>raiden-http</module>
+        <module>raiden-timer</module>
     </modules>
 
     <properties>
