@@ -152,8 +152,9 @@ public class OpenApiHandler extends OpenAPIService {
             if (this.openAPI.getPaths() == null) {
                 this.openAPI.setPaths(new Paths());
             }
-            if (!CollectionUtils.isEmpty(this.openAPI.getServers()))
+            if (!CollectionUtils.isEmpty(this.openAPI.getServers())) {
                 this.isServersPresent = true;
+            }
         }
         this.propertyResolverUtils = propertyResolverUtils;
         this.securityParser = securityParser;
@@ -174,10 +175,11 @@ public class OpenApiHandler extends OpenAPIService {
         buildTagsFromMethod(handlerMethod.getMethod(), tags, tagsStr, locale);
         buildTagsFromClass(handlerMethod.getBeanType(), tags, tagsStr, locale);
 
-        if (!CollectionUtils.isEmpty(tagsStr))
+        if (!CollectionUtils.isEmpty(tagsStr)) {
             tagsStr = tagsStr.stream()
                     .map(str -> propertyResolverUtils.resolve(str, locale))
                     .collect(Collectors.toSet());
+        }
 
         if (springdocTags.containsKey(handlerMethod)) {
             Tag tag = springdocTags.get(handlerMethod);
@@ -224,8 +226,9 @@ public class OpenApiHandler extends OpenAPIService {
         if (!CollectionUtils.isEmpty(tags)) {
             // Existing tags
             List<Tag> openApiTags = openAPI.getTags();
-            if (!CollectionUtils.isEmpty(openApiTags))
+            if (!CollectionUtils.isEmpty(openApiTags)) {
                 tags.addAll(openApiTags);
+            }
             openAPI.setTags(new ArrayList<>(tags));
         }
 
@@ -233,10 +236,11 @@ public class OpenApiHandler extends OpenAPIService {
         io.swagger.v3.oas.annotations.security.SecurityRequirement[] securityRequirements = securityParser
                 .getSecurityRequirements(handlerMethod);
         if (securityRequirements != null) {
-            if (securityRequirements.length == 0)
+            if (securityRequirements.length == 0) {
                 operation.setSecurity(Collections.emptyList());
-            else
+            } else {
                 securityParser.buildSecurityRequirement(securityRequirements, operation);
+            }
         }
 
         return operation;
@@ -244,11 +248,10 @@ public class OpenApiHandler extends OpenAPIService {
 
     private void buildTagsFromMethod(Method method, Set<Tag> tags, Set<String> tagsStr, Locale locale) {
         // method tags
-        Set<Tags> tagsSet = AnnotatedElementUtils
-                .findAllMergedAnnotations(method, Tags.class);
-        Set<io.swagger.v3.oas.annotations.tags.Tag> methodTags = tagsSet.stream()
-                .flatMap(x -> Stream.of(x.value())).collect(Collectors.toSet());
+        Set<Tags> tagsSet = AnnotatedElementUtils.findAllMergedAnnotations(method, Tags.class);
+        Set<io.swagger.v3.oas.annotations.tags.Tag> methodTags = tagsSet.stream().flatMap(x -> Stream.of(x.value())).collect(Collectors.toSet());
         methodTags.addAll(AnnotatedElementUtils.findAllMergedAnnotations(method, io.swagger.v3.oas.annotations.tags.Tag.class));
+
         if (!CollectionUtils.isEmpty(methodTags)) {
             tagsStr.addAll(methodTags.stream().map(tag -> propertyResolverUtils.resolve(tag.name(), locale)).collect(Collectors.toSet()));
             List<io.swagger.v3.oas.annotations.tags.Tag> allTags = new ArrayList<>(methodTags);
@@ -257,14 +260,15 @@ public class OpenApiHandler extends OpenAPIService {
     }
 
     private void addTags(List<io.swagger.v3.oas.annotations.tags.Tag> sourceTags, Set<Tag> tags, Locale locale) {
-        Optional<Set<Tag>> optionalTagSet = AnnotationsUtils
-                .getTags(sourceTags.toArray(new io.swagger.v3.oas.annotations.tags.Tag[0]), true);
+        Optional<Set<Tag>> optionalTagSet = AnnotationsUtils.getTags(sourceTags.toArray(new io.swagger.v3.oas.annotations.tags.Tag[0]), true);
+
         optionalTagSet.ifPresent(tagsSet -> {
             tagsSet.forEach(tag -> {
                 tag.name(propertyResolverUtils.resolve(tag.getName(), locale));
                 tag.description(propertyResolverUtils.resolve(tag.getDescription(), locale));
-                if (tags.stream().noneMatch(t -> t.getName().equals(tag.getName())))
+                if (tags.stream().noneMatch(t -> t.getName().equals(tag.getName()))) {
                     tags.add(tag);
+                }
             });
         });
     }

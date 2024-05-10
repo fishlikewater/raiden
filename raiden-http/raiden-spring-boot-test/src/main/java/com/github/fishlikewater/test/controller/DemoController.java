@@ -70,6 +70,13 @@ public class DemoController {
         return "ok";
     }
 
+    /**
+     * 文件上传
+     *
+     * @param file {@code MultipartFile} |required
+     * @return {@code String}
+     * @throws IOException {@code IOException}
+     */
     @PostMapping("/upload")
     public String upload(@RequestParam(value = "file") MultipartFile file) throws IOException {
         String fileName = IdUtil.getSnowflakeNextIdStr() + file.getOriginalFilename();

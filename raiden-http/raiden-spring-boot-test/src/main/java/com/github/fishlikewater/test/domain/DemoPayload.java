@@ -40,12 +40,12 @@ public class DemoPayload implements Serializable {
     private static final long serialVersionUID = 1834720647044184466L;
 
     /**
-     * 用户名
+     * 用户名 | required | 张三
      */
     private String username;
 
     /**
-     * 密码
+     * 密码 | required | 123456
      */
     private String password;
 
