@@ -34,6 +34,9 @@
         <maven-source.verion>3.3.0</maven-source.verion>
         <license-maven.version>3.0</license-maven.version>
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+        <therapi-runtime-javadoc.version>0.15.0</therapi-runtime-javadoc.version>
+        <openapi.version>2.5.0</openapi.version>
+        <knife4j-openapi3.version>4.5.0</knife4j-openapi3.version>
     </properties>
 
     <url>https://github.com/fishlikewater/raiden-utils</url>
@@ -108,6 +111,24 @@
                 <groupId>com.github.fishlikewater</groupId>
                 <artifactId>raiden-docs-spring-boot-stater</artifactId>
                 <version>${raiden.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.therapi</groupId>
+                <artifactId>therapi-runtime-javadoc</artifactId>
+                <version>${therapi-runtime-javadoc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${openapi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j-openapi3.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
