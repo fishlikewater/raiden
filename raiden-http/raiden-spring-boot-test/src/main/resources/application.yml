@@ -1,0 +1,55 @@
+com:
+  raiden:
+    http:
+      enable-log: true
+      log-level: heads
+spring:
+  application:
+    name: raiden-spring-boot-test
+
+# SpringDoc??
+springdoc:
+  #??????,?????????????
+  packages-to-scan: com.github.fishlikewater
+  paths-to-exclude: #??????swagger????api
+    - /api/test/**
+    - /api/mockito/data
+  swagger-ui:
+    enabled: true
+    disable-swagger-default-url: true  #??default petstore url
+    path: /swagger-ui.html  #swagger??
+    persistAuthorization: true  # ????????????? true???????????????????/?????
+    csrf:
+      enabled: true # ??CSRF??
+  api-docs:
+    enabled: true #??/??api-docs, prod?????false
+  use-management-port: false
+  enable-spring-security: true
+  info:
+    # ??
+    title: 'Spring Boot Doc test'
+    # ??
+    description: 'Spring Boot Doc test'
+    # ??
+    version: '1.0.0'
+    # ????
+    contact:
+      name: fishlikewater
+      email: fishlikewater@126.com
+      url: https://gitee.com
+  components:
+    # ??????
+    security-schemes:
+      apiKey:
+        type: APIKEY
+        in: HEADER
+        name: ${sa-token.token-name}
+  group-configs:
+    - group: 1.????
+      packages-to-scan: com.ruoyi.demo
+    - group: 2.????
+      packages-to-scan: com.ruoyi.common
+    - group: 3.????
+      packages-to-scan: com.ruoyi.system
+    - group: 4.??????
+      packages-to-scan: com.ruoyi.generator
