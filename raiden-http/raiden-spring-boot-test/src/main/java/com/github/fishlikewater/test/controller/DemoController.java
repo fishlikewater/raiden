@@ -27,8 +27,9 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import static java.lang.StringTemplate.STR;
+
 /**
- * {@code DemoController}
  * 测试controller
  *
  * @author fishlikewater@126.com
@@ -39,6 +40,7 @@ import java.time.LocalDateTime;
 public class DemoController {
 
     /**
+     * patch方法测试
      *
      * @param payload {@code DemoPayload}
      * @return {@code String}

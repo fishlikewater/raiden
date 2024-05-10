@@ -112,7 +112,7 @@ public class DocsAutoConfig {
     public OpenApiCustomizer openApiCustomizer() {
         String contextPath = serverProperties.getServlet().getContextPath();
         String finalContextPath;
-        if ((contextPath != null && contextPath.trim().length() > 0) || "/".equals(contextPath)) {
+        if ((contextPath == null || contextPath.trim().length() == 0) || "/".equals(contextPath)) {
             finalContextPath = "";
         } else {
             finalContextPath = contextPath;
@@ -120,10 +120,10 @@ public class DocsAutoConfig {
         // 对所有路径增加前置上下文路径
         return openApi -> {
             Paths oldPaths = openApi.getPaths();
-            if (oldPaths instanceof PlusPaths) {
+            if (oldPaths instanceof CustomerPaths) {
                 return;
             }
-            PlusPaths newPaths = new PlusPaths();
+            CustomerPaths newPaths = new CustomerPaths();
             oldPaths.forEach((k, v) -> newPaths.addPathItem(finalContextPath + k, v));
             openApi.setPaths(newPaths);
         };
@@ -132,14 +132,11 @@ public class DocsAutoConfig {
     /**
      * 单独使用一个类便于判断 解决springdoc路径拼接重复问题
      *
-     * @author Lion Li
      */
-    static class PlusPaths extends Paths {
+    static class CustomerPaths extends Paths {
 
-        public PlusPaths() {
+        public CustomerPaths() {
             super();
         }
     }
-
-
 }

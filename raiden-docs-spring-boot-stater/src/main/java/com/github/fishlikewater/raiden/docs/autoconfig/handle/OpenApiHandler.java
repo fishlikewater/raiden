@@ -145,10 +145,13 @@ public class OpenApiHandler extends OpenAPIService {
         super(openAPI, securityParser, springDocConfigProperties, propertyResolverUtils, openApiBuilderCustomizers, serverBaseUrlCustomizers, javadocProvider);
         if (openAPI.isPresent()) {
             this.openAPI = openAPI.get();
-            if (this.openAPI.getComponents() == null)
+
+            if (this.openAPI.getComponents() == null) {
                 this.openAPI.setComponents(new Components());
-            if (this.openAPI.getPaths() == null)
+            }
+            if (this.openAPI.getPaths() == null) {
                 this.openAPI.setPaths(new Paths());
+            }
             if (!CollectionUtils.isEmpty(this.openAPI.getServers()))
                 this.isServersPresent = true;
         }
@@ -196,8 +199,6 @@ public class OpenApiHandler extends OpenAPIService {
         }
 
         if (isAutoTagClasses(operation)) {
-
-
             if (javadocProvider.isPresent()) {
                 String description = javadocProvider.get().getClassJavadoc(handlerMethod.getBeanType());
                 if (StringUtils.isNotBlank(description)) {
@@ -267,5 +268,4 @@ public class OpenApiHandler extends OpenAPIService {
             });
         });
     }
-
 }
