@@ -259,7 +259,9 @@
                     <header>${main.user.dir}/HEADER</header>
                     <!--排除文件-->
                     <excludes>
+                        <exclude>**/resource/**</exclude>
                         <exclude>**/*.properties</exclude>
+                        <exclude>**/*.yml</exclude>
                         <exclude>*.sh</exclude>
                         <exclude>*.yml</exclude>
                         <exclude>.editorconfig</exclude>
