@@ -13,39 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.test.domain;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.io.Serial;
-import java.io.Serializable;
+package com.github.fishlikewater.raiden.mapstruct;
 
 /**
- * {@code DemoPayload}
+ * <p>
+ * 类型转换接口
+ * </p>
  *
- * @author zhangxiang
- * @since 2024/03/19
- * @version 1.0.0
- */
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class DemoPayload implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1834720647044184466L;
+ * @author fishlikewater@126.com
+ * @since 2024年05月11日 20:43
+ **/
+public interface ConvertEntity<S, T> {
 
     /**
-     * 用户名 | required | 张三
+     * @param source 被转换的类
+     * @return T 转换后的类
      */
-    private String username;
+    T convertT(S source);
 
     /**
-     * 密码 | required | 123456
+     * @param target 被转换的类
+     * @return S 转换后的类
      */
-    private String password;
+    S convertS(T target);
 }

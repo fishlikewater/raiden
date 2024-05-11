@@ -13,39 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.test.domain;
+package com.github.fishlikewater.test.assemble;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.io.Serial;
-import java.io.Serializable;
+import com.github.fishlikewater.raiden.mapstruct.ConvertEntity;
+import com.github.fishlikewater.test.domain.DemoEntity;
+import com.github.fishlikewater.test.domain.DemoPayload;
+import org.mapstruct.Mapper;
 
 /**
- * {@code DemoPayload}
+ * <p>
+ * payload转换测试
+ * </p>
  *
- * @author zhangxiang
- * @since 2024/03/19
+ * @author fishlikewater@126.com
  * @version 1.0.0
- */
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class DemoPayload implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1834720647044184466L;
-
-    /**
-     * 用户名 | required | 张三
-     */
-    private String username;
-
-    /**
-     * 密码 | required | 123456
-     */
-    private String password;
+ * @since 2024年05月11日 20:59
+ **/
+@Mapper(componentModel = "spring")
+public interface PayloadAssemble extends ConvertEntity<DemoEntity, DemoPayload> {
 }

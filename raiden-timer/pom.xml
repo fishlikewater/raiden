@@ -7,9 +7,9 @@
         <artifactId>raiden-utils</artifactId>
         <version>${raiden.version}</version>
     </parent>
-    <artifactId>raiden-timer</artifactId>
-    <version>${raiden.version}</version>
+
     <packaging>pom</packaging>
+    <artifactId>raiden-timer</artifactId>
 
     <name>raiden-timer</name>
     <modules>

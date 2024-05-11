@@ -20,24 +20,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 /**
- * {@code DemoPayload}
+ * <p>
  *
- * @author zhangxiang
- * @since 2024/03/19
+ * </p>
+ *
+ * @author fishlikewater@126.com
  * @version 1.0.0
- */
+ * @since 2024年05月11日 21:01
+ **/
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DemoPayload implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1834720647044184466L;
+public class DemoEntity {
 
     /**
      * 用户名 | required | 张三

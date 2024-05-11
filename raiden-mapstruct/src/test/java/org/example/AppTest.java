@@ -13,39 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.test.domain;
+package org.example;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.io.Serial;
-import java.io.Serializable;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
- * {@code DemoPayload}
- *
- * @author zhangxiang
- * @since 2024/03/19
- * @version 1.0.0
+ * Unit test for simple App.
  */
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class DemoPayload implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1834720647044184466L;
+public class AppTest
+        extends TestCase {
+    /**
+     * Create the test case
+     *
+     * @param testName name of the test case
+     */
+    public AppTest(String testName) {
+        super(testName);
+    }
 
     /**
-     * 用户名 | required | 张三
+     * @return the suite of tests being tested
      */
-    private String username;
+    public static Test suite() {
+        return new TestSuite(AppTest.class);
+    }
 
     /**
-     * 密码 | required | 123456
+     * Rigourous Test :-)
      */
-    private String password;
+    public void testApp() {
+        assertTrue(true);
+    }
 }

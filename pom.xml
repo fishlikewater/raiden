@@ -15,6 +15,7 @@
         <module>raiden-http</module>
         <module>raiden-timer</module>
         <module>raiden-docs-spring-boot-stater</module>
+        <module>raiden-mapstruct</module>
     </modules>
 
     <properties>
@@ -37,6 +38,8 @@
         <therapi-runtime-javadoc.version>0.15.0</therapi-runtime-javadoc.version>
         <openapi.version>2.5.0</openapi.version>
         <knife4j-openapi3.version>4.5.0</knife4j-openapi3.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <junit.version>4.13.1</junit.version>
     </properties>
 
     <url>https://github.com/fishlikewater/raiden-utils</url>
@@ -87,14 +90,8 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>${spring.boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
+            <!--self module-->
             <dependency>
                 <groupId>com.github.fishlikewater</groupId>
                 <artifactId>raiden-core</artifactId>
@@ -114,6 +111,22 @@
             </dependency>
 
             <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-mapstruct</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
+            <!--springboot-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!--springdoc-->
+            <dependency>
                 <groupId>com.github.therapi</groupId>
                 <artifactId>therapi-runtime-javadoc</artifactId>
                 <version>${therapi-runtime-javadoc.version}</version>
@@ -129,6 +142,19 @@
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
                 <version>${knife4j-openapi3.version}</version>
+            </dependency>
+
+            <!--mapstruct-->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -157,6 +183,11 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
