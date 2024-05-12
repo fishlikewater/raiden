@@ -18,4 +18,20 @@
 
     <dependencies>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>json-core</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-json-spring-boot-stater</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

@@ -18,7 +18,7 @@
     </modules>
 
     <properties>
-        <classgraph.version>4.8.162</classgraph.version>
+
     </properties>
 
 </project>

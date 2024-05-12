@@ -17,6 +17,8 @@
         <module>raiden-docs-spring-boot-stater</module>
         <module>raiden-mapstruct</module>
         <module>raiden-json</module>
+        <module>raiden-redis</module>
+        <module>raiden-lock</module>
     </modules>
 
     <properties>
@@ -32,8 +34,11 @@
         <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.user.dir>${user.dir}</main.user.dir>
+        <project.root.directory>${project.basedir}</project.root.directory>
+        <deployment.repository.relative.path>maven-repository/repository</deployment.repository.relative.path>
         <maven-compiler.version>3.12.1</maven-compiler.version>
         <maven-source.verion>3.3.0</maven-source.verion>
+        <maven-deploy.version>3.1.2</maven-deploy.version>
         <license-maven.version>3.0</license-maven.version>
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
         <therapi-runtime-javadoc.version>0.15.0</therapi-runtime-javadoc.version>
@@ -41,6 +46,7 @@
         <knife4j-openapi3.version>4.5.0</knife4j-openapi3.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <junit.version>4.13.1</junit.version>
+        <classgraph.version>4.8.162</classgraph.version>
     </properties>
 
     <url>https://github.com/fishlikewater/raiden-utils</url>
@@ -125,8 +131,16 @@
 
             <dependency>
                 <groupId>com.github.fishlikewater</groupId>
-                <artifactId>json-core</artifactId>
+                <artifactId>raiden-lock</artifactId>
                 <version>${raiden.version}</version>
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-redis</artifactId>
+                <version>${raiden.version}</version>
+                <type>pom</type>
             </dependency>
 
             <!--hutool-->
@@ -299,6 +313,17 @@
                     <mapping>
                         <java>SLASHSTAR_STYLE</java>
                     </mapping>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy.version}</version>
+                <configuration>
+                    <!-- 特别注意的地方：指定打包的目录 -->
+                    <altDeploymentRepository>
+                        internal.repo::default::file://${main.user.dir}/${deployment.repository.relative.path}
+                    </altDeploymentRepository>
                 </configuration>
             </plugin>
         </plugins>
