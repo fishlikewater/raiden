@@ -11,15 +11,11 @@
     <packaging>pom</packaging>
 
     <name>raiden-json</name>
-
-
-    <properties>
-    </properties>
+    <modules>
+        <module>json-core</module>
+        <module>raiden-json-spring-boot-stater</module>
+    </modules>
 
     <dependencies>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-json</artifactId>
-        </dependency>
     </dependencies>
 </project>

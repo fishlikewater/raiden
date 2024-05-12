@@ -13,30 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.raiden.json.autoconfig;
+package com.github.fishlikewater.raiden.json.core.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fishlikewater.raiden.json.core.JSONUtils;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 
 /**
- * {@code JacksonConfig}
+ * {@code JacksonUtils}
  * <p>
- * json 配置
+ * Jackson 工具类
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2024年05月11日 20:43
+ * @version 1.0.0
+ * @since 2024年05月12日 11:14
  **/
-@Slf4j
-public class JacksonConfig {
-
-    @Bean
-    @Primary
-    public ObjectMapper objectMapper() {
-        return JSONUtils.JACKSON;
-    }
+public class JacksonUtils extends ObjectMapper {
 
 }

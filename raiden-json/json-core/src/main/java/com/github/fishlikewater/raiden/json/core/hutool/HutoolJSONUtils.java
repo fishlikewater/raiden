@@ -13,30 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.raiden.json.autoconfig;
+package com.github.fishlikewater.raiden.json.core.hutool;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fishlikewater.raiden.json.core.JSONUtils;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
+import cn.hutool.json.JSONUtil;
 
 /**
- * {@code JacksonConfig}
+ * {@code HutoolJSONUtils}
  * <p>
- * json 配置
+ * hutool 工具包中的json
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2024年05月11日 20:43
+ * @version 1.0.0
+ * @since 2024年05月12日 11:15
  **/
-@Slf4j
-public class JacksonConfig {
-
-    @Bean
-    @Primary
-    public ObjectMapper objectMapper() {
-        return JSONUtils.JACKSON;
-    }
-
+public class HutoolJSONUtils extends JSONUtil {
 }

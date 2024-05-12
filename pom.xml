@@ -116,6 +116,19 @@
                 <version>${raiden.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-json</artifactId>
+                <version>${raiden.version}</version>
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>json-core</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
             <!--hutool-->
             <dependency>
                 <groupId>cn.hutool</groupId>
