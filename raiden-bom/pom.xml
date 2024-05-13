@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.github.fishlikewater</groupId>
+        <artifactId>raiden-utils</artifactId>
+        <version>${raiden.version}</version>
+    </parent>
+
+    <packaging>pom</packaging>
+    <artifactId>raiden-bom</artifactId>
+
+    <properties>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--core-->
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-core</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
+            <!--spring core-->
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-core-spring-boot</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
+            <!--docs-->
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-docs-spring-boot-stater</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
+            <!--http-->
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>http-core</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-http-spring-boot-starter</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
+            <!--mapstruct-->
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-mapstruct</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
+            <!--lock-->
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-lock</artifactId>
+                <version>${raiden.version}</version>
+                <type>pom</type>
+            </dependency>
+
+            <!--json-->
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>json-core</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-json-spring-boot-stater</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
+            <!--redis-->
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>redis-core</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+
+            <!--timer-->
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>timer-core</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-timer-spring-boot-starter</artifactId>
+                <version>${raiden.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
