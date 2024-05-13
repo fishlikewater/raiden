@@ -12,5 +12,9 @@
     <packaging>pom</packaging>
     <artifactId>raiden-redis</artifactId>
 
+    <modules>
+        <module>redis-core</module>
+    </modules>
+
 
 </project>
