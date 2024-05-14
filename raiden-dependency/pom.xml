@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.fishlikewater</groupId>
         <artifactId>raiden-utils</artifactId>
-        <version>${raiden.version}</version>
+        <version>${revision}</version>
     </parent>
 
     <packaging>pom</packaging>

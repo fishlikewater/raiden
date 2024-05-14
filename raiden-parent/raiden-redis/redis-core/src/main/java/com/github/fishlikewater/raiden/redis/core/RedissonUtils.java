@@ -1,7 +1,23 @@
+/*
+ * Copyright © 2024 zhangxiang (fishlikewater@126.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.fishlikewater.raiden.redis.core;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 
 /**
  * <p>
@@ -15,14 +31,14 @@ import org.redisson.api.RedissonClient;
  **/
 public class RedissonUtils {
 
-    public RedissonClient redissonClient() {
+    public RedissonClient redissonClient(RedissonCfg cfg) {
         Config config = new Config();
         config.useSingleServer()
-                .setAddress(configProperties.getRedissonCfg().getUrl())
-                .setPassword(configProperties.getRedissonCfg().getPassWord())
-                .setConnectionMinimumIdleSize(configProperties.getRedissonCfg().getConnectionMinimumIdleSize())
-                .setConnectionPoolSize(configProperties.getRedissonCfg().getConnectionPoolSize())
-                .setDatabase(configProperties.getRedissonCfg().getDataBase());
+                .setAddress(cfg.getUrl())
+                .setPassword(cfg.getPassWord())
+                .setConnectionMinimumIdleSize(cfg.getConnectionMinimumIdleSize())
+                .setConnectionPoolSize(cfg.getConnectionPoolSize())
+                .setDatabase(cfg.getDataBase());
         return Redisson.create(config);
     }
 }

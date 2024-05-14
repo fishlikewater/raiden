@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.fishlikewater</groupId>
         <artifactId>raiden-http</artifactId>
-        <version>${raiden.version}</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>raiden-spring-boot-test</artifactId>
     <name>raiden-spring-boot-test</name>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.github.fishlikewater</groupId>
             <artifactId>raiden-http-spring-boot-starter</artifactId>
-            <version>${raiden.version}</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 
@@ -54,10 +54,6 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-configuration-processor</artifactId>
                         </path>
                         <path>
                             <groupId>org.mapstruct</groupId>

@@ -4,25 +4,24 @@
 
     <groupId>com.github.fishlikewater</groupId>
     <artifactId>raiden-utils</artifactId>
-    <version>${raiden.version}</version>
-    <packaging>pom</packaging>
+    <version>${revision}</version>
 
+    <packaging>pom</packaging>
     <name>raiden-utils</name>
 
     <modules>
         <module>raiden-dependency</module>
         <module>raiden-parent</module>
         <module>raiden-bom</module>
-
     </modules>
 
     <properties>
+        <revision>1.0-SNAPSHOT</revision>
         <lombok.version>1.18.30</lombok.version>
-        <raiden.version>1.0-SNAPSHOT</raiden.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.release>21</maven.compiler.release>
-        <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
+        <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.user.dir>${user.dir}</main.user.dir>
         <project.root.directory>${project.basedir}</project.root.directory>
@@ -79,11 +78,11 @@
                         <arg>--enable-preview</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
-                        <path>
+                        <!--<path>
                             <groupId>com.github.therapi</groupId>
                             <artifactId>therapi-runtime-javadoc-scribe</artifactId>
                             <version>${therapi-runtime-javadoc.version}</version>
-                        </path>
+                        </path>-->
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
@@ -119,7 +118,12 @@
                 <version>${flatten-maven-plugin.version}</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
-                    <!--<flattenMode>resolveCiFriendliesOnly</flattenMode>-->
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <pomElements>
+                        <parent>expand</parent>
+                        <distributionManagement>remove</distributionManagement>
+                        <repositories>remove</repositories>
+                    </pomElements>
                 </configuration>
                 <executions>
                     <!-- enable flattening -->
@@ -154,6 +158,23 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <inlineHeader>
+                        <![CDATA[
+                        Copyright © ${year} ${owner} (${email})
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+                        ]]>
+                    </inlineHeader>
                     <properties>
                         <year>${maven.build.timestamp}</year>
                         <owner>zhangxiang</owner>
@@ -161,7 +182,7 @@
                     </properties>
                     <quiet>true</quiet>
                     <!--HEADER文件-->
-                    <header>${main.user.dir}/HEADER</header>
+                   <!-- <header>${main.user.dir}/HEADER</header>-->
                     <!--排除文件-->
                     <excludes>
                         <exclude>**/resource/**</exclude>
@@ -188,7 +209,7 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>${maven-deploy.version}</version>
                 <configuration>
-                    <!-- 特别注意的地方：指定打包的目录 -->
+                    <!--指定打包的目录 -->
                     <altDeploymentRepository>
                         internal.repo::default::file://${main.user.dir}/${deployment.repository.relative.path}
                     </altDeploymentRepository>
