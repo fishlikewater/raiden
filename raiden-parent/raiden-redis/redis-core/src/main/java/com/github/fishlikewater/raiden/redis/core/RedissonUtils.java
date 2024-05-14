@@ -15,6 +15,7 @@ package com.github.fishlikewater.raiden.redis.core;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
+import org.redisson.codec.JsonJacksonCodec;
 import org.redisson.config.Config;
 
 /**
@@ -37,6 +38,7 @@ public class RedissonUtils {
                 .setConnectionMinimumIdleSize(cfg.getConnectionMinimumIdleSize())
                 .setConnectionPoolSize(cfg.getConnectionPoolSize())
                 .setDatabase(cfg.getDataBase());
+        config.setCodec(new JsonJacksonCodec());
         return Redisson.create(config);
     }
 }

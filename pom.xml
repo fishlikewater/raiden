@@ -163,8 +163,8 @@
                         <owner>zhangxiang</owner>
                         <email>fishlikewater@126.com</email>
                     </properties>
-                    <inlineHeader>
-                    </inlineHeader>
+                    <!-- <inlineHeader>
+                     </inlineHeader>-->
                     <quiet>true</quiet>
                     <!--HEADER文件-->
                     <header>${main.user.dir}/HEADER</header>
