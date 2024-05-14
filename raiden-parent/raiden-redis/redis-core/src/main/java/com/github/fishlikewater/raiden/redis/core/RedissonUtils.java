@@ -29,7 +29,7 @@ import org.redisson.config.Config;
  **/
 public class RedissonUtils {
 
-    public RedissonClient redissonClient(RedissonCfg cfg) {
+    public static RedissonClient redissonClient(RedissonCfg cfg) {
         Config config = new Config();
         config.useSingleServer()
                 .setAddress(cfg.getUrl())
