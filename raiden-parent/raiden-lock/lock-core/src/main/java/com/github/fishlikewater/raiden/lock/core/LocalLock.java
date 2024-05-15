@@ -15,6 +15,9 @@
  */
 package com.github.fishlikewater.raiden.lock.core;
 
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 /**
  * {@code LocalLock}
  *
@@ -23,4 +26,31 @@ package com.github.fishlikewater.raiden.lock.core;
  * @since 2024/05/15
  */
 public interface LocalLock {
+
+    default void tryLock(ReentrantLock lock, Runnable runnable) {
+        lock.lock();
+        try {
+            runnable.run();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    default void tryLock(ReentrantReadWriteLock.WriteLock lock, Runnable runnable) {
+        lock.lock();
+        try {
+            runnable.run();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    default void tryLock(ReentrantReadWriteLock.ReadLock lock, Runnable runnable) {
+        lock.lock();
+        try {
+            runnable.run();
+        } finally {
+            lock.unlock();
+        }
+    }
 }
