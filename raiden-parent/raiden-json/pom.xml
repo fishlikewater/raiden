@@ -13,7 +13,7 @@
     <name>raiden-json</name>
     <modules>
         <module>json-core</module>
-        <module>raiden-json-spring-boot-stater</module>
+        <module>raiden-json-spring-boot-starter</module>
     </modules>
 
     <dependencies>

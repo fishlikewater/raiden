@@ -17,7 +17,7 @@
         <module>raiden-core</module>
         <module>raiden-http</module>
         <module>raiden-timer</module>
-        <module>raiden-docs-spring-boot-stater</module>
+        <module>raiden-docs-spring-boot-starter</module>
         <module>raiden-mapstruct</module>
         <module>raiden-json</module>
         <module>raiden-redis</module>

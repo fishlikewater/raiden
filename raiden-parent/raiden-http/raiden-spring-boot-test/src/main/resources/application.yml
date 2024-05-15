@@ -7,6 +7,7 @@ spring:
   application:
     name: raiden-spring-boot-test
 
+
 # SpringDoc
 springdoc:
   packages-to-scan: com.github.fishlikewater
@@ -43,3 +44,9 @@ springdoc:
       packages-to-scan: com.github.fishlikewater
     - group: 2.xxx
       packages-to-scan: com.github.fishlikewater
+redis:
+  server-pattern: single
+  single:
+    address: redis://127.0.0.1:6379
+    timeout: 10000
+    database: 0

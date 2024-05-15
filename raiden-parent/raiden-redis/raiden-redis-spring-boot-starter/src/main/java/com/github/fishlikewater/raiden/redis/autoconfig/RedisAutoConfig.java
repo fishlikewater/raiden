@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.raiden.json.autoconfig;
+package com.github.fishlikewater.raiden.redis.autoconfig;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fishlikewater.raiden.json.core.JSONUtils;
-import lombok.extern.slf4j.Slf4j;
+import com.github.fishlikewater.raiden.redis.core.RedissonUtils;
+import org.redisson.api.RedissonClient;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 
 /**
- * {@code JacksonConfig}
- * <p>
- * json 配置
- * </p>
+ * {@code RedisAutoConfig}
+ * redis 自动配置类
  *
- * @author fishlikewater@126.com
- * @since 2024年05月11日 20:43
- **/
-@Slf4j
-public class JacksonConfig {
+ * @author zhangxiang
+ * @version 1.0.0
+ * @since 2024/05/15
+ */
+@AutoConfiguration
+@EnableConfigurationProperties(RedisProperties.class)
+public class RedisAutoConfig {
 
     @Bean
-    @Primary
-    public ObjectMapper objectMapper() {
-        return JSONUtils.JACKSON;
+    public RedissonClient redissonClient(RedisProperties properties) {
+        return RedissonUtils.redissonClient(properties);
     }
-
 }

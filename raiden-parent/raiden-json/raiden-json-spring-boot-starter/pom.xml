@@ -8,7 +8,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>raiden-json-spring-boot-stater</artifactId>
+    <artifactId>raiden-json-spring-boot-starter</artifactId>
 
     <properties>
 

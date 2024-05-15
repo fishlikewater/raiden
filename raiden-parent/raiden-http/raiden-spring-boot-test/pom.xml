@@ -24,7 +24,12 @@
 
         <dependency>
             <groupId>com.github.fishlikewater</groupId>
-            <artifactId>raiden-docs-spring-boot-stater</artifactId>
+            <artifactId>raiden-docs-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.fishlikewater</groupId>
+            <artifactId>raiden-redis-spring-boot-starter</artifactId>
         </dependency>
 
         <dependency>

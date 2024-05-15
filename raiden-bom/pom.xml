@@ -34,7 +34,7 @@
             <!--docs-->
             <dependency>
                 <groupId>com.github.fishlikewater</groupId>
-                <artifactId>raiden-docs-spring-boot-stater</artifactId>
+                <artifactId>raiden-docs-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -73,7 +73,7 @@
             </dependency>
             <dependency>
                 <groupId>com.github.fishlikewater</groupId>
-                <artifactId>raiden-json-spring-boot-stater</artifactId>
+                <artifactId>raiden-json-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -81,6 +81,11 @@
             <dependency>
                 <groupId>com.github.fishlikewater</groupId>
                 <artifactId>redis-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-redis-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
