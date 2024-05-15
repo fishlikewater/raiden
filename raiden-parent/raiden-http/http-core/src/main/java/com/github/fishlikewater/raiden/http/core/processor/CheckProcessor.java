@@ -76,7 +76,7 @@ public class CheckProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> strings = new TreeSet<>();
-        strings.add("com.github.fishlikewater.raidencore.annotation.Heads");
+        strings.add("com.github.fishlikewater.raiden.http.core.annotation.Heads");
         return strings;
     }
 
