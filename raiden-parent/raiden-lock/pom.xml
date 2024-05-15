@@ -10,6 +10,9 @@
     </parent>
 
     <packaging>pom</packaging>
+    <modules>
+        <module>lock-core</module>
+    </modules>
     <artifactId>raiden-lock</artifactId>
 
     <properties>
