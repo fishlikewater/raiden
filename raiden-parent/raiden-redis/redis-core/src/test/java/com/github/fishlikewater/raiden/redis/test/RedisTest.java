@@ -1,4 +1,6 @@
 /*
+ * Copyright (c) 2024 zhangxiang (fishlikewater@126.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,8 +15,9 @@
  */
 package com.github.fishlikewater.raiden.redis.test;
 
-import com.github.fishlikewater.raiden.redis.core.RedissonCfg;
+import com.github.fishlikewater.raiden.redis.core.RedissonPatternCfg;
 import com.github.fishlikewater.raiden.redis.core.RedissonUtils;
+import com.github.fishlikewater.raiden.redis.core.ServerPattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.Test;
@@ -39,8 +42,9 @@ public class RedisTest {
 
     @Test
     public void testRedis() {
-        final RedissonCfg cfg = new RedissonCfg();
-        cfg.setUrl("redis://127.0.0.1:6379/1");
+        final RedissonPatternCfg cfg = new RedissonPatternCfg();
+        cfg.setServerPattern(ServerPattern.SINGLE);
+        cfg.getSingle().setAddress("redis://127.0.0.1:6379/1");
         final RedissonClient redissonClient = RedissonUtils.redissonClient(cfg);
         final RLock lock = redissonClient.getLock("com:github:fishlikewater:redis:lock:test");
         lock.lock();

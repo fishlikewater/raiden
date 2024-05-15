@@ -160,7 +160,7 @@
                 <configuration>
                     <properties>
                         <year>${maven.build.timestamp}</year>
-                        <owner>zhangxiang</owner>
+                        <author>zhangxiang</author>
                         <email>fishlikewater@126.com</email>
                     </properties>
                     <!-- <inlineHeader>
@@ -170,7 +170,7 @@
                     <header>${main.user.dir}/HEADER</header>
                     <!--排除文件-->
                     <excludes>
-                        <exclude>**/resource/**</exclude>
+                        <exclude>**/resources/**</exclude>
                         <exclude>**/*.properties</exclude>
                         <exclude>**/*.yml</exclude>
                         <exclude>*.sh</exclude>

@@ -1,4 +1,6 @@
 /*
+ * Copyright (c) 2024 zhangxiang (fishlikewater@126.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,34 +15,33 @@
  */
 package com.github.fishlikewater.raiden.redis.core;
 
-import lombok.Data;
-
-import java.io.Serial;
-import java.io.Serializable;
+import lombok.Getter;
 
 /**
- * <p>
- * {@code RedissonCfg}
- * Redisson配置类
- * </p>
+ * {@code ServerPattern}
+ * 服务模式
  *
- * @author fishlikewater@126.com
+ * @author zhangxiang
  * @version 1.0.0
- * @since 2024年05月13日 20:35
- **/
-@Data
-public class RedissonCfg implements Serializable {
+ * @since 2024/05/15
+ */
+@Getter
+public enum ServerPattern {
 
-    @Serial
-    private static final long serialVersionUID = 8090491648279726067L;
+    // 单机模式  集群模式 哨兵模式 主从模式 云托管模式
+    SINGLE("单机模式"),
 
-    private String url;
+    CLUSTER("集群模式"),
 
-    private String passWord;
+    SENTINEL("哨兵模式"),
 
-    private int dataBase = 1;
+    MASTER_SLAVE("主从模式"),
 
-    private int connectionMinimumIdleSize = 1;
+    REPLICATED("云托管模式");
 
-    private int connectionPoolSize = 2;
+    private final String desc;
+
+    ServerPattern(String desc) {
+        this.desc = desc;
+    }
 }
