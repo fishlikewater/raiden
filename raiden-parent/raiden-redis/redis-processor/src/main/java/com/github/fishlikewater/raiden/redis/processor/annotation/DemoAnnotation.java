@@ -13,24 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.test.assemble;
-
-import com.github.fishlikewater.raiden.mapstruct.ConvertEntity;
-import com.github.fishlikewater.raiden.redis.processor.annotation.DemoAnnotation;
-import com.github.fishlikewater.test.domain.DemoEntity;
-import com.github.fishlikewater.test.domain.DemoPayload;
-import org.mapstruct.Mapper;
+package com.github.fishlikewater.raiden.redis.processor.annotation;
 
 /**
  * <p>
- * payload转换测试
+ * {@code DemoAnnotation}
+ *
  * </p>
  *
  * @author fishlikewater@126.com
  * @version 1.0.0
- * @since 2024年05月11日 20:59
+ * @since 2024年05月16日 23:28
  **/
-@Mapper(componentModel = "spring")
-@DemoAnnotation
-public interface PayloadAssemble extends ConvertEntity<DemoEntity, DemoPayload> {
+public @interface DemoAnnotation {
 }

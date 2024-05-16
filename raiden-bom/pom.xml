@@ -85,6 +85,11 @@
             </dependency>
             <dependency>
                 <groupId>com.github.fishlikewater</groupId>
+                <artifactId>redis-processor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
                 <artifactId>raiden-redis-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
