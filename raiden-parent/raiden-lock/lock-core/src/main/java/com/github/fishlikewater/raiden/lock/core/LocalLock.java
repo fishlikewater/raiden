@@ -27,6 +27,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public interface LocalLock {
 
+    /**
+     * 尝试获取锁
+     *
+     * @param lock     锁
+     * @param runnable 运行方法
+     */
     default void tryLock(ReentrantLock lock, Runnable runnable) {
         lock.lock();
         try {
@@ -36,6 +42,11 @@ public interface LocalLock {
         }
     }
 
+    /**
+     * 尝试获取锁
+     * @param lock 锁
+     * @param runnable 运行方法
+     */
     default void tryLock(ReentrantReadWriteLock.WriteLock lock, Runnable runnable) {
         lock.lock();
         try {
@@ -45,6 +56,11 @@ public interface LocalLock {
         }
     }
 
+    /**
+     * 尝试获取锁
+     * @param lock 锁
+     * @param runnable 运行方法
+     */
     default void tryLock(ReentrantReadWriteLock.ReadLock lock, Runnable runnable) {
         lock.lock();
         try {
