@@ -15,7 +15,7 @@
  */
 package com.github.fishlikewater.raiden.redis.processor;
 
-import com.github.fishlikewater.raiden.redis.processor.annotation.DemoAnnotation;
+import com.github.fishlikewater.raiden.redis.core.annotation.RedisCache;
 import com.squareup.javapoet.*;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -29,6 +29,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.SimpleTypeVisitor8;
+import javax.tools.Diagnostic;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -68,7 +69,7 @@ public class DemoProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment environment) {
         // 获取所有被 @DemoAnnotation 注解的类
-        Set<? extends Element> elements = environment.getElementsAnnotatedWith(DemoAnnotation.class);
+        Set<? extends Element> elements = environment.getElementsAnnotatedWith(RedisCache.class);
 
         // 创建一个方法，返回 Set<Class>
         MethodSpec method = createMethodWithElements(elements);
@@ -85,7 +86,7 @@ public class DemoProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         // 这个方法返回当前处理器 能处理哪些注解，这里我们只返回 DemoAnnotation
-        return Collections.singleton(DemoAnnotation.class.getCanonicalName());
+        return Collections.singleton(RedisCache.class.getCanonicalName());
     }
 
     @Override
@@ -125,7 +126,6 @@ public class DemoProcessor extends AbstractProcessor {
         // 遍历 elements, 添加代码行
         for (Element element : elements) {
 
-// 修改后的代码
             TypeMirror elementType = element.asType();
             ClassName className = ClassName.get((TypeElement) elementType.accept(new SimpleTypeVisitor8<TypeElement, Void>() {
                 @Override
@@ -134,7 +134,6 @@ public class DemoProcessor extends AbstractProcessor {
                 }
             }, null));
 
-// 然后在添加语句时使用 className
             builder.addStatement("set.add($T.class)", className);
         }
 
@@ -170,7 +169,7 @@ public class DemoProcessor extends AbstractProcessor {
     private void writeClassToFile(TypeSpec clazz) {
         // 声明一个文件在 "me.moolv.apt" 下
         JavaFile file = JavaFile.builder("me.moolv.apt", clazz).build();
-
+        this.processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "创建file");
         // 写入文件
         try {
             file.writeTo(mFiler);

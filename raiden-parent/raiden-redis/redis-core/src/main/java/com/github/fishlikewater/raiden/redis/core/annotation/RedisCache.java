@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.raiden.redis.processor.annotation;
+package com.github.fishlikewater.raiden.redis.core.annotation;
+
+import java.lang.annotation.*;
 
 /**
- * <p>
- * {@code DemoAnnotation}
+ * {@code RedisCache}
  *
- * </p>
- *
- * @author fishlikewater@126.com
+ * @author zhangxiang
  * @version 1.0.0
- * @since 2024年05月16日 23:28
- **/
-public @interface DemoAnnotation {
+ * @since 2024/05/17
+ */
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface RedisCache {
 }

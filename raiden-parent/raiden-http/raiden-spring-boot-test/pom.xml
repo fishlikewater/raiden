@@ -39,7 +39,7 @@
 
         <dependency>
             <groupId>com.github.fishlikewater</groupId>
-            <artifactId>redis-processor</artifactId>
+            <artifactId>redis-core</artifactId>
         </dependency>
     </dependencies>
 

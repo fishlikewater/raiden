@@ -16,7 +16,6 @@
 package com.github.fishlikewater.test.assemble;
 
 import com.github.fishlikewater.raiden.mapstruct.ConvertEntity;
-import com.github.fishlikewater.raiden.redis.processor.annotation.DemoAnnotation;
 import com.github.fishlikewater.test.domain.DemoEntity;
 import com.github.fishlikewater.test.domain.DemoPayload;
 import org.mapstruct.Mapper;
@@ -31,6 +30,5 @@ import org.mapstruct.Mapper;
  * @since 2024年05月11日 20:59
  **/
 @Mapper(componentModel = "spring")
-@DemoAnnotation
 public interface PayloadAssemble extends ConvertEntity<DemoEntity, DemoPayload> {
 }

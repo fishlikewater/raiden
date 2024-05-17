@@ -16,11 +16,15 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.fishlikewater</groupId>
+            <artifactId>redis-core</artifactId>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.squareup/javapoet -->
         <dependency>
             <groupId>com.squareup</groupId>
             <artifactId>javapoet</artifactId>
-            <version>1.13.0</version>
         </dependency>
 
     </dependencies>
