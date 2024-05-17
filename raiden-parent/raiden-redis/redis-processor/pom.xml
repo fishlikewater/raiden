@@ -17,11 +17,15 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.fishlikewater</groupId>
             <artifactId>redis-core</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.squareup/javapoet -->
         <dependency>
             <groupId>com.squareup</groupId>
             <artifactId>javapoet</artifactId>

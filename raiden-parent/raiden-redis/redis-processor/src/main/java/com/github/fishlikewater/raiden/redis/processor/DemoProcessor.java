@@ -16,12 +16,10 @@
 package com.github.fishlikewater.raiden.redis.processor;
 
 import com.github.fishlikewater.raiden.redis.core.annotation.RedisCache;
+import com.google.auto.service.AutoService;
 import com.squareup.javapoet.*;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
@@ -45,7 +43,11 @@ import java.util.Set;
  * @version 1.0.0
  * @since 2024年05月16日 23:26
  **/
+@AutoService(Processor.class)
 public class DemoProcessor extends AbstractProcessor {
+
+    private static int flag = 1;
+
     /* ======================================================= */
     /* Fields                                                  */
     /* ======================================================= */
@@ -127,7 +129,7 @@ public class DemoProcessor extends AbstractProcessor {
         for (Element element : elements) {
 
             TypeMirror elementType = element.asType();
-            ClassName className = ClassName.get((TypeElement) elementType.accept(new SimpleTypeVisitor8<TypeElement, Void>() {
+            ClassName className = ClassName.get(elementType.accept(new SimpleTypeVisitor8<TypeElement, Void>() {
                 @Override
                 public TypeElement visitDeclared(DeclaredType t, Void p) {
                     return (TypeElement) t.asElement();
@@ -149,7 +151,7 @@ public class DemoProcessor extends AbstractProcessor {
      */
     private TypeSpec createClassWithMethod(MethodSpec method) {
         // 定义一个名字叫 OurClass 的类
-        TypeSpec.Builder ourClass = TypeSpec.classBuilder("CustomerProcessor");
+        TypeSpec.Builder ourClass = TypeSpec.classBuilder("CustomerProcessor" + flag++);
 
         // 声明为 public
         ourClass.addModifiers(Modifier.PUBLIC);
