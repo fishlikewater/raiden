@@ -23,7 +23,6 @@
         <classgraph.version>4.8.162</classgraph.version>
         <redisson.version>3.30.0</redisson.version>
         <javapoet.version>1.13.0</javapoet.version>
-        <google.auto.service.version>1.1.1</google.auto.service.version>
     </properties>
 
     <dependencyManagement>
