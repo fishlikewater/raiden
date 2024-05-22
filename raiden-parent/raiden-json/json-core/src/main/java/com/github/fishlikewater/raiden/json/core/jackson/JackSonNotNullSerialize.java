@@ -87,18 +87,26 @@ public class JackSonNotNullSerialize extends JsonSerializer<Object> {
             return;
         }
         // 集合、数组
-        if (needNotNull.collT() && (javaType.isArrayType() || javaType.isCollectionLikeType())) {
+        if (needNotNull.collT() && this.determineIsCollection(javaType)) {
             gen.writeObject(ListUtil.empty());
             return;
         }
 
         // 时间
-        if (needNotNull.dateT() && (javaType.isTypeOrSubTypeOf(Date.class) || javaType.isTypeOrSubTypeOf(Temporal.class))) {
+        if (needNotNull.dateT() && this.determineIsTime(javaType)) {
             gen.writeObject(needNotNull.dateV());
             return;
         }
 
         gen.writeObject(null);
+    }
+
+    private boolean determineIsTime(JavaType javaType) {
+        return javaType.isTypeOrSubTypeOf(Date.class) || javaType.isTypeOrSubTypeOf(Temporal.class);
+    }
+
+    private boolean determineIsCollection(JavaType javaType) {
+        return javaType.isArrayType() || javaType.isCollectionLikeType();
     }
 
 }

@@ -27,5 +27,6 @@ import cn.hutool.json.JSONUtil;
  * @version 1.0.0
  * @since 2024年05月12日 11:15
  **/
+@SuppressWarnings("all")
 public class HutoolJSONUtils extends JSONUtil {
 }

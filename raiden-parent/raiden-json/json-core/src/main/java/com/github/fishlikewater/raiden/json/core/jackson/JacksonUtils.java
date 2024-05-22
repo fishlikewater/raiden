@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @version 1.0.0
  * @since 2024年05月12日 11:14
  **/
+@SuppressWarnings("all")
 public class JacksonUtils extends ObjectMapper {
 
 }
