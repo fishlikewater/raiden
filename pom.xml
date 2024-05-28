@@ -188,7 +188,6 @@
                         <exclude>**/raiden/core/Assert.java</exclude>
                         <exclude>**/references/**/**.java</exclude>
                     </excludes>
-                    <!--严格检查-->
                     <strictCheck>true</strictCheck>
                     <mapping>
                         <java>SLASHSTAR_STYLE</java>

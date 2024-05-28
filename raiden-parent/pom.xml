@@ -22,6 +22,7 @@
         <module>raiden-json</module>
         <module>raiden-redis</module>
         <module>raiden-lock</module>
+        <module>raiden-crypto</module>
     </modules>
 
     <properties>
