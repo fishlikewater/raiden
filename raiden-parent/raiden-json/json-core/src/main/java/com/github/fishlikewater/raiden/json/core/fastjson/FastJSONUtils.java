@@ -15,6 +15,8 @@
  */
 package com.github.fishlikewater.raiden.json.core.fastjson;
 
+import com.alibaba.fastjson2.JSON;
+
 /**
  * <p>
  * {@code FastJSONUtils}
@@ -26,5 +28,5 @@ package com.github.fishlikewater.raiden.json.core.fastjson;
  * @since 2024年05月12日 11:17
  **/
 @SuppressWarnings("all")
-public class FastJSONUtils {
+public class FastJSONUtils implements JSON {
 }

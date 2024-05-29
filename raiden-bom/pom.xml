@@ -105,6 +105,13 @@
                 <artifactId>raiden-timer-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <!--crypto-->
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-crypto</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

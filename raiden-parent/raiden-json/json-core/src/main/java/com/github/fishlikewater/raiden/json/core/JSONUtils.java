@@ -29,11 +29,11 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.github.fishlikewater.raiden.json.core.fastjson.FastJSONUtils;
-import com.github.fishlikewater.raiden.json.core.gson.GsonUtils;
 import com.github.fishlikewater.raiden.json.core.hutool.HutoolJSONUtils;
 import com.github.fishlikewater.raiden.json.core.jackson.BigNumberSerializer;
 import com.github.fishlikewater.raiden.json.core.jackson.JackSonNotNullSerialize;
 import com.github.fishlikewater.raiden.json.core.jackson.JacksonUtils;
+import com.google.gson.Gson;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -59,8 +59,11 @@ import java.util.TimeZone;
 public final class JSONUtils {
 
     public static final FastJSONUtils FAST_JSON = new FastJSONUtils();
-    public static final GsonUtils GSON = new GsonUtils();
+
+    public static final Gson GSON = new Gson();
+
     public static final JacksonUtils JACKSON = new JacksonUtils();
+
     public static final HutoolJSONUtils HUTOOL_JSON = new HutoolJSONUtils();
 
     static {
