@@ -23,6 +23,7 @@
         <module>raiden-redis</module>
         <module>raiden-lock</module>
         <module>raiden-crypto</module>
+        <module>raiden-generate</module>
     </modules>
 
     <properties>

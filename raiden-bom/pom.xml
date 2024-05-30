@@ -112,6 +112,13 @@
                 <artifactId>raiden-crypto</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <!--generate-->
+            <dependency>
+                <groupId>com.github.fishlikewater</groupId>
+                <artifactId>raiden-generate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
