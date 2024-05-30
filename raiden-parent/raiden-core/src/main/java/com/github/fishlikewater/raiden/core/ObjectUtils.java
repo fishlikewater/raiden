@@ -15,14 +15,7 @@
  */
 package com.github.fishlikewater.raiden.core;
 
-import cn.hutool.core.util.StrUtil;
-import org.slf4j.helpers.FormattingTuple;
-import org.slf4j.helpers.MessageFormatter;
-
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * {@code ObjectUtils}
@@ -32,26 +25,52 @@ import java.util.Map;
  * @since 2024/04/30
  */
 @SuppressWarnings("unused")
-public final class ObjectUtils extends StrUtil {
+public final class ObjectUtils {
 
+    /**
+     * 判断对象是否为空
+     *
+     * @param target 对象
+     * @return true:为空 false:不为空
+     */
     public static <T> boolean isNullOrEmpty(T target) {
         if (null == target) {
             return true;
         } else if (target instanceof CharSequence) {
-            return isBlank((CharSequence) target);
+            return StringUtils.isBlank((CharSequence) target);
         } else {
             return isCollectionsSupportType(target) && CollectionUtils.isEmpty(target);
         }
     }
 
+    /**
+     * 判断对象是否不为空
+     *
+     * @param target 对象
+     * @return true:不为空 false:为空
+     */
     public static <T> boolean isNotNullOrEmpty(T target) {
         return !isNullOrEmpty(target);
     }
 
-    static String format(String text, Object... args) {
-        assert null != text;
-        FormattingTuple formattingTuple = MessageFormatter.arrayFormat(text, args);
-        return formattingTuple.getMessage();
+    /**
+     * 判断两个对象是否相等
+     *
+     * @param t1 对象1
+     * @param t2 对象2
+     * @return true:相等 false:不相等
+     */
+    public static <T> boolean equals(T t1, T t2) {
+        return Objects.equals(t1, t2);
+    }
+
+    /**
+     * 要求对象不能为null
+     *
+     * @param obj 对象
+     */
+    public static <T> void requireNonNull(T obj) {
+        Objects.requireNonNull(obj);
     }
 
     private static boolean isCollectionsSupportType(Object target) {

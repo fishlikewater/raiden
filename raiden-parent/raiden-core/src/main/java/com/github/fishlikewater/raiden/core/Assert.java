@@ -28,6 +28,7 @@ import java.util.function.Supplier;
  * @version 1.0.0
  * @since 2024/04/30
  */
+@SuppressWarnings("all")
 public class Assert {
 
     /**

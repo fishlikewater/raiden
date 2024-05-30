@@ -13,29 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.raiden.core.constant;
+package com.github.fishlikewater.raiden.crypto;
 
 /**
- * {@code CommonConstants}
+ * {@code RaidenCryptoUtils}
  *
  * @author zhangxiang
  * @version 1.0.0
- * @since 2024/04/30
+ * @since 2024/05/30
  */
-public interface CommonConstants {
-
-    // ---------------------------------------------------------------- STRING
-
-    String LAMBDA_FUNCTION_NAME = "writeReplace";
-    String BOOLEAN_FIELD_START_WITH = "is";
-    String GET_METHOD_START_WITH = "get";
-    String SET_METHOD_START_WITH = "set";
-    String SYMBOL_AND = "&";
-    String SYMBOL_OR = "|";
-    String SYMBOL_PATH = "/";
-
-    // ---------------------------------------------------------------- NUMBER
-
-    long MILLIS_UNIT = 1000L;
-    int TIME_STAMP_LENGTH = 13;
+public final class RaidenCryptoUtils {
 }

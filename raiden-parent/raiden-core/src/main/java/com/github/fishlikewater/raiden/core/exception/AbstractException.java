@@ -15,7 +15,7 @@
  */
 package com.github.fishlikewater.raiden.core.exception;
 
-import com.github.fishlikewater.raiden.core.ObjectUtils;
+import com.github.fishlikewater.raiden.core.StringUtils;
 
 import java.io.Serial;
 
@@ -62,24 +62,24 @@ public abstract class AbstractException extends RuntimeException {
     }
 
     public AbstractException(ExceptionStatusEnum status, String message, Object... args) {
-        super(ObjectUtils.format(message, args));
+        super(StringUtils.format(message, args));
         this.status = status.status();
         this.code = status.code();
-        this.message = ObjectUtils.format(message, args);
+        this.message = StringUtils.format(message, args);
     }
 
     public AbstractException(String message, Object... args) {
-        super(ObjectUtils.format(message, args));
+        super(StringUtils.format(message, args));
         this.status = ExceptionStatusEnum.BAD_REQUEST.status();
         this.code = ExceptionStatusEnum.BAD_REQUEST.code();
-        this.message = ObjectUtils.format(message, args);
+        this.message = StringUtils.format(message, args);
     }
 
     public AbstractException(Throwable e, String message, Object... args) {
-        super(ObjectUtils.format(message, args), e);
+        super(StringUtils.format(message, args), e);
         this.status = ExceptionStatusEnum.BAD_REQUEST.status();
         this.code = ExceptionStatusEnum.BAD_REQUEST.code();
-        this.message = ObjectUtils.format(message, args);
+        this.message = StringUtils.format(message, args);
     }
 
 }

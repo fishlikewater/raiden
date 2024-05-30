@@ -30,6 +30,12 @@ import java.util.Map;
  */
 public final class CollectionUtils {
 
+    /**
+     * 判断对象是否为空
+     *
+     * @param object 对象
+     * @return 是否为空
+     */
     public static boolean isEmpty(Object object) {
         switch (object) {
             case null -> {

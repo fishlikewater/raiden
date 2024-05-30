@@ -13,29 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.raiden.core.constant;
+package com.github.fishlikewater;
+
+import com.github.fishlikewater.raiden.core.GeoHash;
+import org.junit.Test;
 
 /**
- * {@code CommonConstants}
+ * {@code GeoHashTest}
  *
  * @author zhangxiang
  * @version 1.0.0
- * @since 2024/04/30
+ * @since 2024/05/30
  */
-public interface CommonConstants {
+public class GeoHashTest {
 
-    // ---------------------------------------------------------------- STRING
-
-    String LAMBDA_FUNCTION_NAME = "writeReplace";
-    String BOOLEAN_FIELD_START_WITH = "is";
-    String GET_METHOD_START_WITH = "get";
-    String SET_METHOD_START_WITH = "set";
-    String SYMBOL_AND = "&";
-    String SYMBOL_OR = "|";
-    String SYMBOL_PATH = "/";
-
-    // ---------------------------------------------------------------- NUMBER
-
-    long MILLIS_UNIT = 1000L;
-    int TIME_STAMP_LENGTH = 13;
+    @Test
+    public void testGeoHash() {
+        GeoHash geohash = new GeoHash();
+        String geoHashCode = geohash.encode(40.222012152454, 116.24828312144);
+        System.out.println(geoHashCode);
+        //对geoHash点解码
+        double[] geo = geohash.decode(geoHashCode);
+        //geo[0]为纬度，geo[1]为经度
+        System.out.println(STR."\{geo[0]} \{geo[1]}");
+    }
 }
