@@ -16,6 +16,7 @@
 package com.github.fishlikewater.raiden.json.core;
 
 import cn.hutool.core.date.DatePattern;
+import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -28,8 +29,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import com.github.fishlikewater.raiden.json.core.fastjson.FastJSONUtils;
-import com.github.fishlikewater.raiden.json.core.hutool.HutoolJSONUtils;
 import com.github.fishlikewater.raiden.json.core.jackson.BigNumberSerializer;
 import com.github.fishlikewater.raiden.json.core.jackson.JackSonNotNullSerialize;
 import com.github.fishlikewater.raiden.json.core.jackson.JacksonUtils;
@@ -58,15 +57,18 @@ import java.util.TimeZone;
 @SuppressWarnings("all")
 public final class JSONUtils {
 
-    public static final FastJSONUtils FAST_JSON = new FastJSONUtils();
-
-    public static final Gson GSON = new Gson();
+    public static Gson GSON;
 
     public static final JacksonUtils JACKSON = new JacksonUtils();
 
-    public static final HutoolJSONUtils HUTOOL_JSON = new HutoolJSONUtils();
-
     static {
+        try {
+            Class.forName("com.google.gson.Gson");
+            GSON = new Gson();
+        } catch (Exception ignored) {
+
+        }
+
         // 为mapper注册一个带有SerializerModifier的Factory，此modifier主要做的事情为：值为null时序列化为默认值
         JACKSON.setSerializerFactory(JACKSON.getSerializerFactory().withSerializerModifier(new NeedNotNullSerializerModifier()));
         // 设置时区
@@ -80,7 +82,11 @@ public final class JSONUtils {
     private JSONUtils() {
     }
 
-    public static class NeedNotNullSerializerModifier extends BeanSerializerModifier {
+    public static class HutoolJSON extends JSONUtil {
+
+    }
+
+    private static class NeedNotNullSerializerModifier extends BeanSerializerModifier {
 
         @Override
         public List<BeanPropertyWriter> changeProperties(SerializationConfig config, BeanDescription beanDesc, List<BeanPropertyWriter> beanProperties) {
@@ -89,7 +95,7 @@ public final class JSONUtils {
         }
     }
 
-    public static class JavaTimeModule extends SimpleModule {
+    private static class JavaTimeModule extends SimpleModule {
         public JavaTimeModule() {
             super(PackageVersion.VERSION);
             this.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN)));

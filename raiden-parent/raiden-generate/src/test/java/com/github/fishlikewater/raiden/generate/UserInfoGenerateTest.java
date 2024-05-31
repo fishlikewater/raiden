@@ -18,19 +18,35 @@ package com.github.fishlikewater.raiden.generate;
 import org.junit.Test;
 
 /**
- * {@code IdGenerateTest}
+ * {@code UserInfoGenerateTest}
  *
  * @author zhangxiang
  * @version 1.0.0
- * @since 2024/05/30
+ * @since 2024/05/31
  */
-public class IdGenerateTest {
+public class UserInfoGenerateTest {
 
     @Test
-    public void testIdGenerate() {
-        IdGenerate idGenerate = new IdGenerate();
-        System.out.println(idGenerate.generate());
-        System.out.println(idGenerate.generateString());
+    public void testGenerateUserInfo() {
+        UserNameGenerate userNameGenerate = new UserNameGenerate();
+        for (int i = 0; i < 10; i++) {
+            System.out.println(userNameGenerate.generate());
+        }
     }
 
+    @Test
+    public void testGenerateAge() {
+        AgeGenerate ageGenerate = new AgeGenerate();
+        for (int i = 0; i < 10; i++) {
+            System.out.println(ageGenerate.generate());
+        }
+    }
+
+    @Test
+    public void testGenerateNation() {
+        NationGenerate nationGenerate = new NationGenerate();
+        for (int i = 0; i < 10; i++) {
+            System.out.println(nationGenerate.generate());
+        }
+    }
 }

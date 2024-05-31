@@ -15,42 +15,39 @@
  */
 package com.github.fishlikewater.raiden.generate;
 
+import cn.hutool.json.JSONObject;
 import com.github.fishlikewater.raiden.core.ObjectUtils;
-import com.github.fishlikewater.raiden.core.Snowflake;
+import com.github.fishlikewater.raiden.core.RandomUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * {@code IdGenerate}
- * ID生成器
- * <p>调用Snowflake 生成</p>
+ * {@code NationGenerate}
+ * 民族生成器
  *
  * @author zhangxiang
  * @version 1.0.0
- * @since 2024/05/30
+ * @since 2024/05/31
  */
-public class IdGenerate extends AbstractGenerate<Long> {
+public class NationGenerate extends AbstractGenerate<String> {
 
-    private Snowflake snowflake;
-
-    public IdGenerate(Snowflake snowflake) {
-        this.snowflake = snowflake;
-    }
-
-    public IdGenerate() {
-        this.init();
-    }
+    private List<String> nationList = new ArrayList<>();
 
     @Override
-    public Long generate() {
-        return snowflake.nextId();
-    }
-
-    public String generateString() {
-        return snowflake.nextId().toString();
+    public String generate() {
+        this.init();
+        return nationList.get(RandomUtils.randomInt(0, nationList.size()));
     }
 
     private void init() {
-        if (ObjectUtils.isNullOrEmpty(snowflake)) {
-            snowflake = new Snowflake(0L, 0L);
+        if (this.determineIsNotInitialized()) {
+            JSONObject jsonObject = this.readFile("nation.json");
+            nationList = jsonObject.getBeanList("nation", String.class);
         }
+    }
+
+    private boolean determineIsNotInitialized() {
+        return ObjectUtils.isNullOrEmpty(nationList);
     }
 }

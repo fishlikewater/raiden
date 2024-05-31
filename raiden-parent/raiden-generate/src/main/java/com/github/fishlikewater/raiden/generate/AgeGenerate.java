@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.raiden.json.core.fastjson;
+package com.github.fishlikewater.raiden.generate;
 
-import com.alibaba.fastjson2.JSON;
+import com.github.fishlikewater.raiden.core.RandomUtils;
 
 /**
- * <p>
- * {@code FastJSONUtils}
- * fastjson 工具类
- * </p>
+ * {@code AgeGenerate}
+ * 年龄生成器
  *
- * @author fishlikewater@126.com
+ * @author zhangxiang
  * @version 1.0.0
- * @since 2024年05月12日 11:17
- **/
-@SuppressWarnings("all")
-public class FastJSONUtils implements JSON {
+ * @since 2024/05/31
+ */
+public class AgeGenerate extends AbstractGenerate<Integer> {
+
+    @Override
+    public Integer generate() {
+        return RandomUtils.randomInt(18, 60);
+    }
 }

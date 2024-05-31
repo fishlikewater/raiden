@@ -15,22 +15,29 @@
  */
 package com.github.fishlikewater.raiden.generate;
 
-import org.junit.Test;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.json.JSONObject;
+import com.github.fishlikewater.raiden.json.core.JSONUtils;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 /**
- * {@code IdGenerateTest}
+ * {@code AbstractGenerate}
  *
  * @author zhangxiang
  * @version 1.0.0
- * @since 2024/05/30
+ * @since 2024/05/31
  */
-public class IdGenerateTest {
+public abstract class AbstractGenerate<T> implements Generate<T> {
 
-    @Test
-    public void testIdGenerate() {
-        IdGenerate idGenerate = new IdGenerate();
-        System.out.println(idGenerate.generate());
-        System.out.println(idGenerate.generateString());
+    @Override
+    public T generate() {
+        throw new UnsupportedOperationException("not support");
     }
 
+    protected JSONObject readFile(String path) {
+        File file = FileUtil.file(path);
+        return JSONUtils.HutoolJSON.readJSONObject(file, StandardCharsets.UTF_8);
+    }
 }

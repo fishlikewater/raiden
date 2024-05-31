@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.fishlikewater.raiden.json.core.hutool;
+package com.github.fishlikewater.raiden.json.core;
 
-import cn.hutool.json.JSONUtil;
+import org.junit.Test;
 
 /**
- * {@code HutoolJSONUtils}
- * <p>
- * hutool 工具包中的json
- * </p>
+ * {@code JSONTest}
  *
- * @author fishlikewater@126.com
+ * @author zhangxiang
  * @version 1.0.0
- * @since 2024年05月12日 11:15
- **/
-@SuppressWarnings("all")
-public class HutoolJSONUtils extends JSONUtil {
+ * @since 2024/05/31
+ */
+public class JSONTest {
+
+    @Test
+    public void testHutoolJSON() {
+    }
+
 }

@@ -23,19 +23,12 @@ package com.github.fishlikewater.raiden.generate;
  * @version 1.0.0
  * @since 2024/05/30
  */
-public interface Generate {
+public interface Generate<T> {
 
     /**
      * 生成 字符串
      *
      * @return 生成结果
      */
-    String generate();
-
-    /**
-     * 生成 Long
-     *
-     * @return 生成结果
-     */
-    long generateLong();
+    T generate();
 }

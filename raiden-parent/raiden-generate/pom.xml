@@ -16,6 +16,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.fishlikewater</groupId>
+            <artifactId>json-core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
