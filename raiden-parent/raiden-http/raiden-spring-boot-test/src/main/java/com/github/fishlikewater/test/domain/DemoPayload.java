@@ -15,6 +15,7 @@
  */
 package com.github.fishlikewater.test.domain;
 
+import com.github.fishlikewater.raiden.redis.core.annotation.RedisCache;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,6 +35,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@RedisCache
 public class DemoPayload implements Serializable {
 
     @Serial

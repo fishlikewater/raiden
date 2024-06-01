@@ -15,24 +15,20 @@
  */
 package com.github.fishlikewater.raiden.generate;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.json.JSONObject;
-import com.github.fishlikewater.raiden.json.core.JSONUtils;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-
 /**
- * {@code AbstractGenerate}
+ * <p>
+ * {@code EmailGenerate}
+ * 邮件地址生成器
+ * </p>
  *
- * @author zhangxiang
+ * @author fishlikewater@126.com
  * @version 1.0.0
- * @since 2024/05/31
- */
-public abstract class AbstractGenerate<T> implements Generate<T> {
+ * @since 2024年06月01日 9:56
+ **/
+public class EmailGenerate extends AbstractGenerate<String>{
 
-    protected JSONObject readFile(String path) {
-        File file = FileUtil.file(path);
-        return JSONUtils.HutoolJSON.readJSONObject(file, StandardCharsets.UTF_8);
+    @Override
+    public String generate() {
+        return null;
     }
 }

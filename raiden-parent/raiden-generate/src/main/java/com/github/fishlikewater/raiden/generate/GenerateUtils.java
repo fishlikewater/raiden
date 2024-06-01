@@ -15,24 +15,27 @@
  */
 package com.github.fishlikewater.raiden.generate;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.json.JSONObject;
-import com.github.fishlikewater.raiden.json.core.JSONUtils;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-
 /**
- * {@code AbstractGenerate}
+ * <p>
+ * {@code GenerateUtils}
  *
- * @author zhangxiang
+ * </p>
+ *
+ * @author fishlikewater@126.com
  * @version 1.0.0
- * @since 2024/05/31
- */
-public abstract class AbstractGenerate<T> implements Generate<T> {
+ * @since 2024年06月01日 9:58
+ **/
+public interface GenerateUtils {
 
-    protected JSONObject readFile(String path) {
-        File file = FileUtil.file(path);
-        return JSONUtils.HutoolJSON.readJSONObject(file, StandardCharsets.UTF_8);
-    }
+    Generate<String> NATION = new NationGenerate();
+
+    Generate<String> USER_NAME = new UserNameGenerate();
+
+    Generate<Integer> AGE = new AgeGenerate();
+
+    Generate<String> TELEPHONE = new PhoneNumberGenerate.Telephone();
+
+    Generate<String> TELEPHONE_AREA = new PhoneNumberGenerate.Telephone(true);
+
+    Generate<String> MOBILEPHONE = new PhoneNumberGenerate.Mobilephone();
 }

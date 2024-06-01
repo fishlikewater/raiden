@@ -49,4 +49,5 @@ redis:
   single:
     address: redis://127.0.0.1:6379
     timeout: 10000
-    database: 0
+    database: 1
+    connection-timeout: 10000

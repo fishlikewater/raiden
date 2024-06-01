@@ -28,25 +28,29 @@ public class UserInfoGenerateTest {
 
     @Test
     public void testGenerateUserInfo() {
-        UserNameGenerate userNameGenerate = new UserNameGenerate();
         for (int i = 0; i < 10; i++) {
-            System.out.println(userNameGenerate.generate());
+            System.out.println(GenerateUtils.USER_NAME.generate());
         }
     }
 
     @Test
     public void testGenerateAge() {
-        AgeGenerate ageGenerate = new AgeGenerate();
         for (int i = 0; i < 10; i++) {
-            System.out.println(ageGenerate.generate());
+            System.out.println(GenerateUtils.AGE.generate());
         }
     }
 
     @Test
     public void testGenerateNation() {
-        NationGenerate nationGenerate = new NationGenerate();
         for (int i = 0; i < 10; i++) {
-            System.out.println(nationGenerate.generate());
+            System.out.println(GenerateUtils.NATION.generate());
         }
+    }
+
+    @Test
+    public void testGeneratePhoneNumber() {
+        System.out.println(GenerateUtils.TELEPHONE.generate());
+        System.out.println(GenerateUtils.TELEPHONE_AREA.generate());
+        System.out.println(GenerateUtils.MOBILEPHONE.generate());
     }
 }

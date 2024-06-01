@@ -72,7 +72,9 @@ public class DemoProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment environment) {
         // 获取所有被 @DemoAnnotation 注解的类
         Set<? extends Element> elements = environment.getElementsAnnotatedWith(RedisCache.class);
-
+        if (elements.isEmpty()) {
+            return false;
+        }
         // 创建一个方法，返回 Set<Class>
         MethodSpec method = createMethodWithElements(elements);
 
