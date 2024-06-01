@@ -15,6 +15,13 @@
  */
 package com.github.fishlikewater.raiden.generate;
 
+import com.github.fishlikewater.raiden.core.RandomUtils;
+import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
+
 /**
  * <p>
  * {@code EmailGenerate}
@@ -25,10 +32,28 @@ package com.github.fishlikewater.raiden.generate;
  * @version 1.0.0
  * @since 2024年06月01日 9:56
  **/
-public class EmailGenerate extends AbstractGenerate<String>{
+@Slf4j
+public class EmailGenerate extends AbstractGenerate<String> {
+
+    private final String[] suffix = {"@qq.com", "@163.com", "@gmail.com", "@outlook.com", "@sina.com", "@yahoo.com", "@hotmail.com", "@yandex.com", "@aol.com", "@126.com"};
 
     @Override
     public String generate() {
-        return null;
+        final String userName = GenerateUtils.USER_NAME.generate();
+        HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
+        format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+        format.setCaseType(HanyuPinyinCaseType.LOWERCASE);
+        final char[] charArray = userName.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (char c : charArray) {
+            try {
+                String[] array = PinyinHelper.toHanyuPinyinStringArray(c, format);
+                sb.append(array[0]);
+            } catch (Exception e) {
+                log.error("generate pinyin failed, target: {}", userName, e);
+            }
+        }
+        sb.append(suffix[RandomUtils.randomInt(0, suffix.length)]);
+        return sb.toString();
     }
 }

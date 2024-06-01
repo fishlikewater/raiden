@@ -53,4 +53,11 @@ public class UserInfoGenerateTest {
         System.out.println(GenerateUtils.TELEPHONE_AREA.generate());
         System.out.println(GenerateUtils.MOBILEPHONE.generate());
     }
+
+    @Test
+    public void testGenerateEmail() {
+        for (int i = 0; i < 10; i++) {
+            System.out.println(GenerateUtils.EMAIL.generate());
+        }
+    }
 }

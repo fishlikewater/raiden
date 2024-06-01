@@ -38,4 +38,6 @@ public interface GenerateUtils {
     Generate<String> TELEPHONE_AREA = new PhoneNumberGenerate.Telephone(true);
 
     Generate<String> MOBILEPHONE = new PhoneNumberGenerate.Mobilephone();
+
+    Generate<String> EMAIL = new EmailGenerate();
 }
