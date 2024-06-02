@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.fishlikewater</groupId>
+        <artifactId>raiden-http</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <artifactId>http-core</artifactId>
+    <description>http-core</description>
+
+    <properties>
+        <logback.version>1.4.11</logback.version>
+        <junit.version>4.13.1</junit.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.fishlikewater</groupId>
+            <artifactId>json-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.fishlikewater</groupId>
+            <artifactId>raiden-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

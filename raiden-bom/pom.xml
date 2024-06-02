@@ -22,47 +22,47 @@
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-core</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <!--spring core-->
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-core-spring-boot</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <!--docs-->
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-docs-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <!--http-->
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>http-core</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-http-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <!--mapstruct-->
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-mapstruct</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <!--lock-->
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-lock</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
                 <type>pom</type>
             </dependency>
 
@@ -70,50 +70,50 @@
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>json-core</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-json-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <!--redis-->
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>redis-core</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-redis-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <!--timer-->
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>timer-core</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-timer-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <!--crypto-->
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-crypto</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <!--generate-->
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-generate</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

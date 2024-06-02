@@ -7,24 +7,22 @@
     <version>${revision}</version>
 
     <packaging>pom</packaging>
-    <name>raiden-utils</name>
-    <description>raiden-utils</description>
+    <name>raiden</name>
+    <description>raiden</description>
     <modules>
         <module>raiden-dependency</module>
         <module>raiden-bom</module>
+        <module>raiden-parent</module>
     </modules>
 
     <properties>
-        <revision>1.0.0</revision>
+        <revision>1.0.1</revision>
         <lombok.version>1.18.30</lombok.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.release>21</maven.compiler.release>
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <main.user.dir>${user.dir}</main.user.dir>
-        <project.root.directory>${project.basedir}</project.root.directory>
-        <deployment.repository.relative.path>maven-repository/repository</deployment.repository.relative.path>
         <maven-compiler.version>3.12.1</maven-compiler.version>
         <maven-source.verion>3.3.0</maven-source.verion>
         <maven-deploy.version>3.1.2</maven-deploy.version>
@@ -40,23 +38,23 @@
         <gpg.version>3.2.4</gpg.version>
     </properties>
 
-    <url>https://github.com/fishlikewater/raiden-utils</url>
+    <url>https://github.com/fishlikewater/raiden</url>
 
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
-            <url>https://github.com/fishlikewater/raiden-utils/blob/master/LICENSE</url>
+            <url>https://github.com/fishlikewater/raiden/blob/master/LICENSE</url>
         </license>
     </licenses>
 
     <scm>
-        <url>https://github.com/fishlikewater/raiden-utils</url>
-        <connection>https://github.com/fishlikewater/raiden-utils.git</connection>
+        <url>https://github.com/fishlikewater/raiden</url>
+        <connection>https://github.com/fishlikewater/raiden.git</connection>
     </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/fishlikewater/raiden-utils/issues</url>
+        <url>https://github.com/fishlikewater/raiden/issues</url>
     </issueManagement>
 
     <developers>
@@ -132,7 +130,7 @@
                         <scm>expand</scm>
                         <url>expand</url>
                         <developers>expand</developers>
-                        <developers>expand</developers>
+                        <dependencies>expand</dependencies>
                         <distributionManagement>remove</distributionManagement>
                         <repositories>remove</repositories>
                     </pomElements>
@@ -179,7 +177,7 @@
                      </inlineHeader>-->
                     <quiet>true</quiet>
                     <!--HEADER文件-->
-                    <header>${main.user.dir}/HEADER</header>
+                    <header>${user.dir}/HEADER</header>
                     <!--排除文件-->
                     <excludes>
                         <exclude>**/resources/**</exclude>

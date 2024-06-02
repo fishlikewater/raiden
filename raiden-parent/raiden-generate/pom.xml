@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.fishlikewater</groupId>
+        <artifactId>raiden-parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>raiden-generate</artifactId>
+    <description>raiden-generate</description>
+
+    <properties>
+        <pinyin.version>2.5.0</pinyin.version>
+    </properties>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.fishlikewater</groupId>
+            <artifactId>raiden-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.fishlikewater</groupId>
+            <artifactId>json-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.belerweb</groupId>
+            <artifactId>pinyin4j</artifactId>
+            <version>${pinyin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
