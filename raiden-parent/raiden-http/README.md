@@ -8,7 +8,7 @@
 
   ```java
   @SpringBootApplication
-  @HttpScan("com.github.fishlikewater.test")  // 这里添加扫描路径
+  @HttpScan("io.github.fishlikewater.test")  // 这里添加扫描路径
   public class RaidenSpringBootTestApplication {
   
       public static void main(String[] args) {
@@ -129,7 +129,7 @@
         @Before
         public void before() throws ClassNotFoundException {
             HttpBootStrap.setSelfManager(true);
-            HttpBootStrap.init("com.github.fishlikewater.raidencore.remote");
+            HttpBootStrap.init("io.github.fishlikewater.raidencore.remote");
             HttpBootStrap.registerHttpClient("third", HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build());
             HttpBootStrap.getLogConfig().setEnableLog(false).setLogLevel(LogConfig.LogLevel.BASIC);
         }

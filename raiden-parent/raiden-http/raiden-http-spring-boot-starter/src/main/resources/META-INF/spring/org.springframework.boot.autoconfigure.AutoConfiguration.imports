@@ -1,2 +1,2 @@
-com.github.fishlikewater.raiden.http.autoconfigure.HttpAutoConfig
-com.github.fishlikewater.raiden.http.autoconfigure.HttpApplicationStartedEventListener
+io.github.fishlikewater.raiden.http.autoconfigure.HttpAutoConfig
+io.github.fishlikewater.raiden.http.autoconfigure.HttpApplicationStartedEventListener

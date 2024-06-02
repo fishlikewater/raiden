@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.github.fishlikewater</groupId>
+        <groupId>io.github.fishlikewater</groupId>
         <artifactId>raiden-parent</artifactId>
         <version>${revision}</version>
     </parent>
@@ -15,7 +15,6 @@
     <modules>
         <module>http-core</module>
         <module>raiden-http-spring-boot-starter</module>
-        <module>raiden-spring-boot-test</module>
     </modules>
 
     <properties>
