@@ -38,7 +38,7 @@
         <gpg.version>3.2.4</gpg.version>
     </properties>
 
-    <url>https://github.com/fishlikewater/raiden</url>
+    <url>https://github.com/fishlikewater/raiden/tree/master</url>
 
     <licenses>
         <license>
@@ -48,8 +48,8 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/fishlikewater/raiden</url>
-        <connection>https://github.com/fishlikewater/raiden.git</connection>
+        <url>git@github.com/fishlikewater/raiden.git</url>
+        <connection>scm:git@github.com/fishlikewater/raiden.git</connection>
     </scm>
 
     <issueManagement>
@@ -127,7 +127,7 @@
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>
                     <pomElements>
                         <parent>expand</parent>
-                        <scm>expand</scm>
+                        <scm>keep</scm>
                         <url>expand</url>
                         <developers>expand</developers>
                         <dependencies>expand</dependencies>
