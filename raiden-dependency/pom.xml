@@ -5,12 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.fishlikewater</groupId>
-        <artifactId>raiden-utils</artifactId>
+        <artifactId>raiden</artifactId>
         <version>${revision}</version>
     </parent>
 
     <packaging>pom</packaging>
     <artifactId>raiden-dependency</artifactId>
+    <description>raiden-dependency</description>
 
     <properties>
         <spring.boot.version>3.2.5</spring.boot.version>

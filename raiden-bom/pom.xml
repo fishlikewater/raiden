@@ -5,12 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.fishlikewater</groupId>
-        <artifactId>raiden-utils</artifactId>
+        <artifactId>raiden</artifactId>
         <version>${revision}</version>
     </parent>
 
     <packaging>pom</packaging>
     <artifactId>raiden-bom</artifactId>
+    <description>raiden-bom</description>
 
     <properties>
     </properties>
@@ -81,11 +82,6 @@
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>redis-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.fishlikewater</groupId>
-                <artifactId>redis-processor</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

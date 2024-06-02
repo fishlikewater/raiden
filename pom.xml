@@ -3,20 +3,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.fishlikewater</groupId>
-    <artifactId>raiden-utils</artifactId>
+    <artifactId>raiden</artifactId>
     <version>${revision}</version>
 
     <packaging>pom</packaging>
     <name>raiden-utils</name>
-
+    <description>raiden-utils</description>
     <modules>
         <module>raiden-dependency</module>
-        <module>raiden-parent</module>
         <module>raiden-bom</module>
     </modules>
 
     <properties>
-        <revision>1.0-SNAPSHOT</revision>
+        <revision>1.0.0</revision>
         <lombok.version>1.18.30</lombok.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -36,6 +35,9 @@
         <knife4j-openapi3.version>4.5.0</knife4j-openapi3.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <google.auto.service.version>1.1.1</google.auto.service.version>
+        <sonatype.central.version>0.4.0</sonatype.central.version>
+        <javadoc.version>3.7.0</javadoc.version>
+        <gpg.version>3.2.4</gpg.version>
     </properties>
 
     <url>https://github.com/fishlikewater/raiden-utils</url>
@@ -59,7 +61,7 @@
 
     <developers>
         <developer>
-            <name>fish</name>
+            <name>zhangxiang</name>
             <email>fishlikewater@126.com</email>
         </developer>
     </developers>
@@ -127,6 +129,10 @@
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>
                     <pomElements>
                         <parent>expand</parent>
+                        <scm>expand</scm>
+                        <url>expand</url>
+                        <developers>expand</developers>
+                        <developers>expand</developers>
                         <distributionManagement>remove</distributionManagement>
                         <repositories>remove</repositories>
                     </pomElements>
@@ -194,17 +200,66 @@
                     </mapping>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>${maven-deploy.version}</version>
-                <configuration>
-                    <!--指定打包的目录 -->
-                    <altDeploymentRepository>
-                        internal.repo::default::file://${main.user.dir}/${deployment.repository.relative.path}
-                    </altDeploymentRepository>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${sonatype.central.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>sonatype</publishingServerId>
+                            <tokenAuth>true</tokenAuth>
+                        </configuration>
+                    </plugin>
+                    <!--   javadoc插件 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${javadoc.version}</version>
+                        <configuration>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <charset>${project.build.sourceEncoding}</charset>
+                            <docencoding>${project.build.sourceEncoding}</docencoding>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${gpg.version}</version>
+                        <configuration>
+                            <keyname>io.github.fishlikewater</keyname>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
