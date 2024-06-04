@@ -58,4 +58,25 @@ public class Result<T extends Serializable> implements Serializable {
      */
     private String requestId;
 
+    public static <T extends Serializable> Result<T> of(String message, String code) {
+        return Result.<T>builder()
+                .code(code)
+                .message(message)
+                .build();
+    }
+
+    public static <T extends Serializable> Result<T> of(String message, String code, T result) {
+        return Result.<T>builder()
+                .code(code)
+                .message(message)
+                .result(result)
+                .build();
+    }
+
+    public static <T extends Serializable> Result<T> of(String code, T result) {
+        return Result.<T>builder()
+                .code(code)
+                .result(result)
+                .build();
+    }
 }
