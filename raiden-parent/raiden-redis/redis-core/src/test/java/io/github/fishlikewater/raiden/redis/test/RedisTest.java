@@ -18,15 +18,21 @@ package io.github.fishlikewater.raiden.redis.test;
 import io.github.fishlikewater.raiden.redis.core.RedissonPatternCfg;
 import io.github.fishlikewater.raiden.redis.core.RedissonUtils;
 import io.github.fishlikewater.raiden.redis.core.ServerPattern;
+import io.github.fishlikewater.raiden.redis.core.queue.DelayQueue;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.junit.Test;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.redisson.codec.JsonJacksonCodec;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -44,7 +50,8 @@ public class RedisTest {
     public void testRedis() {
         final RedissonPatternCfg cfg = new RedissonPatternCfg();
         cfg.setServerPattern(ServerPattern.SINGLE);
-        cfg.getSingle().setAddress("redis://127.0.0.1:6379/1");
+        cfg.getSingle().setAddress("redis://127.0.0.1:6379");
+        cfg.getSingle().setDatabase(1);
         final RedissonClient redissonClient = RedissonUtils.redissonClient(cfg);
         final RLock lock = redissonClient.getLock("com:github:fishlikewater:redis:lock:test");
         lock.lock();
@@ -59,9 +66,30 @@ public class RedisTest {
         }
     }
 
+    @Test
+    public void testRedisDelayQueue() throws InterruptedException {
+        final RedissonPatternCfg cfg = new RedissonPatternCfg();
+        cfg.setServerPattern(ServerPattern.SINGLE);
+        cfg.getSingle().setAddress("redis://127.0.0.1:6379");
+        cfg.getSingle().setDatabase(1);
+        final RedissonClient redissonClient = RedissonUtils.redissonClient(cfg);
+
+        final DelayQueue<RedisJsonTest> delayQueue = new DelayQueue<>(
+                "io:github:fishlikewater:test",
+                "delayTasks",
+                redissonClient,
+                new JsonJacksonCodec()
+        );
+        delayQueue.registerListener();
+        delayQueue.add("1000000", new RedisJsonTest("fishlikewater", 18), 3, TimeUnit.SECONDS);
+        Thread.sleep(10_000L);
+    }
+
     @Data
+    @Builder
     @AllArgsConstructor
-    public static class RedisJsonTest {
+    @NoArgsConstructor
+    public static class RedisJsonTest implements Serializable {
 
         private String name;
 
