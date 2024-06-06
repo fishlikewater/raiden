@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  * {@code DelayQueueHandler}
- * 延迟队列监听器
+ * 延迟队列处理器
  *
  * @author zhangxiang
  * @version 1.0.2

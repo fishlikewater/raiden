@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.github.fishlikewater.raiden.core.DateUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
+import io.github.fishlikewater.raiden.redis.core.DelayQueueUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBlockingQueue;
@@ -64,6 +65,7 @@ public class DelayQueue implements Serializable {
     }
 
     private void init() {
+        DelayQueueUtils.getRegisters().put(topic, this);
         RBlockingQueue<String> blockingQueue = redissonClient.getBlockingQueue(topic, StringCodec.INSTANCE);
         delayedQueue = redissonClient.getDelayedQueue(blockingQueue);
         blockingQueue.subscribeOnElements(element -> {

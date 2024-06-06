@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.redis.test;
 
 import io.github.fishlikewater.raiden.core.RandomUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
+import io.github.fishlikewater.raiden.redis.core.DelayQueueUtils;
 import io.github.fishlikewater.raiden.redis.core.RedissonPatternCfg;
 import io.github.fishlikewater.raiden.redis.core.RedissonUtils;
 import io.github.fishlikewater.raiden.redis.core.ServerPattern;
@@ -51,11 +52,7 @@ public class RedisTest {
 
     @Test
     public void testRedis() {
-        final RedissonPatternCfg cfg = new RedissonPatternCfg();
-        cfg.setServerPattern(ServerPattern.SINGLE);
-        cfg.getSingle().setAddress("redis://127.0.0.1:6379");
-        cfg.getSingle().setDatabase(1);
-        final RedissonClient redissonClient = RedissonUtils.redissonClient(cfg);
+        final RedissonClient redissonClient = getRedissonClient();
         final RLock lock = redissonClient.getLock("com:github:fishlikewater:redis:lock:test");
         lock.lock();
         try {
@@ -71,12 +68,7 @@ public class RedisTest {
 
     @Test
     public void testRedisDelayQueue() throws InterruptedException {
-        final RedissonPatternCfg cfg = new RedissonPatternCfg();
-        cfg.setServerPattern(ServerPattern.SINGLE);
-        cfg.getSingle().setAddress("redis://127.0.0.1:6379");
-        cfg.getSingle().setDatabase(1);
-        final RedissonClient redissonClient = RedissonUtils.redissonClient(cfg);
-
+        final RedissonClient redissonClient = getRedissonClient();
         final DelayQueue delayQueue = new DelayQueue(
                 "io:github:fishlikewater:test",
                 redissonClient,
@@ -93,6 +85,39 @@ public class RedisTest {
                 .build();
         delayQueue.add(task);
         Thread.sleep(10_000L);
+    }
+
+    @Test
+    public void testRedisDelayQueue2() throws InterruptedException {
+        final RedissonClient redissonClient = getRedissonClient();
+        String topicName = "io:github:fishlikewater:test2";
+        final DelayQueue ignore = new DelayQueue(
+                topicName,
+                redissonClient,
+                task -> {
+                    String taskId = task.getTaskId();
+                    String topic = task.getTopic();
+                    Long publishTime = task.getPublishTime();
+                    System.out.println(StringUtils.format("topic:{}, taskId:{}, publishTime:{}", topic, taskId, publishTime));
+                });
+        DelayTask<RedisJsonTest> task = DelayTask.<RedisJsonTest>builder()
+                .topic(topicName)
+                .taskId(RandomUtils.randNum(5))
+                .payload(new RedisJsonTest("fishlikewater", 18))
+                .delayTime(3L)
+                .timeUnit(TimeUnit.SECONDS)
+                .build();
+        DelayQueueUtils.publish(task);
+        Thread.sleep(10_000L);
+    }
+
+    private static RedissonClient getRedissonClient() {
+        final RedissonPatternCfg cfg = new RedissonPatternCfg();
+        cfg.setServerPattern(ServerPattern.SINGLE);
+        cfg.getSingle().setAddress("redis://127.0.0.1:6379");
+        cfg.getSingle().setDatabase(1);
+        final RedissonClient redissonClient = RedissonUtils.redissonClient(cfg);
+        return redissonClient;
     }
 
     @Data

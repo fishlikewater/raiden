@@ -48,7 +48,6 @@ public class RedisProperties extends RedissonPatternCfg {
         @Serial
         private static final long serialVersionUID = 612468000501891604L;
 
-
         private boolean enabled;
 
         private String topic;

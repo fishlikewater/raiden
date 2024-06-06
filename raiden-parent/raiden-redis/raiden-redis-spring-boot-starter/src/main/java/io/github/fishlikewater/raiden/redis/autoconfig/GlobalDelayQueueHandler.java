@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * {@code GlobalDelayQueueHandler}
- * 默认全局监听器
+ * 默认全局处理器
  *
  * @author zhangxiang
  * @version 1.0.2
