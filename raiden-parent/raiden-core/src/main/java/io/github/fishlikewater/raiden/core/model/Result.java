@@ -62,14 +62,14 @@ public class Result<T> implements Serializable {
      */
     private String requestId;
 
-    public static <T extends Serializable> Result<T> of(String message, String code) {
+    public static <T> Result<T> of(String message, String code) {
         return Result.<T>builder()
                 .code(code)
                 .message(message)
                 .build();
     }
 
-    public static <T extends Serializable> Result<T> of(String message, String code, T result) {
+    public static <T> Result<T> of(String message, String code, T result) {
         return Result.<T>builder()
                 .code(code)
                 .message(message)
@@ -77,7 +77,7 @@ public class Result<T> implements Serializable {
                 .build();
     }
 
-    public static <T extends Serializable> Result<T> of(String code, T result) {
+    public static <T> Result<T> of(String code, T result) {
         return Result.<T>builder()
                 .code(code)
                 .result(result)
