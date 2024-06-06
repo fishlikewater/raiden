@@ -20,6 +20,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -36,7 +37,10 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Result<T extends Serializable> implements Serializable {
+public class Result<T> implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 5347148098024079057L;
 
     /**
      * 返回状态码
