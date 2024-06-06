@@ -16,8 +16,10 @@
 package io.github.fishlikewater.raiden.redis.autoconfig;
 
 import io.github.fishlikewater.raiden.redis.core.RedissonUtils;
+import io.github.fishlikewater.raiden.redis.core.delay.DelayQueue;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
@@ -34,7 +36,24 @@ import org.springframework.context.annotation.Bean;
 public class RedisAutoConfig {
 
     @Bean
+    @ConditionalOnProperty(prefix = "redis", name = "enabled", havingValue = "true")
     public RedissonClient redissonClient(RedisProperties properties) {
         return RedissonUtils.redissonClient(properties);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "redis.delay", name = {"enabled"}, havingValue = "true")
+    public GlobalDelayQueueHandler globalDelayQueueHandler() {
+        return new GlobalDelayQueueHandler();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "redis.delay", name = {"enabled"}, havingValue = "true")
+    public DelayQueue delayQueue(RedisProperties properties) {
+        return new DelayQueue(
+                properties.getDelay().getTopic(),
+                this.redissonClient(properties),
+                this.globalDelayQueueHandler()
+        );
     }
 }

@@ -14,6 +14,11 @@
     <dependencies>
         <dependency>
             <groupId>io.github.fishlikewater</groupId>
+            <artifactId>raiden-core-spring-boot</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.fishlikewater</groupId>
             <artifactId>redis-core</artifactId>
         </dependency>
 

@@ -21,6 +21,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.io.Serial;
+import java.io.Serializable;
 
 /**
  * {@code RedisProperties}
@@ -36,4 +37,20 @@ public class RedisProperties extends RedissonPatternCfg {
 
     @Serial
     private static final long serialVersionUID = 2232525714538349168L;
+
+    private boolean enabled;
+
+    private Delay delay;
+
+    @Data
+    public static class Delay implements Serializable {
+
+        @Serial
+        private static final long serialVersionUID = 612468000501891604L;
+
+
+        private boolean enabled;
+
+        private String topic;
+    }
 }

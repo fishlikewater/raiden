@@ -15,10 +15,13 @@
  */
 package io.github.fishlikewater.raiden.redis.test;
 
+import io.github.fishlikewater.raiden.core.RandomUtils;
+import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.redis.core.RedissonPatternCfg;
 import io.github.fishlikewater.raiden.redis.core.RedissonUtils;
 import io.github.fishlikewater.raiden.redis.core.ServerPattern;
-import io.github.fishlikewater.raiden.redis.core.queue.DelayQueue;
+import io.github.fishlikewater.raiden.redis.core.delay.DelayQueue;
+import io.github.fishlikewater.raiden.redis.core.delay.DelayTask;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,8 +30,8 @@ import org.junit.Test;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.redisson.codec.JsonJacksonCodec;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -74,14 +77,21 @@ public class RedisTest {
         cfg.getSingle().setDatabase(1);
         final RedissonClient redissonClient = RedissonUtils.redissonClient(cfg);
 
-        final DelayQueue<RedisJsonTest> delayQueue = new DelayQueue<>(
+        final DelayQueue delayQueue = new DelayQueue(
                 "io:github:fishlikewater:test",
-                "delayTasks",
                 redissonClient,
-                new JsonJacksonCodec()
-        );
-        delayQueue.registerListener();
-        delayQueue.add("1000000", new RedisJsonTest("fishlikewater", 18), 3, TimeUnit.SECONDS);
+                task -> {
+                    String taskId = task.getTaskId();
+                    Long publishTime = task.getPublishTime();
+                    System.out.println(StringUtils.format("taskId:{}, publishTime:{}", taskId, publishTime));
+                });
+        DelayTask<RedisJsonTest> task = DelayTask.<RedisJsonTest>builder()
+                .taskId(RandomUtils.randNum(5))
+                .payload(new RedisJsonTest("fishlikewater", 18))
+                .delayTime(3L)
+                .timeUnit(TimeUnit.SECONDS)
+                .build();
+        delayQueue.add(task);
         Thread.sleep(10_000L);
     }
 
@@ -90,6 +100,9 @@ public class RedisTest {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class RedisJsonTest implements Serializable {
+
+        @Serial
+        private static final long serialVersionUID = -7960401915118169370L;
 
         private String name;
 
