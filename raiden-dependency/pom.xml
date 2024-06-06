@@ -25,10 +25,18 @@
         <classgraph.version>4.8.162</classgraph.version>
         <redisson.version>3.30.0</redisson.version>
         <javapoet.version>1.13.0</javapoet.version>
+        <jakarta.validation.version>3.0.2</jakarta.validation.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!--validation-->
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation.version}</version>
+            </dependency>
+
             <!--fastjson-->
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
