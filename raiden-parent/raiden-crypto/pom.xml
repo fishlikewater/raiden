@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>raiden-crypto</artifactId>
-    <description>raiden-crypto</description>
+    <description>加解密相关的工具类</description>
 
     <properties>
     </properties>

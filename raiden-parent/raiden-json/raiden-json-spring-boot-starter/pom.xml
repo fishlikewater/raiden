@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>raiden-json-spring-boot-starter</artifactId>
-    <description>raiden-json-spring-boot-starter</description>
+    <description>常用json封装 spring boot 自动配置</description>
     <properties>
 
     </properties>

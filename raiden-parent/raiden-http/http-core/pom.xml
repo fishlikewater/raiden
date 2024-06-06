@@ -9,7 +9,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>http-core</artifactId>
-    <description>http-core</description>
+    <description>http 请求封装核心包</description>
 
     <properties>
         <logback.version>1.4.11</logback.version>

@@ -11,7 +11,7 @@
     <artifactId>raiden-core-spring-boot</artifactId>
 
     <name>raiden-core-spring-boot</name>
-    <description>raiden-core-spring-boot</description>
+    <description>spring环境中常用的工具类</description>
 
     <dependencies>
         <dependency>

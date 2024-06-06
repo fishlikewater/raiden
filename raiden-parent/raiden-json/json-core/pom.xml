@@ -9,7 +9,7 @@
 
     <artifactId>json-core</artifactId>
     <name>json-core</name>
-    <description>json-core</description>
+    <description>常用json封装</description>
 
     <properties>
     </properties>

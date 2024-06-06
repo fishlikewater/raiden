@@ -10,7 +10,7 @@
 
     <artifactId>raiden-timer-spring-boot-starter</artifactId>
     <name>raiden-timer-spring-boot-starter</name>
-    <description>raiden-timer-spring-boot-starter</description>
+    <description>spring boot简单任务调度的轻量级实现</description>
 
     <dependencies>
 

@@ -9,7 +9,7 @@
     </parent>
     <artifactId>raiden-http-spring-boot-starter</artifactId>
     <name>raiden-http-spring-boot-starter</name>
-    <description>raiden-http-spring-boot-starter</description>
+    <description>http 请求封装 spring boot自动配置</description>
 
     <dependencies>
 

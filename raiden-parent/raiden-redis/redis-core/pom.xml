@@ -9,7 +9,7 @@
 
     <artifactId>redis-core</artifactId>
     <name>redis-core</name>
-    <description>redis-core</description>
+    <description>redis的简单封装</description>
 
     <properties>
     </properties>

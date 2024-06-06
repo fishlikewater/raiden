@@ -10,7 +10,7 @@
     <artifactId>raiden-core</artifactId>
     <packaging>jar</packaging>
     <name>raiden-core</name>
-    <description>raiden-core</description>
+    <description>常用工具类</description>
 
     <properties>
 

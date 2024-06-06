@@ -9,7 +9,7 @@
 
     <artifactId>lock-core</artifactId>
     <name>lock-core</name>
-    <description>lock-core</description>
+    <description>锁常使用方式的封装</description>
 
     <properties>
     </properties>

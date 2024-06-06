@@ -9,7 +9,7 @@
 
     <artifactId>raiden-mapstruct</artifactId>
     <name>raiden-mapstruct</name>
-    <description>raiden-mapstruct</description>
+    <description>mapstruct的简单封装</description>
 
     <properties>
 

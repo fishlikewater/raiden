@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>raiden-docs-spring-boot-starter</artifactId>
-    <description>raiden-docs-spring-boot-starter-</description>
+    <description>spring boot 文档自动配置</description>
 
     <dependencies>
         <dependency>

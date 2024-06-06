@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>raiden-redis-spring-boot-starter</artifactId>
-    <description>raiden-redis-spring-boot-starter</description>
+    <description>redis spring boot starter</description>
 
     <dependencies>
         <dependency>

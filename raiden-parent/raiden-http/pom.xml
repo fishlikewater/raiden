@@ -11,7 +11,7 @@
     <artifactId>raiden-http</artifactId>
     <packaging>pom</packaging>
     <name>raiden-http</name>
-    <description>raiden-http</description>
+    <description>http 请求封装</description>
 
     <modules>
         <module>http-core</module>

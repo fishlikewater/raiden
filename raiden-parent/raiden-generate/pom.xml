@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>raiden-generate</artifactId>
-    <description>raiden-generate</description>
+    <description>生成器</description>
 
     <properties>
         <pinyin.version>2.5.0</pinyin.version>

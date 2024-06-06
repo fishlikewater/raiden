@@ -10,7 +10,7 @@
     <artifactId>timer-core</artifactId>
     <packaging>jar</packaging>
     <name>timer-core</name>
-    <description>timer-core</description>
+    <description>时间轮的简单实现轻量级任务调度</description>
 
     <properties>
     </properties>
