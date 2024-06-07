@@ -15,10 +15,12 @@
  */
 package io.github.fishlikewater.raiden.redis.core;
 
+import cn.hutool.core.bean.BeanUtil;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.codec.JsonJacksonCodec;
+import org.redisson.config.Config;
 import org.redisson.config.SingleServerConfig;
 
 import java.util.function.BiConsumer;
@@ -37,8 +39,9 @@ public class RedissonUtils {
 
     public static RedissonClient redissonClient(RedissonPatternCfg cfg, BiConsumer<RedissonConfig, RedissonPatternCfg> fx) {
         RedissonConfig config = new RedissonConfig();
-        SingleServerConfig single = cfg.getSingle();
-        config.setSingleServerConfig(single);
+        final SingleServerConfig singleServerConfig = new Config().useSingleServer();
+        BeanUtil.copyProperties(cfg.getSingle(), singleServerConfig, true);
+        config.setSingleServerConfig(singleServerConfig);
 
         fx.accept(config, cfg);
         return Redisson.create(config);

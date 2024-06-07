@@ -18,7 +18,10 @@ package io.github.fishlikewater.raiden.redis.core;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.redisson.client.codec.Codec;
-import org.redisson.config.*;
+import org.redisson.config.ClusterServersConfig;
+import org.redisson.config.MasterSlaveServersConfig;
+import org.redisson.config.ReplicatedServersConfig;
+import org.redisson.config.SentinelServersConfig;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -49,7 +52,7 @@ public class RedissonPatternCfg implements Serializable {
 
     protected Replicated replicated;
 
-    private Config config;
+    private SingleConfig single;
 
     /**
      * Redisson序列化编码
