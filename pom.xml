@@ -17,20 +17,19 @@
 
     <properties>
         <revision>1.0.2-SNAPSHOT</revision>
+        <spring.boot.processor.version>3.2.5</spring.boot.processor.version>
         <lombok.version>1.18.30</lombok.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.release>21</maven.compiler.release>
-        <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-compiler.version>3.12.1</maven-compiler.version>
         <maven-source.verion>3.3.0</maven-source.verion>
         <maven-deploy.version>3.1.2</maven-deploy.version>
+        <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <license-maven.version>3.0</license-maven.version>
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
         <therapi-runtime-javadoc.version>0.15.0</therapi-runtime-javadoc.version>
-        <openapi.version>2.5.0</openapi.version>
-        <knife4j-openapi3.version>4.5.0</knife4j-openapi3.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <google.auto.service.version>1.1.1</google.auto.service.version>
         <sonatype.central.version>0.4.0</sonatype.central.version>
@@ -84,6 +83,12 @@
                             <artifactId>therapi-runtime-javadoc-scribe</artifactId>
                             <version>${therapi-runtime-javadoc.version}</version>
                         </path>-->
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                            <version>${spring.boot.processor.version}</version>
+                        </path>
+
                         <path>
                             <groupId>com.google.auto.service</groupId>
                             <artifactId>auto-service</artifactId>

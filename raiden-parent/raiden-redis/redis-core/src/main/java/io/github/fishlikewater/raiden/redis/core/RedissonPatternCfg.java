@@ -41,8 +41,6 @@ public class RedissonPatternCfg implements Serializable {
 
     protected ServerPattern serverPattern;
 
-    protected SingleServerConfig single = new Config().useSingleServer();
-
     protected Cluster cluster;
 
     protected MasterSlave masterSlave;
@@ -50,6 +48,8 @@ public class RedissonPatternCfg implements Serializable {
     protected Sentinel sentinel;
 
     protected Replicated replicated;
+
+    private Config config;
 
     /**
      * Redisson序列化编码
