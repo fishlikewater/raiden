@@ -52,7 +52,7 @@ public class RedissonPatternCfg implements Serializable {
 
     protected Replicated replicated;
 
-    private SingleConfig single;
+    private Single single;
 
     /**
      * Redisson序列化编码
@@ -89,5 +89,39 @@ public class RedissonPatternCfg implements Serializable {
 
         @Serial
         private static final long serialVersionUID = -8755746104156339625L;
+    }
+
+    @Data
+    public static class Single implements Serializable {
+
+        private String address;
+
+        private String password;
+
+        private String username;
+
+        private int database = 0;
+
+        private int subscriptionConnectionMinimumIdleSize = 1;
+
+        private int subscriptionConnectionPoolSize = 50;
+
+        private int connectionMinimumIdleSize = 24;
+
+        private int connectionPoolSize = 64;
+
+        private long dnsMonitoringInterval = 5000;
+
+        private int idleConnectionTimeout = 10000;
+
+        private int connectTimeout = 10000;
+
+        private int timeout = 3000;
+
+        private int subscriptionTimeout = 7500;
+
+        private int retryAttempts = 3;
+
+        private int retryInterval = 1500;
     }
 }
