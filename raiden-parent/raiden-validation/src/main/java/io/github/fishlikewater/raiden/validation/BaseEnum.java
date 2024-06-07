@@ -25,7 +25,12 @@ package io.github.fishlikewater.raiden.validation;
  * @version 1.0.2
  * @since 2024年06月06日 23:13
  **/
-public interface ValueLimitEnum<T> {
+public interface BaseEnum<T> {
 
-    public boolean exist(T t);
+    /**
+     * 获取枚举编码
+     *
+     * @return 编码
+     */
+    T getCode();
 }

@@ -15,9 +15,10 @@
  */
 package io.github.fishlikewater.raiden.validation.annotation;
 
-import io.github.fishlikewater.raiden.validation.ValueLimitEnum;
+import io.github.fishlikewater.raiden.validation.BaseEnum;
 import io.github.fishlikewater.raiden.validation.ValueLimitValidator;
 import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
@@ -50,8 +51,11 @@ public @interface ValueLimit {
 
     String[] stringValues() default {};
 
-    Class<ValueLimitEnum<?>>[] enumValues() default {};
+    Class<? extends BaseEnum<?>>[] enumClass() default {};
+
+    boolean allowNull() default false;
 
     Class<?>[] groups() default {};
 
+    Class<? extends Payload>[] payload() default {};
 }

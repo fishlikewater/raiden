@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.validation;
 
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.validation.annotation.ValueLimit;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -31,15 +32,73 @@ import jakarta.validation.ConstraintValidatorContext;
  **/
 public class ValueLimitValidator implements ConstraintValidator<ValueLimit, Object> {
 
+    private Class<? extends BaseEnum<?>>[] enumClass;
+
+    private boolean allowNull;
+
+    private int[] intValues;
+
+    private String[] stringValues;
+
     @Override
-    public void initialize(ValueLimit constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
+    public void initialize(ValueLimit valueLimit) {
+        this.enumClass = valueLimit.enumClass();
+        this.allowNull = valueLimit.allowNull();
+        this.intValues = valueLimit.intValues();
+        this.stringValues = valueLimit.stringValues();
     }
 
     @Override
-    public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(Object value, ConstraintValidatorContext constraintValidatorContext) {
+        if (ObjectUtils.isNullOrEmpty(value)) {
+            return this.allowNull;
+        }
+        if (ObjectUtils.isNotNullOrEmpty(this.enumClass)) {
+            return this.handleEnumClass(this.enumClass, value);
+        }
+        if (value instanceof Integer intValue) {
+            return this.handleIntValue(this.intValues, intValue);
+        }
+        if (value instanceof String stringValue) {
+            return this.handleStringValue(this.stringValues, stringValue);
+        }
+        return false;
+    }
 
+    private boolean handleStringValue(String[] stringValues, String stringValue) {
+        if (ObjectUtils.isNullOrEmpty(stringValues)) {
+            return false;
+        }
+        for (String value : stringValues) {
+            if (ObjectUtils.equals(stringValue, value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    private boolean handleIntValue(int[] intValues, Integer intValue) {
+        if (ObjectUtils.isNullOrEmpty(intValues)) {
+            return false;
+        }
+        for (int value : intValues) {
+            if (ObjectUtils.equals(intValue, value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean handleEnumClass(Class<? extends BaseEnum<?>>[] enumClass, Object value) {
+        for (Class<? extends BaseEnum<?>> eClass : enumClass) {
+            BaseEnum<?>[] enums = eClass.getEnumConstants();
+            for (BaseEnum<?> anEnum : enums) {
+                final Object code = anEnum.getCode();
+                if (ObjectUtils.equals(code, value)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 }
