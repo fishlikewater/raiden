@@ -28,7 +28,6 @@ import org.springframework.context.annotation.Bean;
  * @version 1.0.0
  * @since 2024/04/07
  */
-
 @AutoConfiguration
 @EnableConfigurationProperties(TimerConfigProperties.class)
 public class TimerAutoConfig {
@@ -43,5 +42,4 @@ public class TimerAutoConfig {
     public TimerLauncher timerLauncher(TimerConfigProperties timerConfig) {
         return new TimerLauncher(timerConfig);
     }
-
 }

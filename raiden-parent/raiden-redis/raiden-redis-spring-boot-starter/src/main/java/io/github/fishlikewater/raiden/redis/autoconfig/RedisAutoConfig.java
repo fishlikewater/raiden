@@ -36,19 +36,19 @@ import org.springframework.context.annotation.Bean;
 public class RedisAutoConfig {
 
     @Bean
-    @ConditionalOnProperty(prefix = "redis", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "raiden.redis", name = "enabled", havingValue = "true")
     public RedissonClient redissonClient(RedisProperties properties) {
         return RedissonUtils.redissonClient(properties);
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "redis.delay", name = {"enabled"}, havingValue = "true")
+    @ConditionalOnProperty(prefix = "raiden.redis.delay", name = {"enabled"}, havingValue = "true")
     public GlobalDelayQueueHandler globalDelayQueueHandler() {
         return new GlobalDelayQueueHandler();
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "redis.delay", name = {"enabled"}, havingValue = "true")
+    @ConditionalOnProperty(prefix = "raiden.redis.delay", name = {"enabled"}, havingValue = "true")
     public DelayQueue delayQueue(RedisProperties properties) {
         return new DelayQueue(
                 properties.getDelay().getTopic(),

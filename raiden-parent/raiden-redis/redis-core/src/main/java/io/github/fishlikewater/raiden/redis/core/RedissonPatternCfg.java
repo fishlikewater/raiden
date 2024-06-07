@@ -39,17 +39,17 @@ public class RedissonPatternCfg implements Serializable {
     @Serial
     private static final long serialVersionUID = 8090491648279726067L;
 
-    private ServerPattern serverPattern;
+    protected ServerPattern serverPattern;
 
-    private SingleServerConfig single = new Config().useSingleServer();
+    protected SingleServerConfig single = new Config().useSingleServer();
 
-    private Cluster cluster;
+    protected Cluster cluster;
 
-    private MasterSlave masterSlave;
+    protected MasterSlave masterSlave;
 
-    private Sentinel sentinel;
+    protected Sentinel sentinel;
 
-    private Replicated replicated;
+    protected Replicated replicated;
 
     /**
      * Redisson序列化编码

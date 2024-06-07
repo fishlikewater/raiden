@@ -116,8 +116,7 @@ public class RedisTest {
         cfg.setServerPattern(ServerPattern.SINGLE);
         cfg.getSingle().setAddress("redis://127.0.0.1:6379");
         cfg.getSingle().setDatabase(1);
-        final RedissonClient redissonClient = RedissonUtils.redissonClient(cfg);
-        return redissonClient;
+        return RedissonUtils.redissonClient(cfg);
     }
 
     @Data

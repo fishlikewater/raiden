@@ -31,7 +31,7 @@ import java.io.Serializable;
  * @since 2024/05/15
  */
 @Data
-@ConfigurationProperties(prefix = "redis")
+@ConfigurationProperties(prefix = "raiden.redis")
 @EqualsAndHashCode(callSuper = true)
 public class RedisProperties extends RedissonPatternCfg {
 

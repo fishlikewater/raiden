@@ -29,5 +29,4 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("raiden.timer")
 public class TimerConfigProperties extends TimerConfig {
 
-
 }

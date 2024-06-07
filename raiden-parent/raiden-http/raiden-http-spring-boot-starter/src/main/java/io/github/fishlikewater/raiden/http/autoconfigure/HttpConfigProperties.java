@@ -30,7 +30,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  **/
 
 @Data
-@ConfigurationProperties("com.raiden.http")
+@ConfigurationProperties(prefix = "raiden.http")
 public class HttpConfigProperties {
 
     private boolean enableLog;
