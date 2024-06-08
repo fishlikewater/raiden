@@ -15,8 +15,19 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.github.fishlikewater</groupId>
+            <artifactId>raiden-core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-crypto</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

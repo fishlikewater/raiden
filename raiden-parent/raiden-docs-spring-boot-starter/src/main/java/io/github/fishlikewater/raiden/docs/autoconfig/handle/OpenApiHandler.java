@@ -15,7 +15,6 @@
  */
 package io.github.fishlikewater.raiden.docs.autoconfig.handle;
 
-import cn.hutool.core.io.IoUtil;
 import io.swagger.v3.core.jackson.TypeNameResolver;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.oas.annotations.tags.Tags;
@@ -38,6 +37,8 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.method.HandlerMethod;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -207,7 +208,9 @@ public class OpenApiHandler extends OpenAPIService {
                     Tag tag = new Tag();
 
                     // 自定义部分 修改使用java注释当tag名
-                    List<String> list = IoUtil.readLines(new StringReader(description), new ArrayList<>());
+                    List<String> list = new ArrayList<>();
+                    this.readLines(description, list);
+
                     // tag.setName(tagAutoName);
                     tag.setName(list.get(0));
                     operation.addTagsItem(list.get(0));
@@ -244,6 +247,17 @@ public class OpenApiHandler extends OpenAPIService {
         }
 
         return operation;
+    }
+
+    private void readLines(String description, List<String> list) {
+        try (BufferedReader reader = new BufferedReader(new StringReader(description))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                list.add(line);
+            }
+        } catch (IOException e) {
+            log.error("Error reading class description", e);
+        }
     }
 
     private void buildTagsFromMethod(Method method, Set<Tag> tags, Set<String> tagsStr, Locale locale) {
