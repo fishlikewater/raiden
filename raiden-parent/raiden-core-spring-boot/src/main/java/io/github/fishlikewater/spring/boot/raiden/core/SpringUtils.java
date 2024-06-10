@@ -19,6 +19,7 @@ import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ArrayUtil;
 import io.github.fishlikewater.raiden.core.exception.RaidenException;
 import lombok.Getter;
+import lombok.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * {@code SpringUtil}
+ * {@code SpringUtils}
  * Spring 工具类
  *
  * @author zhangxiang
@@ -46,23 +47,21 @@ import java.util.Map;
  */
 @Component
 @SuppressWarnings("unused")
-public class SpringUtil implements BeanFactoryPostProcessor, ApplicationContextAware {
+public class SpringUtils implements BeanFactoryPostProcessor, ApplicationContextAware {
 
     private static ConfigurableListableBeanFactory beanFactory;
 
     @Getter
     private static ApplicationContext applicationContext;
 
-    @SuppressWarnings("NullableProblems")
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        SpringUtil.beanFactory = beanFactory;
+    public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        SpringUtils.beanFactory = beanFactory;
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        SpringUtil.applicationContext = applicationContext;
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) {
+        SpringUtils.applicationContext = applicationContext;
     }
 
     /**

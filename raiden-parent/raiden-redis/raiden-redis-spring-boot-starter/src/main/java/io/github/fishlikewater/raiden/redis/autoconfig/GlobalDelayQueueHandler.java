@@ -19,7 +19,7 @@ import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayQueueHandler;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayQueueListener;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayTask;
-import io.github.fishlikewater.spring.boot.raiden.core.SpringUtil;
+import io.github.fishlikewater.spring.boot.raiden.core.SpringUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -48,7 +48,7 @@ public class GlobalDelayQueueHandler implements DelayQueueHandler {
 
     private synchronized void init() {
         if (ObjectUtils.isNullOrEmpty(subscribers)) {
-            subscribers = SpringUtil.getBeanListOfType(DelayQueueListener.class);
+            subscribers = SpringUtils.getBeanListOfType(DelayQueueListener.class);
         }
     }
 }

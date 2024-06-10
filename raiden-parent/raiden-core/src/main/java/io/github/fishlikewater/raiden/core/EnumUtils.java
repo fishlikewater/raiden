@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@code EnumUtil}
+ * {@code EnumUtils}
  * 枚举工具类
  *
  * @author zhangxiang
@@ -32,7 +32,7 @@ import java.util.List;
  * @since 2024/05/28
  */
 @SuppressWarnings("unused")
-public class EnumUtil {
+public class EnumUtils {
 
     /**
      * 判断是否是枚举
