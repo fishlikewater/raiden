@@ -54,6 +54,10 @@ public class SpringUtils implements BeanFactoryPostProcessor, ApplicationContext
     @Getter
     private static ApplicationContext applicationContext;
 
+    public SpringUtils() {
+
+    }
+
     @Override
     public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
         SpringUtils.beanFactory = beanFactory;
