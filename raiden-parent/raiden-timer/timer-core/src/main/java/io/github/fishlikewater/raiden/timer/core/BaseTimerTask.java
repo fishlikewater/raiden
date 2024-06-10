@@ -15,6 +15,8 @@
  */
 package io.github.fishlikewater.raiden.timer.core;
 
+import io.github.fishlikewater.raiden.core.ObjectUtils;
+import io.github.fishlikewater.raiden.core.references.org.springframework.scheduling.support.CronExpression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -23,8 +25,8 @@ import lombok.EqualsAndHashCode;
  * 执行任务
  *
  * @author zhangxiang
- * @since  2024/04/03
  * @version 1.0.0
+ * @since 2024/04/03
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -50,17 +52,34 @@ public abstract class BaseTimerTask implements Runnable {
     /**
      * 设置延迟时间 ms
      */
-    public abstract void delayMs();
+    public long delayMs() {
+        return 0;
+    }
 
     /**
      * 设置corn表达式
      */
-    public abstract void cornExpression();
+    public String cornExpression() {
+        return null;
+    }
 
     /**
      * 设置描述
      */
-    public void desc() {
+    public String desc() {
+        return null;
+    }
 
-    };
+    public BaseTimerTask() {
+        this.setDesc(this.desc());
+        this.setDelayMs(this.delayMs());
+        final String expression = this.cornExpression();
+        if (ObjectUtils.isNotNullOrEmpty(expression)) {
+            final boolean validExpression = CronExpression.isValidExpression(expression);
+            if (!validExpression) {
+                throw new IllegalArgumentException("cornExpression is not valid");
+            }
+            this.setCornExpression(expression);
+        }
+    }
 }

@@ -49,14 +49,10 @@ public class ScheduleTaskTest {
     @Test
     public void testCornSchedule() throws InterruptedException {
         final BaseTimerTask task = new BaseTimerTask() {
-            @Override
-            public void delayMs() {
-
-            }
 
             @Override
-            public void cornExpression() {
-                this.setCornExpression("0/1 * * * * ?");
+            public String cornExpression() {
+                return "0/1 * * * * ?";
             }
 
             @Override
@@ -73,13 +69,8 @@ public class ScheduleTaskTest {
 
         final BaseTimerTask task = new BaseTimerTask() {
             @Override
-            public void delayMs() {
-                this.setDelayMs(5_000);
-            }
-
-            @Override
-            public void cornExpression() {
-
+            public long delayMs() {
+                return 5_000;
             }
 
             @Override
@@ -89,13 +80,8 @@ public class ScheduleTaskTest {
         };
         final BaseTimerTask task2 = new BaseTimerTask() {
             @Override
-            public void delayMs() {
-                this.setDelayMs(5_000);
-            }
-
-            @Override
-            public void cornExpression() {
-
+            public long delayMs() {
+                return 5_000;
             }
 
             @Override
