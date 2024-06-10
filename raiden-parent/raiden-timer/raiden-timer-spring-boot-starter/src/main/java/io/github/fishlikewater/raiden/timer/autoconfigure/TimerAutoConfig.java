@@ -42,4 +42,14 @@ public class TimerAutoConfig {
     public TimerLauncher timerLauncher(TimerConfigProperties timerConfig) {
         return new TimerLauncher(timerConfig);
     }
+
+    /**
+     * 注册定时任务
+     *
+     * @return TimerBeanProcessor
+     */
+    @Bean
+    public TimerBeanProcessor timerBeanProcessor() {
+        return new TimerBeanProcessor();
+    }
 }

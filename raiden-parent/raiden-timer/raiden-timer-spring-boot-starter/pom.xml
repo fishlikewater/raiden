@@ -17,7 +17,11 @@
         <dependency>
             <groupId>io.github.fishlikewater</groupId>
             <artifactId>timer-core</artifactId>
-            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.fishlikewater</groupId>
+            <artifactId>raiden-core-spring-boot</artifactId>
         </dependency>
 
         <dependency>

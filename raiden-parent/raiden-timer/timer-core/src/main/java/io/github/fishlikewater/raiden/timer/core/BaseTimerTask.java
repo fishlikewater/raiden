@@ -40,17 +40,27 @@ public abstract class BaseTimerTask implements Runnable {
      */
     private String cornExpression;
 
+    private String desc;
+
     /**
-     * 任务所在的entry
+     * 任务所在的entry 用来获取一些执行分配参数
      */
     private TimerTaskEntry timerTaskEntry;
 
-    private String desc;
+    /**
+     * 设置延迟时间 ms
+     */
+    public abstract void delayMs();
 
-    public synchronized void setTimerTaskEntry(TimerTaskEntry entry) {
-        if (timerTaskEntry != null && timerTaskEntry != entry) {
-            timerTaskEntry.remove();
-        }
-        timerTaskEntry = entry;
-    }
+    /**
+     * 设置corn表达式
+     */
+    public abstract void cornExpression();
+
+    /**
+     * 设置描述
+     */
+    public void desc() {
+
+    };
 }

@@ -50,11 +50,20 @@ public class ScheduleTaskTest {
     public void testCornSchedule() throws InterruptedException {
         final BaseTimerTask task = new BaseTimerTask() {
             @Override
+            public void delayMs() {
+
+            }
+
+            @Override
+            public void cornExpression() {
+                this.setCornExpression("0/1 * * * * ?");
+            }
+
+            @Override
             public void run() {
                 System.out.println("这是corn测试");
             }
         };
-        task.setCornExpression("0/1 * * * * ?");
         timerLauncher.add(task);
         Thread.sleep(15_000);
     }
@@ -64,18 +73,36 @@ public class ScheduleTaskTest {
 
         final BaseTimerTask task = new BaseTimerTask() {
             @Override
+            public void delayMs() {
+                this.setDelayMs(5_000);
+            }
+
+            @Override
+            public void cornExpression() {
+
+            }
+
+            @Override
             public void run() {
                 System.out.println("这是具体执行逻辑");
             }
         };
-        task.setDelayMs(5_000);
         final BaseTimerTask task2 = new BaseTimerTask() {
+            @Override
+            public void delayMs() {
+                this.setDelayMs(5_000);
+            }
+
+            @Override
+            public void cornExpression() {
+
+            }
+
             @Override
             public void run() {
                 System.out.println("这是具体执行逻辑222");
             }
         };
-        task2.setDelayMs(5_000);
         timerLauncher.add(task);
         timerLauncher.add(task2);
         Thread.sleep(15_000);

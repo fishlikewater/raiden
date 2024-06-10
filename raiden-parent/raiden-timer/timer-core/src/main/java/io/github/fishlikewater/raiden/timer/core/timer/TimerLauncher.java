@@ -74,7 +74,7 @@ public class TimerLauncher implements Timer {
                 new LinkedBlockingQueue<>(),
                 new NamedThreadFactory("timer-boss"));
 
-        // 20ms推动一次时间轮运转
+        // 推动一次时间轮运转
         this.bossThreadPool.submit(() -> {
             while (true) {
                 this.advanceClock(timerConfig.getClock().toMillis());
@@ -82,24 +82,9 @@ public class TimerLauncher implements Timer {
         });
     }
 
-    public void addTimerTaskEntry(TimerTaskEntry entry) {
-        if (!timeWheel.addTask(entry)) {
-            // 任务已到期
-            BaseTimerTask baseTimerTask = entry.getBaseTimerTask();
-            log.info("执行任务: {}", baseTimerTask.getDesc());
-            workerThreadPool.submit(baseTimerTask);
-            // corn 表达式任务添加下次时间
-            if (Objects.nonNull(entry.getCronExpression())) {
-                LocalDateTime next = entry.getCronExpression().next(LocalDateTime.now());
-                entry.setExpireMs(DateUtils.transfer(next));
-                this.addTimerTaskEntry(entry);
-            }
-        }
-    }
-
     @Override
     public void add(BaseTimerTask baseTimerTask) {
-        log.info("添加任务:{}", baseTimerTask.getDesc());
+        log.info("add task:{}", baseTimerTask.getDesc());
         TimerTaskEntry entry;
         if (ObjectUtils.isNotNullOrEmpty(baseTimerTask.getCornExpression())) {
             CronExpression cronExpression = CronExpression.parse(baseTimerTask.getCornExpression());
@@ -143,5 +128,20 @@ public class TimerLauncher implements Timer {
         this.bossThreadPool.shutdown();
         this.workerThreadPool.shutdown();
         this.timeWheel = null;
+    }
+
+    private void addTimerTaskEntry(TimerTaskEntry entry) {
+        if (!timeWheel.addTask(entry)) {
+            // 任务已到期
+            BaseTimerTask baseTimerTask = entry.getBaseTimerTask();
+            log.info("handle task: {}", baseTimerTask.getDesc());
+            workerThreadPool.submit(baseTimerTask);
+            // corn 表达式任务添加下次时间
+            if (Objects.nonNull(entry.getCronExpression())) {
+                LocalDateTime next = entry.getCronExpression().next(LocalDateTime.now());
+                entry.setExpireMs(DateUtils.transfer(next));
+                this.addTimerTaskEntry(entry);
+            }
+        }
     }
 }
