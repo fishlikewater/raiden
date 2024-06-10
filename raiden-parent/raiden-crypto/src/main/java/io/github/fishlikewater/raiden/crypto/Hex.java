@@ -136,6 +136,18 @@ public class Hex {
         return new String(encodeHex(data, toLowerCase));
     }
 
+    /**
+     * 将字节数组转换为十六进制字符串
+     *
+     * @param data        byte[]
+     * @param toLowerCase {@code true} 传换成小写格式 ， {@code false} 传换成大写格式
+     * @return 十六进制String
+     */
+    public static String encodeHexStr(byte[] data, boolean toLowerCase, Charset charset) {
+        return new String(encodeHex(data, toLowerCase));
+    }
+
+
     private static char[] encodeHex(char[] alphabets, byte[] data) {
         final int len = data.length;
         final char[] out = new char[len << 1];

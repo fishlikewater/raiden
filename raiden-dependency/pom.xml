@@ -26,10 +26,18 @@
         <redisson.version>3.30.0</redisson.version>
         <javapoet.version>1.13.0</javapoet.version>
         <jakarta.validation.version>3.0.2</jakarta.validation.version>
+        <bouncycastle.version>1.78.1</bouncycastle.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!--bouncycastle-->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+
             <!--validation-->
             <dependency>
                 <groupId>jakarta.validation</groupId>
