@@ -15,7 +15,9 @@
  */
 package io.github.fishlikewater.raiden.timer.core;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -26,15 +28,13 @@ import java.util.concurrent.DelayQueue;
  * 时间轮定义
  *
  * @author zhangxiang
- * @since 2024/04/03
  * @version 1.0.0
+ * @since 2024/04/03
  */
 @Data
-@Builder
 @Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
 public class TimeWheel {
 
     /**
@@ -158,5 +158,9 @@ public class TimeWheel {
         if (overflowWheel == null) {
             overflowWheel = new TimeWheel(interval, wheelSize, currentTime, delayQueue);
         }
+    }
+
+    public String toString() {
+        return "";
     }
 }
