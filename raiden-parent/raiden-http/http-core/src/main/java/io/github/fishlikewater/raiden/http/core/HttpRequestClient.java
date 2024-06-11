@@ -116,95 +116,95 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     }
 
     @Override
-    public <T> CompletableFuture<T> getAsync(RequestWrap requestWrap) {
+    <T> CompletableFuture<T> getAsync(RequestWrap requestWrap) {
         this.checkHttpMethod(requestWrap, HttpMethod.GET);
         HttpRequest httpRequest = getHttpRequest(requestWrap);
         return handlerAsync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> T getSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+    <T> T getSync(RequestWrap requestWrap) throws IOException, InterruptedException {
         this.checkHttpMethod(requestWrap, HttpMethod.GET);
         HttpRequest httpRequest = getHttpRequest(requestWrap);
         return handlerSync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> CompletableFuture<T> deleteAsync(RequestWrap requestWrap) {
+    <T> CompletableFuture<T> deleteAsync(RequestWrap requestWrap) {
         this.checkHttpMethod(requestWrap, HttpMethod.DELETE);
         HttpRequest httpRequest = getHttpRequest(requestWrap);
         return handlerAsync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> T deleteSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+    <T> T deleteSync(RequestWrap requestWrap) throws IOException, InterruptedException {
         this.checkHttpMethod(requestWrap, HttpMethod.DELETE);
         HttpRequest httpRequest = getHttpRequest(requestWrap);
         return handlerSync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> CompletableFuture<T> postAsync(RequestWrap requestWrap) {
+    <T> CompletableFuture<T> postAsync(RequestWrap requestWrap) {
         this.checkHttpMethod(requestWrap, HttpMethod.POST);
         HttpRequest httpRequest = getHttpRequestBody(requestWrap);
         return handlerAsync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> T postSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+    <T> T postSync(RequestWrap requestWrap) throws IOException, InterruptedException {
         this.checkHttpMethod(requestWrap, HttpMethod.POST);
         HttpRequest httpRequest = getHttpRequestBody(requestWrap);
         return handlerSync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> CompletableFuture<T> putAsync(RequestWrap requestWrap) {
+    <T> CompletableFuture<T> putAsync(RequestWrap requestWrap) {
         this.checkHttpMethod(requestWrap, HttpMethod.PUT);
         HttpRequest httpRequest = getHttpRequestBody(requestWrap);
         return handlerAsync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> T putSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+    <T> T putSync(RequestWrap requestWrap) throws IOException, InterruptedException {
         this.checkHttpMethod(requestWrap, HttpMethod.PUT);
         HttpRequest httpRequest = getHttpRequestBody(requestWrap);
         return handlerSync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> CompletableFuture<T> patchAsync(RequestWrap requestWrap) {
+    <T> CompletableFuture<T> patchAsync(RequestWrap requestWrap) {
         this.checkHttpMethod(requestWrap, HttpMethod.PATCH);
         HttpRequest httpRequest = getHttpRequestBody(requestWrap);
         return handlerAsync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> T patchSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+    <T> T patchSync(RequestWrap requestWrap) throws IOException, InterruptedException {
         this.checkHttpMethod(requestWrap, HttpMethod.PATCH);
         HttpRequest httpRequest = getHttpRequestBody(requestWrap);
         return handlerSync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> CompletableFuture<T> fileAsync(RequestWrap requestWrap) {
+    <T> CompletableFuture<T> fileAsync(RequestWrap requestWrap) {
         HttpRequest httpRequest = getFileHttpRequest(requestWrap);
         return handlerAsync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> T fileSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+    <T> T fileSync(RequestWrap requestWrap) throws IOException, InterruptedException {
         HttpRequest httpRequest = getFileHttpRequest(requestWrap);
         return handlerSync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> CompletableFuture<T> formAsync(RequestWrap requestWrap) {
+    <T> CompletableFuture<T> formAsync(RequestWrap requestWrap) {
         HttpRequest httpRequest = getFormHttpRequest(requestWrap);
         return handlerAsync(requestWrap, httpRequest);
     }
 
     @Override
-    public <T> T formSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+    <T> T formSync(RequestWrap requestWrap) throws IOException, InterruptedException {
         HttpRequest httpRequest = getFormHttpRequest(requestWrap);
         return handlerSync(requestWrap, httpRequest);
     }
