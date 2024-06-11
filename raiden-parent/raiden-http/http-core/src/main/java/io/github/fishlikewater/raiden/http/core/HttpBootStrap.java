@@ -20,7 +20,9 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.annotation.HttpServer;
+import io.github.fishlikewater.raiden.http.core.annotation.Interceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.PredRequest;
 import io.github.fishlikewater.raiden.http.core.processor.DefaultHttpClientBeanFactory;
@@ -31,6 +33,7 @@ import io.github.fishlikewater.raiden.http.core.proxy.InterfaceProxy;
 import io.github.fishlikewater.raiden.http.core.proxy.JdkInterfaceProxy;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegistry;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,8 +49,8 @@ import java.util.Objects;
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月24日 10:14
  * @version 1.0.0
+ * @since 2023年09月24日 10:14
  **/
 @Slf4j
 @Accessors(chain = true)
@@ -133,7 +136,7 @@ public class HttpBootStrap {
      */
     public static void init(String... packages) throws ClassNotFoundException {
 
-        log.info("httpClient 接口开始初始化....");
+        log.info("httpClient Initialization begin...");
         if (selfManager) {
             registerDefaultHttpClient();
             registry.init();
@@ -160,7 +163,7 @@ public class HttpBootStrap {
                 cacheMethod(allClass, methods, clazz);
             }
         }
-        log.info("httpClient 接口初始化完成....");
+        log.info("httpClient Initialization complete...");
     }
 
     private static void buildProxy() {
@@ -171,12 +174,22 @@ public class HttpBootStrap {
     }
 
     private static void cacheMethod(ClassInfo allClass, Method[] methods, Class<?> clazz) {
-        for (Method method : methods) {
-            if (selfManager) {
-                final Object instance = interfaceProxy.getInstance(clazz);
-                httpClientBeanFactory.cacheProxyObject(allClass.getName(), instance);
+        if (selfManager) {
+            final Object instance = interfaceProxy.getInstance(clazz);
+            httpClientBeanFactory.cacheProxyObject(allClass.getName(), instance);
+            Interceptor interceptorAnnotation = clazz.getAnnotation(Interceptor.class);
+            HttpClientInterceptor interceptor = httpClientBeanFactory.getInterceptor(interceptorAnnotation.value().getName());
+            if (ObjectUtils.isNullOrEmpty(interceptor)) {
+                httpClientBeanFactory.setHttpClientInterceptor(getInterceptor(interceptorAnnotation.value()));
             }
+        }
+        for (Method method : methods) {
             httpClientBeanFactory.cacheMethod(method);
         }
+    }
+
+    @SneakyThrows
+    private static HttpClientInterceptor getInterceptor(Class<? extends HttpClientInterceptor> iClass) {
+        return iClass.getDeclaredConstructor().newInstance();
     }
 }

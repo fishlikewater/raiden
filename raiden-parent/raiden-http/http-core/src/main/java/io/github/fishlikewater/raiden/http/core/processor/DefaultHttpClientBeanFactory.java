@@ -17,13 +17,13 @@ package io.github.fishlikewater.raiden.http.core.processor;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.TypeUtil;
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
-import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
 import io.github.fishlikewater.raiden.http.core.annotation.*;
+import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
@@ -50,13 +50,6 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
     ConcurrentHashMap<String, MethodArgsBean> methodCache = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Object> proxyCache = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, HttpClientInterceptor> interceptorCache = new ConcurrentHashMap<>();
-    static final String URL_SPLIT = "/";
-    static final String HTTP = "http";
-
-    @SneakyThrows
-    private HttpClientInterceptor getInterceptor(Class<? extends HttpClientInterceptor> iClass) {
-        return iClass.getDeclaredConstructor().newInstance();
-    }
 
     @Override
     public MethodArgsBean getMethodArgsBean(String methodName) {
@@ -105,7 +98,7 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         final Interceptor interceptor = method.getDeclaringClass().getAnnotation(Interceptor.class);
         HttpServer httpServer = method.getDeclaringClass().getAnnotation(HttpServer.class);
         String serverName = httpServer.serverName();
-        String interceptorClassName = handleInterceptor(interceptor);
+        String interceptorClassName = ObjectUtils.isNotNullOrEmpty(interceptor) ? interceptor.getClass().getName() : null;
         final Class<?> returnType = method.getReturnType();
         final Type returnType1 = TypeUtil.getReturnType(method);
         final Type typeArgument = TypeUtil.getTypeArgument(returnType1);
@@ -134,20 +127,6 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         methodCache.put(name, methodArgsBean);
     }
 
-    private String handleInterceptor(Interceptor interceptor) {
-        String interceptorClassName = null;
-        if (Objects.nonNull(interceptor)) {
-            interceptorClassName = interceptor.value().getName();
-            if (HttpBootStrap.isSelfManager()) {
-                final HttpClientInterceptor httpClientInterceptor = interceptorCache.get(interceptorClassName);
-                if (Objects.isNull(httpClientInterceptor)) {
-                    setHttpClientInterceptor(getInterceptor(interceptor.value()));
-                }
-            }
-        }
-        return interceptorClassName;
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProxyObject(Class<T> tClass) {
@@ -171,15 +150,15 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
 
     private String getUrl(String protocol, String url, String path) {
         String requestUrl;
-        if (!url.isBlank() && !url.endsWith(URL_SPLIT)) {
-            url += URL_SPLIT;
+        if (!url.isBlank() && !url.endsWith(HttpConstants.URL_SPLIT)) {
+            url += HttpConstants.URL_SPLIT;
         }
-        if (url.startsWith(HTTP)) {
+        if (url.startsWith(HttpConstants.HTTP)) {
             requestUrl = url;
         } else {
             requestUrl = StringUtils.format("{}://{}", protocol, url);
         }
-        if (path.startsWith(URL_SPLIT)) {
+        if (path.startsWith(HttpConstants.URL_SPLIT)) {
             path = path.substring(1);
         }
         requestUrl += path;
