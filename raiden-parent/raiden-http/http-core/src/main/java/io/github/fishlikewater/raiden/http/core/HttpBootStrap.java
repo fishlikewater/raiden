@@ -178,9 +178,11 @@ public class HttpBootStrap {
             final Object instance = interfaceProxy.getInstance(clazz);
             httpClientBeanFactory.cacheProxyObject(allClass.getName(), instance);
             Interceptor interceptorAnnotation = clazz.getAnnotation(Interceptor.class);
-            HttpClientInterceptor interceptor = httpClientBeanFactory.getInterceptor(interceptorAnnotation.value().getName());
-            if (ObjectUtils.isNullOrEmpty(interceptor)) {
-                httpClientBeanFactory.setHttpClientInterceptor(getInterceptor(interceptorAnnotation.value()));
+            if (ObjectUtils.isNotNullOrEmpty(interceptorAnnotation)) {
+                HttpClientInterceptor interceptor = httpClientBeanFactory.getInterceptor(interceptorAnnotation.value().getName());
+                if (ObjectUtils.isNullOrEmpty(interceptor)) {
+                    httpClientBeanFactory.setHttpClientInterceptor(getInterceptor(interceptorAnnotation.value()));
+                }
             }
         }
         for (Method method : methods) {

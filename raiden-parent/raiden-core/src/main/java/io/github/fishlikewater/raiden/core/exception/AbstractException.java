@@ -82,4 +82,5 @@ public abstract class AbstractException extends RuntimeException {
         this.message = StringUtils.format(message, args);
     }
 
+    public abstract AbstractException creat(String message, Object... args);
 }

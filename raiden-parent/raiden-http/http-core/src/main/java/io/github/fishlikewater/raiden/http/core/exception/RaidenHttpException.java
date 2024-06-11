@@ -55,4 +55,9 @@ public class RaidenHttpException extends AbstractException {
     public RaidenHttpException(Throwable e, String message, Object... args) {
         super(e, message, args);
     }
+
+    @Override
+    public AbstractException creat(String message, Object... args) {
+        return new RaidenHttpException(message, args);
+    }
 }

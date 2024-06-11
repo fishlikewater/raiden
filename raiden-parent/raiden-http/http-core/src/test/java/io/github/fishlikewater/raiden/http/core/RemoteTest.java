@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core;
 
+import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
 import io.github.fishlikewater.raiden.http.core.remote.DemoRemote;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,6 +43,7 @@ public class RemoteTest {
 
     @Test
     public void test() {
+        HttpExceptionCheck.isNull(null, "test is {}", "null");
         DemoRemote remote = HttpBootStrap.getProxy(DemoRemote.class);
         String s = remote.baidu();
         Assert.assertNotNull(s);

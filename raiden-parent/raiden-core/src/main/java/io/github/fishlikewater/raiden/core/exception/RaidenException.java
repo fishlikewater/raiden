@@ -52,4 +52,9 @@ public class RaidenException extends AbstractException {
     public RaidenException(Throwable e, String message, Object... args) {
         super(e, message, args);
     }
+
+    @Override
+    public AbstractException creat(String message, Object... args) {
+        return new RaidenException(message, args);
+    }
 }
