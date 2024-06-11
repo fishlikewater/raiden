@@ -17,13 +17,11 @@ package io.github.fishlikewater.raiden.http.core.processor;
 
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.HttpRequestClient;
-import io.github.fishlikewater.raiden.http.core.MultipartData;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -52,63 +50,11 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
 
     private static Object sync(RequestWrap requestWrap) throws IOException, InterruptedException {
         HttpRequestClient httpRequestClient = HttpBootStrap.getHttpRequestClient();
-        if (requestWrap.isForm()) {
-            return httpRequestClient.formSync(requestWrap);
-        }
-        MultipartData multipartData = requestWrap.getMultipartData();
-        if (Objects.nonNull(multipartData) && !multipartData.isFileDownload()) {
-            return httpRequestClient.fileSync(requestWrap);
-        }
-        switch (requestWrap.getHttpMethod()) {
-            case GET -> {
-                return httpRequestClient.getSync(requestWrap);
-            }
-            case DELETE -> {
-                return httpRequestClient.deleteSync(requestWrap);
-            }
-            case POST -> {
-                return httpRequestClient.postSync(requestWrap);
-            }
-            case PUT -> {
-                return httpRequestClient.putSync(requestWrap);
-            }
-            case PATCH -> {
-                return httpRequestClient.patchSync(requestWrap);
-            }
-            default -> {
-                return "";
-            }
-        }
+        return httpRequestClient.requestSync(requestWrap);
     }
 
-    private static <T> Object async(RequestWrap requestWrap) {
+    private static Object async(RequestWrap requestWrap) {
         HttpRequestClient httpRequestClient = HttpBootStrap.getHttpRequestClient();
-        if (requestWrap.isForm()) {
-            return httpRequestClient.formAsync(requestWrap);
-        }
-        MultipartData multipartData = requestWrap.getMultipartData();
-        if (Objects.nonNull(multipartData) && !multipartData.isFileDownload()) {
-            return httpRequestClient.fileAsync(requestWrap);
-        }
-        switch (requestWrap.getHttpMethod()) {
-            case GET -> {
-                return httpRequestClient.getAsync(requestWrap);
-            }
-            case DELETE -> {
-                return httpRequestClient.deleteAsync(requestWrap);
-            }
-            case POST -> {
-                return httpRequestClient.postAsync(requestWrap);
-            }
-            case PUT -> {
-                return httpRequestClient.putAsync(requestWrap);
-            }
-            case PATCH -> {
-                return httpRequestClient.patchAsync(requestWrap);
-            }
-            default -> {
-                return "";
-            }
-        }
+        return httpRequestClient.requestAsync(requestWrap);
     }
 }

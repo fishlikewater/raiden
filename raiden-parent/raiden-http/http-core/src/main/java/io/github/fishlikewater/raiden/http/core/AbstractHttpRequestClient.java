@@ -28,6 +28,25 @@ import java.util.concurrent.CompletableFuture;
 @SuppressWarnings("unused")
 public abstract class AbstractHttpRequestClient {
 
+    /**
+     * 异步请求
+     *
+     * @param requestWrap 请求封装
+     * @param <T>         返回类型
+     * @return CompletableFuture
+     */
+    abstract <T> CompletableFuture<T> requestAsync(RequestWrap requestWrap);
+
+    /**
+     * 同步请求
+     *
+     * @param requestWrap 请求封装
+     * @return <T> 返回类型
+     * @throws IOException          异常
+     * @throws InterruptedException 异常
+     */
+    abstract <T> T requestSync(RequestWrap requestWrap) throws IOException, InterruptedException;
+
     //--------------------get------------------------
 
     /**

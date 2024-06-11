@@ -48,7 +48,7 @@ public class OnlyHttpRequestClientTest {
                 .returnType(String.class)
                 .url("https://www.baidu.com")
                 .build();
-        String sync = httpRequestClient.getSync(requestWrap);
+        String sync = httpRequestClient.requestSync(requestWrap);
         Assert.assertNotNull(sync);
     }
 }

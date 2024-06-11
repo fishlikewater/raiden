@@ -54,6 +54,68 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     private static final LogInterceptor LOG_INTERCEPTOR = new LogInterceptor();
 
     @Override
+    public <T> CompletableFuture<T> requestAsync(RequestWrap requestWrap) {
+        if (requestWrap.isForm()) {
+            return this.formAsync(requestWrap);
+        }
+        MultipartData multipartData = requestWrap.getMultipartData();
+        if (Objects.nonNull(multipartData) && !multipartData.isFileDownload()) {
+            return this.fileAsync(requestWrap);
+        }
+        switch (requestWrap.getHttpMethod()) {
+            case GET -> {
+                return this.getAsync(requestWrap);
+            }
+            case DELETE -> {
+                return this.deleteAsync(requestWrap);
+            }
+            case POST -> {
+                return this.postAsync(requestWrap);
+            }
+            case PUT -> {
+                return this.putAsync(requestWrap);
+            }
+            case PATCH -> {
+                return this.patchAsync(requestWrap);
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    @Override
+    public <T> T requestSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        if (requestWrap.isForm()) {
+            return this.formSync(requestWrap);
+        }
+        MultipartData multipartData = requestWrap.getMultipartData();
+        if (Objects.nonNull(multipartData) && !multipartData.isFileDownload()) {
+            return this.fileSync(requestWrap);
+        }
+        switch (requestWrap.getHttpMethod()) {
+            case GET -> {
+                return this.getSync(requestWrap);
+            }
+            case DELETE -> {
+                return this.deleteSync(requestWrap);
+            }
+            case POST -> {
+                return this.postSync(requestWrap);
+            }
+            case PUT -> {
+                return this.putSync(requestWrap);
+            }
+            case PATCH -> {
+                return this.patchSync(requestWrap);
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    @Override
     public <T> CompletableFuture<T> getAsync(RequestWrap requestWrap) {
         this.checkHttpMethod(requestWrap, HttpMethod.GET);
         HttpRequest httpRequest = getHttpRequest(requestWrap);
