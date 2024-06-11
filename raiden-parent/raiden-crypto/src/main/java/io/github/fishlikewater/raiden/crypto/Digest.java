@@ -15,31 +15,23 @@
  */
 package io.github.fishlikewater.raiden.crypto;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import java.security.Provider;
-import java.security.Security;
-
 /**
- * <p>
- * {@code ProviderFactory}
- * </p>
- * Provider工厂类
+ * {@code Digest}
+ * 摘要算法
  *
- * @author fishlikewater@126.com
+ * @author zhangxiang
  * @version 1.0.2
- * @since 2024年06月10日 9:23
- **/
-public class ProviderFactory {
+ * @since 2024/06/11
+ */
+public class Digest {
 
     /**
-     * 创建Bouncy Castle 提供者
-     *
-     * @return {@link Provider}
+     * 算法
      */
-    public static Provider createBouncyCastleProvider() {
-        final BouncyCastleProvider provider = new BouncyCastleProvider();
-        Security.insertProviderAt(provider, 0);
-        return provider;
-    }
+    private String algorithm;
+
+    /**
+     * 盐
+     */
+    private String salt;
 }
