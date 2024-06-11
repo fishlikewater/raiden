@@ -12,8 +12,6 @@
     <description>http 请求封装核心包</description>
 
     <properties>
-        <logback.version>1.4.11</logback.version>
-        <junit.version>4.13.1</junit.version>
     </properties>
 
     <dependencies>

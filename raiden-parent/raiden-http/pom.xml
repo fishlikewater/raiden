@@ -15,6 +15,7 @@
 
     <modules>
         <module>http-core</module>
+        <module>http-processor</module>
         <module>raiden-http-spring-boot-starter</module>
     </modules>
 

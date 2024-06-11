@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.http.core.processor;
+package io.github.fishlikewater.raiden.http.processor.check;
 
+import com.google.auto.service.AutoService;
 import io.github.fishlikewater.raiden.http.core.HeadWrap;
 import io.github.fishlikewater.raiden.http.core.annotation.Heads;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -39,9 +41,10 @@ import java.util.TreeSet;
  * 编译检查
  *
  * @author zhangxiang
- * @since 2024/03/19
  * @version 1.0.0
+ * @since 2024/03/19
  */
+@AutoService(Processor.class)
 public class CheckProcessor extends AbstractProcessor {
 
     @Override

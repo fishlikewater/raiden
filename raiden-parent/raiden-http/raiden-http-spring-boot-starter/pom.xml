@@ -12,7 +12,6 @@
     <description>http 请求封装 spring boot自动配置</description>
 
     <dependencies>
-
         <dependency>
             <groupId>io.github.fishlikewater</groupId>
             <artifactId>http-core</artifactId>
