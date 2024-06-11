@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.http.HttpClient;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * {@code RemoteTest}
@@ -34,7 +35,7 @@ public class RemoteTest {
     @Before
     public void before() throws ClassNotFoundException {
         HttpBootStrap.setSelfManager(true);
-        HttpBootStrap.init("io.github.fishlikewater.raidencore.remote");
+        HttpBootStrap.init("io.github.fishlikewater.raiden.http.core.remote");
         HttpBootStrap.registerHttpClient("third", HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build());
         HttpBootStrap.getLogConfig().setEnableLog(false).setLogLevel(LogConfig.LogLevel.BASIC);
     }
@@ -46,4 +47,12 @@ public class RemoteTest {
         Assert.assertNotNull(s);
     }
 
+    @Test
+    public void testAsync() throws InterruptedException {
+        DemoRemote remote = HttpBootStrap.getProxy(DemoRemote.class);
+        CompletableFuture<String> future = remote.baidu5();
+        future.thenAcceptAsync(System.out::println);
+        System.out.println("11");
+        Thread.sleep(2_000);
+    }
 }

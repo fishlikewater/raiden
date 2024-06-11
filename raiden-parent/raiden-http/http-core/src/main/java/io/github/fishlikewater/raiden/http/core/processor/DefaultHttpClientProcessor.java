@@ -15,100 +15,65 @@
  */
 package io.github.fishlikewater.raiden.http.core.processor;
 
-import cn.hutool.core.util.TypeUtil;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.HttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.MultipartData;
-import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.http.HttpClient;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
  * @author fishlikewater@126.com
- * @since 2021年12月26日 18:59
  * @version 1.0.0
+ * @since 2021年12月26日 18:59
  **/
 @Slf4j
 public class DefaultHttpClientProcessor implements HttpClientProcessor {
 
     @SneakyThrows(Throwable.class)
     @Override
-    public Object handler(HttpMethod method,
-                          Map<String, String> headMap,
-                          Class<?> returnType,
-                          Type typeArgument,
-                          boolean form,
-                          String url,
-                          Map<String, String> paramMap,
-                          Object bodyObject,
-                          HttpClientInterceptor interceptor,
-                          MultipartData multipartData,
-                          HttpClient httpClient) {
-        return request(url, method, form, returnType, TypeUtil.getClass(typeArgument),
-                headMap, paramMap, bodyObject, interceptor, multipartData, httpClient);
+    public Object handler(RequestWrap requestWrap) {
+        return request(requestWrap);
     }
 
-    private <T> Object request(String url,
-                               HttpMethod method,
-                               boolean form,
-                               Class<?> returnType,
-                               Class<T> typeArgument,
-                               Map<String, String> headMap,
-                               Map<String, String> paramMap,
-                               Object bodyObject,
-                               HttpClientInterceptor interceptor,
-                               MultipartData multipartData,
-                               HttpClient httpClient) throws IOException, InterruptedException {
-        HttpRequestClient httpRequestClient = HttpBootStrap.getHttpRequestClient();
-        if (returnType.isAssignableFrom(CompletableFuture.class)) {
+    private Object request(RequestWrap requestWrap) throws IOException, InterruptedException {
+        if (requestWrap.getReturnType().isAssignableFrom(CompletableFuture.class)) {
             //异步
-            return async(url, method, form, typeArgument, headMap, paramMap, bodyObject, interceptor, multipartData, httpClient, httpRequestClient);
+            return async(requestWrap);
         } else {
             //同步
-            return sync(url, method, form, returnType, headMap, paramMap, bodyObject, interceptor, multipartData, httpClient, httpRequestClient);
+            return sync(requestWrap);
         }
     }
 
-    private static Object sync(String url,
-                               HttpMethod method,
-                               boolean form,
-                               Class<?> returnType,
-                               Map<String, String> headMap,
-                               Map<String, String> paramMap,
-                               Object bodyObject,
-                               HttpClientInterceptor interceptor,
-                               MultipartData multipartData,
-                               HttpClient httpClient,
-                               HttpRequestClient httpRequestClient) throws IOException, InterruptedException {
-        if (form) {
-            return httpRequestClient.formSync(method, url, headMap, paramMap, bodyObject, returnType, interceptor, httpClient);
+    private static Object sync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        HttpRequestClient httpRequestClient = HttpBootStrap.getHttpRequestClient();
+        if (requestWrap.isForm()) {
+            return httpRequestClient.formSync(requestWrap);
         }
+        MultipartData multipartData = requestWrap.getMultipartData();
         if (Objects.nonNull(multipartData) && !multipartData.isFileDownload()) {
-            return httpRequestClient.fileSync(method, url, headMap, bodyObject, returnType, interceptor, multipartData, httpClient);
+            return httpRequestClient.fileSync(requestWrap);
         }
-        switch (method) {
+        switch (requestWrap.getHttpMethod()) {
             case GET -> {
-                return httpRequestClient.getSync(url, headMap, paramMap, returnType, interceptor, httpClient, multipartData);
+                return httpRequestClient.getSync(requestWrap);
             }
             case DELETE -> {
-                return httpRequestClient.deleteSync(url, headMap, paramMap, returnType, interceptor, httpClient);
+                return httpRequestClient.deleteSync(requestWrap);
             }
             case POST -> {
-                return httpRequestClient.postSync(url, headMap, bodyObject, returnType, interceptor, httpClient);
+                return httpRequestClient.postSync(requestWrap);
             }
             case PUT -> {
-                return httpRequestClient.putSync(url, headMap, bodyObject, returnType, interceptor, httpClient);
+                return httpRequestClient.putSync(requestWrap);
             }
             case PATCH -> {
-                return httpRequestClient.patchSync(url, headMap, bodyObject, returnType, interceptor, httpClient);
+                return httpRequestClient.patchSync(requestWrap);
             }
             default -> {
                 return "";
@@ -116,38 +81,30 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
         }
     }
 
-    private static <T> Object async(String url,
-                                    HttpMethod method,
-                                    boolean form,
-                                    Class<T> typeArgument,
-                                    Map<String, String> headMap,
-                                    Map<String, String> paramMap,
-                                    Object bodyObject,
-                                    HttpClientInterceptor interceptor,
-                                    MultipartData multipartData,
-                                    HttpClient httpClient,
-                                    HttpRequestClient httpRequestClient) {
-        if (form) {
-            return httpRequestClient.formAsync(method, url, headMap, paramMap, bodyObject, typeArgument, interceptor, httpClient);
+    private static <T> Object async(RequestWrap requestWrap) {
+        HttpRequestClient httpRequestClient = HttpBootStrap.getHttpRequestClient();
+        if (requestWrap.isForm()) {
+            return httpRequestClient.formAsync(requestWrap);
         }
+        MultipartData multipartData = requestWrap.getMultipartData();
         if (Objects.nonNull(multipartData) && !multipartData.isFileDownload()) {
-            return httpRequestClient.fileAsync(method, url, headMap, bodyObject, typeArgument, interceptor, multipartData, httpClient);
+            return httpRequestClient.fileAsync(requestWrap);
         }
-        switch (method) {
+        switch (requestWrap.getHttpMethod()) {
             case GET -> {
-                return httpRequestClient.getAsync(url, headMap, paramMap, typeArgument, interceptor, httpClient, multipartData);
+                return httpRequestClient.getAsync(requestWrap);
             }
             case DELETE -> {
-                return httpRequestClient.deleteAsync(url, headMap, paramMap, typeArgument, interceptor, httpClient);
+                return httpRequestClient.deleteAsync(requestWrap);
             }
             case POST -> {
-                return httpRequestClient.postAsync(url, headMap, bodyObject, typeArgument, interceptor, httpClient);
+                return httpRequestClient.postAsync(requestWrap);
             }
             case PUT -> {
-                return httpRequestClient.putAsync(url, headMap, bodyObject, typeArgument, interceptor, httpClient);
+                return httpRequestClient.putAsync(requestWrap);
             }
             case PATCH -> {
-                return httpRequestClient.patchAsync(url, headMap, bodyObject, typeArgument, interceptor, httpClient);
+                return httpRequestClient.patchAsync(requestWrap);
             }
             default -> {
                 return "";

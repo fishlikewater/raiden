@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.http.core.processor;
-
-import io.github.fishlikewater.raiden.http.core.RequestWrap;
+package io.github.fishlikewater.raiden.http.core.constant;
 
 /**
- * @author fishlikewater@126.com
- * @version 1.0.0
- * @since 2021年12月26日 18:42
- **/
-public interface HttpClientProcessor {
+ * {@code HttpConstants}
+ * 一些常量
+ *
+ * @author zhangxiang
+ * @version 1.0.2
+ * @since 2024/06/11
+ */
+public interface HttpConstants {
 
-    /**
-     * 处理请求
-     *
-     * @param requestWrap {@code RequestWrap}
-     * @return 响应数据
-     */
-    Object handler(RequestWrap requestWrap);
+    String DEFAULT = "default";
+
+    String CONTENT_TYPE = "Content-Type";
+
+    String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
+
+    String CONTENT_TYPE_FORM = "application/x-www-form-urlencoded;charset=utf-8";
+
+    String URL_PARAMETER_SPLIT = "?";
+
+    int DEFAULT_READ_LIMIT = 1024 * 1024;
 }

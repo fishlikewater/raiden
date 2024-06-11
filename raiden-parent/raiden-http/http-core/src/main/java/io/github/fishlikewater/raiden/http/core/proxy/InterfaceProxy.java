@@ -19,10 +19,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.StrFormatter;
 import cn.hutool.core.util.ObjectUtil;
-import io.github.fishlikewater.raiden.http.core.HeadWrap;
-import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
-import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
-import io.github.fishlikewater.raiden.http.core.MultipartData;
+import cn.hutool.core.util.TypeUtil;
+import io.github.fishlikewater.raiden.http.core.*;
 import io.github.fishlikewater.raiden.http.core.annotation.Body;
 import io.github.fishlikewater.raiden.http.core.annotation.Heads;
 import io.github.fishlikewater.raiden.http.core.annotation.Param;
@@ -45,8 +43,8 @@ import java.util.Objects;
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月23日 18:30
  * @version 1.0.0
+ * @since 2023年09月23日 18:30
  **/
 public interface InterfaceProxy {
 
@@ -74,43 +72,69 @@ public interface InterfaceProxy {
         final String interceptorClassName = methodArgsBean.getInterceptorClassName();
         final HttpClientInterceptor interceptor = Objects.isNull(interceptorClassName) ? null : HttpBootStrap.getHttpClientInterceptor(interceptorClassName);
         Map<String, String> headMap = methodArgsBean.getHeadMap();
-        Map<String, String> paramMap = MapUtil.newHashMap();
-        Map<String, String> paramPath = MapUtil.newHashMap();
+
         final HttpClient httpClient = HttpBootStrap.getHttpClient(methodArgsBean.getSourceHttpClientName());
-        Object bodyObject = null;
-        MultipartData multipartData = null;
+        RequestWrap requestWrap = RequestWrap.builder()
+                .httpMethod(httpMethod)
+                .returnType(returnType)
+                .typeArgumentClass(TypeUtil.getClass(typeArgument))
+                .form(form)
+                .url(url)
+                .interceptor(interceptor)
+                .httpClient(httpClient)
+                .headMap(headMap)
+                .build();
         /* 构建请求参数*/
         if (ObjectUtil.isNotNull(parameters)) {
-            for (int i = 0; i < parameters.length; i++) {
-                Param param = parameters[i].getAnnotation(Param.class);
-                if (ObjectUtil.isNotNull(param)) {
-                    this.handleParam(paramMap, param, args[i]);
-                    continue;
-                }
-                PathParam pathParam = parameters[i].getAnnotation(PathParam.class);
-                if (ObjectUtil.isNotNull(pathParam)) {
-                    paramPath.put(pathParam.value(), (String) args[i]);
-                    continue;
-                }
-                Body body = parameters[i].getAnnotation(Body.class);
-                if (ObjectUtil.isNotNull(body)) {
-                    bodyObject = args[i];
-                    continue;
-                }
-                Heads heads = parameters[i].getAnnotation(Heads.class);
-                if (ObjectUtil.isNotNull(heads) && args[i] instanceof HeadWrap headWrap) {
-                    headWrap.getHeads().forEach(head -> headMap.put(head.getKey(), head.getValue()));
-                }
-                if (args[i] instanceof MultipartData mData) {
-                    multipartData = mData;
-                }
+            this.buildParams(requestWrap, parameters, args);
+        }
+        return httpClientProcessor.handler(requestWrap);
+    }
+
+    /**
+     * 处理参数
+     *
+     * @param requestWrap 参数包装
+     * @param parameters  方法参数
+     * @param args        参数
+     */
+    default void buildParams(RequestWrap requestWrap, Parameter[] parameters, Object[] args) {
+        Map<String, String> paramMap = MapUtil.newHashMap();
+        Map<String, String> paramPath = MapUtil.newHashMap();
+        Object bodyObject = null;
+        MultipartData multipartData = null;
+        for (int i = 0; i < parameters.length; i++) {
+            Param param = parameters[i].getAnnotation(Param.class);
+            if (ObjectUtil.isNotNull(param)) {
+                this.handleParam(paramMap, param, args[i]);
+                continue;
             }
-            if (!paramPath.isEmpty()) {
-                url = StrFormatter.format(url, paramPath, true);
+            PathParam pathParam = parameters[i].getAnnotation(PathParam.class);
+            if (ObjectUtil.isNotNull(pathParam)) {
+                paramPath.put(pathParam.value(), (String) args[i]);
+                continue;
+            }
+            Body body = parameters[i].getAnnotation(Body.class);
+            if (ObjectUtil.isNotNull(body)) {
+                bodyObject = args[i];
+                continue;
+            }
+            Heads heads = parameters[i].getAnnotation(Heads.class);
+            if (ObjectUtil.isNotNull(heads) && args[i] instanceof HeadWrap headWrap) {
+                Map<String, String> headMap = requestWrap.getHeadMap();
+                headWrap.getHeads().forEach(head -> headMap.put(head.getKey(), head.getValue()));
+            }
+            if (args[i] instanceof MultipartData mData) {
+                multipartData = mData;
             }
         }
-        return httpClientProcessor.handler(httpMethod, headMap, returnType, typeArgument, form, url, paramMap,
-                bodyObject, interceptor, multipartData, httpClient);
+        if (!paramPath.isEmpty()) {
+            String url = StrFormatter.format(requestWrap.getUrl(), paramPath, true);
+            requestWrap.setUrl(url);
+        }
+        requestWrap.setParamMap(paramMap);
+        requestWrap.setBodyObject(bodyObject);
+        requestWrap.setMultipartData(multipartData);
     }
 
     /**

@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core;
 
+import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,8 +26,8 @@ import java.io.IOException;
  * {@code OnlyHttpRequestClientTest}
  *
  * @author fishlikewater@126.com
- * @since 2024/03/20
  * @version 1.0.0
+ * @since 2024/03/20
  */
 public class OnlyHttpRequestClientTest {
 
@@ -42,7 +43,12 @@ public class OnlyHttpRequestClientTest {
     @Test
     public void testClient() throws InterruptedException, IOException {
         HttpRequestClient httpRequestClient = HttpBootStrap.getHttpRequestClient();
-        String sync = httpRequestClient.getSync("https://www.baidu.com", String.class);
+        RequestWrap requestWrap = RequestWrap.builder()
+                .httpMethod(HttpMethod.GET)
+                .returnType(String.class)
+                .url("https://www.baidu.com")
+                .build();
+        String sync = httpRequestClient.getSync(requestWrap);
         Assert.assertNotNull(sync);
     }
 }

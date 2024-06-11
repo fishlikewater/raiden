@@ -65,6 +65,17 @@ public final class ObjectUtils {
     }
 
     /**
+     * 判断两个对象是否不相等
+     *
+     * @param t1 对象1
+     * @param t2 对象2
+     * @return true:相等 false:不相等
+     */
+    public static <T> boolean notEquals(T t1, T t2) {
+        return !Objects.equals(t1, t2);
+    }
+
+    /**
      * 要求对象不能为null
      *
      * @param obj 对象

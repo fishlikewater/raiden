@@ -19,6 +19,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.http.core.MultipartData;
+import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
+import io.github.fishlikewater.raiden.http.core.exception.RaidenHttpException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,8 +36,8 @@ import java.util.stream.Collectors;
  * 文件上传处理器
  *
  * @author fishlikewater@126.com
- * @since 2023年09月27日 9:38
  * @version 1.0.0
+ * @since 2023年09月27日 9:38
  **/
 public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
 
@@ -72,7 +74,7 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
                 contentLength += bytes.length;
                 contentLength += file.length();
             } catch (Exception e) {
-                throw new RuntimeException("构建文件数据异常", e);
+                throw new RaidenHttpException("build file data error", e);
             }
         }
         endBytes = (StringUtils.format("\r\n--{}--", boundary)).getBytes();
@@ -91,19 +93,18 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
         final ByteBuffer paramBuffer = copy2(paramByte, paramByte.length);
         submissionPublisher.submit(paramBuffer);
         int i = 0;
-        int readLimit = 1024 * 1024;
         for (Path path : paths) {
             final byte[] bytes = fileParams.get(i);
             submissionPublisher.submit(copy2(bytes, bytes.length));
             final File file = FileUtil.file(path.toFile());
             try (FileInputStream fileInputStream = new FileInputStream(file)) {
                 int readCount;
-                byte[] readByte = new byte[readLimit];
+                byte[] readByte = new byte[HttpConstants.DEFAULT_READ_LIMIT];
                 while ((readCount = fileInputStream.read(readByte)) != -1) {
                     submissionPublisher.submit(copy2(readByte, readCount));
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RaidenHttpException(e);
             }
             i++;
         }

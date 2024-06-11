@@ -18,8 +18,11 @@ package io.github.fishlikewater.raiden.http.core;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.json.JSONUtil;
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
+import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
+import io.github.fishlikewater.raiden.http.core.exception.RaidenHttpException;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.LogInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.MultiFileBodyProvider;
@@ -51,471 +54,161 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     private static final LogInterceptor LOG_INTERCEPTOR = new LogInterceptor();
 
     @Override
-    public <T> CompletableFuture<T> getAsync(String url,
-                                             Map<String, String> headMap,
-                                             Map<String, String> paramMap,
-                                             Class<T> typeArgument,
-                                             HttpClientInterceptor interceptor,
-                                             HttpClient httpClient,
-                                             MultipartData multipartData) {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
+    public <T> CompletableFuture<T> getAsync(RequestWrap requestWrap) {
+        this.checkHttpMethod(requestWrap, HttpMethod.GET);
+        HttpRequest httpRequest = getHttpRequest(requestWrap);
+        return handlerAsync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> T getSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.checkHttpMethod(requestWrap, HttpMethod.GET);
+        HttpRequest httpRequest = getHttpRequest(requestWrap);
+        return handlerSync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> deleteAsync(RequestWrap requestWrap) {
+        this.checkHttpMethod(requestWrap, HttpMethod.DELETE);
+        HttpRequest httpRequest = getHttpRequest(requestWrap);
+        return handlerAsync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> T deleteSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.checkHttpMethod(requestWrap, HttpMethod.DELETE);
+        HttpRequest httpRequest = getHttpRequest(requestWrap);
+        return handlerSync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> postAsync(RequestWrap requestWrap) {
+        this.checkHttpMethod(requestWrap, HttpMethod.POST);
+        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
+        return handlerAsync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> T postSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.checkHttpMethod(requestWrap, HttpMethod.POST);
+        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
+        return handlerSync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> putAsync(RequestWrap requestWrap) {
+        this.checkHttpMethod(requestWrap, HttpMethod.PUT);
+        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
+        return handlerAsync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> T putSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.checkHttpMethod(requestWrap, HttpMethod.PUT);
+        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
+        return handlerSync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> patchAsync(RequestWrap requestWrap) {
+        this.checkHttpMethod(requestWrap, HttpMethod.PATCH);
+        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
+        return handlerAsync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> T patchSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.checkHttpMethod(requestWrap, HttpMethod.PATCH);
+        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
+        return handlerSync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> fileAsync(RequestWrap requestWrap) {
+        HttpRequest httpRequest = getFileHttpRequest(requestWrap);
+        return handlerAsync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> T fileSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        HttpRequest httpRequest = getFileHttpRequest(requestWrap);
+        return handlerSync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> formAsync(RequestWrap requestWrap) {
+        HttpRequest httpRequest = getFormHttpRequest(requestWrap);
+        return handlerAsync(requestWrap, httpRequest);
+    }
+
+    @Override
+    public <T> T formSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        HttpRequest httpRequest = getFormHttpRequest(requestWrap);
+        return handlerSync(requestWrap, httpRequest);
+    }
+
+    // ---------------------------------------------------------------- private
+
+    private void checkHttpMethod(RequestWrap requestWrap, HttpMethod httpMethod) {
+        if (ObjectUtils.notEquals(requestWrap.getHttpMethod(), httpMethod)) {
+            throw new RaidenHttpException("The current calling method only supports {}", httpMethod.name());
         }
-        HttpRequest httpRequest = getHttpRequest(HttpMethod.GET, url, headMap, paramMap, interceptor);
-        return handlerAsync(httpRequest, typeArgument, interceptor, multipartData, httpClient);
     }
 
-    @Override
-    public <T> CompletableFuture<T> getAsync(String url,
-                                             Map<String, String> headMap,
-                                             Map<String, String> paramMap,
-                                             Class<T> typeArgument,
-                                             HttpClientInterceptor interceptor,
-                                             HttpClient httpClient) {
-        return getAsync(url, headMap, paramMap, typeArgument, null, httpClient, null);
+    /**
+     * 生成一个随机的boundary字符串
+     *
+     * @return {@link String}
+     */
+    private String boundaryString() {
+        return StringUtils.format("Boundary {}", System.currentTimeMillis());
     }
 
-    @Override
-    public <T> CompletableFuture<T> getAsync(String url,
-                                             Map<String, String> headMap,
-                                             Map<String, String> paramMap,
-                                             Class<T> typeArgument,
-                                             HttpClient httpClient) {
-        return getAsync(url, headMap, paramMap, typeArgument, null, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> getAsync(String url, Class<T> typeArgument) {
-        return getAsync(url, null, null, typeArgument, null, null);
-    }
-
-    @Override
-    public <T> T getSync(String url,
-                         Map<String, String> headMap,
-                         Map<String, String> paramMap,
-                         Class<T> returnType,
-                         HttpClientInterceptor interceptor,
-                         HttpClient httpClient,
-                         MultipartData multipartData) throws IOException, InterruptedException {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
+    private HttpRequest getHttpRequest(RequestWrap requestWrap) {
+        URI uri = URI.create(this.getRequestUrl(requestWrap.getUrl(), requestWrap.getParamMap()));
+        final HttpRequest.Builder builder = HttpRequest.newBuilder().uri(uri);
+        if (Objects.nonNull(requestWrap.getHeadMap())) {
+            requestWrap.getHeadMap().forEach(builder::header);
         }
-        HttpRequest httpRequest = getHttpRequest(HttpMethod.GET, url, headMap, paramMap, interceptor);
-        return handlerSync(httpRequest, returnType, interceptor, multipartData, httpClient);
-    }
-
-    @Override
-    public <T> T getSync(String url,
-                         Map<String, String> headMap,
-                         Map<String, String> paramMap,
-                         Class<T> returnType,
-                         HttpClientInterceptor interceptor,
-                         HttpClient httpClient) throws IOException, InterruptedException {
-        return getSync(url, headMap, paramMap, returnType, null, httpClient, null);
-    }
-
-    @Override
-    public <T> T getSync(String url,
-                         Map<String, String> headMap,
-                         Map<String, String> paramMap,
-                         Class<T> returnType,
-                         HttpClient httpClient) throws IOException, InterruptedException {
-        return getSync(url, headMap, paramMap, returnType, null, httpClient);
-    }
-
-    @Override
-    public <T> T getSync(String url, Class<T> returnType) throws IOException, InterruptedException {
-        return getSync(url, null, null, returnType, null, null);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> deleteAsync(String url,
-                                                Map<String, String> headMap,
-                                                Map<String, String> paramMap,
-                                                Class<T> typeArgument,
-                                                HttpClientInterceptor interceptor,
-                                                HttpClient httpClient) {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getHttpRequest(HttpMethod.DELETE, url, headMap, paramMap, interceptor);
-        return handlerAsync(httpRequest, typeArgument, interceptor, null, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> deleteAsync(String url,
-                                                Map<String, String> headMap,
-                                                Map<String, String> paramMap,
-                                                Class<T> typeArgument,
-                                                HttpClient httpClient) {
-        return deleteAsync(url, headMap, paramMap, typeArgument, null, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> deleteAsync(String url, Class<T> returnType) {
-        return deleteAsync(url, null, null, returnType, null, null);
-    }
-
-    @Override
-    public <T> T deleteSync(String url,
-                            Map<String, String> headMap,
-                            Map<String, String> paramMap,
-                            Class<T> returnType,
-                            HttpClientInterceptor interceptor,
-                            HttpClient httpClient) throws IOException, InterruptedException {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getHttpRequest(HttpMethod.DELETE, url, headMap, paramMap, interceptor);
-        return handlerSync(httpRequest, returnType, interceptor, null, httpClient);
-    }
-
-    @Override
-    public <T> T deleteSync(String url,
-                            Map<String, String> headMap,
-                            Map<String, String> paramMap,
-                            Class<T> returnType,
-                            HttpClient httpClient) throws IOException, InterruptedException {
-        return deleteSync(url, headMap, paramMap, returnType, null, httpClient);
-    }
-
-    @Override
-    public <T> T deleteSync(String url, Class<T> returnType) throws IOException, InterruptedException {
-        return deleteSync(url, null, null, returnType, null, null);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> postAsync(String url,
-                                              Map<String, String> headMap,
-                                              Object bodyObject,
-                                              Class<T> typeArgument,
-                                              HttpClientInterceptor interceptor,
-                                              HttpClient httpClient) {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getHttpRequest(HttpMethod.POST, url, headMap, bodyObject, interceptor);
-        return handlerAsync(httpRequest, typeArgument, interceptor, null, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> postAsync(String url,
-                                              Map<String, String> headMap,
-                                              Object bodyObject,
-                                              Class<T> typeArgument,
-                                              HttpClient httpClient) {
-        return postAsync(url, headMap, bodyObject, typeArgument, null, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> postAsync(String url,
-                                              Object bodyObject,
-                                              Class<T> typeArgument) {
-        return postAsync(url, null, bodyObject, typeArgument, null, null);
-    }
-
-    @Override
-    public <T> T postSync(String url,
-                          Map<String, String> headMap,
-                          Object bodyObject,
-                          Class<T> returnType,
-                          HttpClientInterceptor interceptor,
-                          HttpClient httpClient) throws IOException, InterruptedException {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getHttpRequest(HttpMethod.POST, url, headMap, bodyObject, interceptor);
-        return handlerSync(httpRequest, returnType, interceptor, null, httpClient);
-    }
-
-    @Override
-    public <T> T postSync(String url,
-                          Map<String, String> headMap,
-                          Object bodyObject,
-                          Class<T> returnType,
-                          HttpClient httpClient) throws IOException, InterruptedException {
-        return postSync(url, headMap, bodyObject, returnType, null, httpClient);
-    }
-
-    @Override
-    public <T> T postSync(String url,
-                          Object bodyObject,
-                          Class<T> returnType) throws IOException, InterruptedException {
-        return postSync(url, null, bodyObject, returnType, null, null);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> putAsync(String url,
-                                             Map<String, String> headMap,
-                                             Object bodyObject,
-                                             Class<T> typeArgument,
-                                             HttpClientInterceptor interceptor,
-                                             HttpClient httpClient) {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getHttpRequest(HttpMethod.PUT, url, headMap, bodyObject, interceptor);
-        return handlerAsync(httpRequest, typeArgument, interceptor, null, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> putAsync(String url,
-                                             Map<String, String> headMap,
-                                             Object bodyObject,
-                                             Class<T> typeArgument,
-                                             HttpClient httpClient) {
-        return putAsync(url, headMap, bodyObject, typeArgument, null, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> putAsync(String url,
-                                             Object bodyObject,
-                                             Class<T> typeArgument) {
-        return putAsync(url, null, bodyObject, typeArgument, null, null);
-    }
-
-    @Override
-    public <T> T putSync(String url,
-                         Map<String, String> headMap,
-                         Object bodyObject,
-                         Class<T> returnType,
-                         HttpClientInterceptor interceptor,
-                         HttpClient httpClient) throws IOException, InterruptedException {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getHttpRequest(HttpMethod.PUT, url, headMap, bodyObject, interceptor);
-        return handlerSync(httpRequest, returnType, interceptor, null, httpClient);
-    }
-
-    @Override
-    public <T> T putSync(String url,
-                         Map<String, String> headMap,
-                         Object bodyObject,
-                         Class<T> returnType,
-                         HttpClient httpClient) throws IOException, InterruptedException {
-        return putSync(url, headMap, bodyObject, returnType, null, httpClient);
-    }
-
-    @Override
-    public <T> T putSync(String url,
-                         Object bodyObject,
-                         Class<T> returnType) throws IOException, InterruptedException {
-        return putSync(url, null, bodyObject, returnType, null, null);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> patchAsync(String url,
-                                               Map<String, String> headMap,
-                                               Object bodyObject,
-                                               Class<T> typeArgument,
-                                               HttpClientInterceptor interceptor,
-                                               HttpClient httpClient) {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getHttpRequest(HttpMethod.PATCH, url, headMap, bodyObject, interceptor);
-        return handlerAsync(httpRequest, typeArgument, interceptor, null, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> patchAsync(String url,
-                                               Map<String, String> headMap,
-                                               Object bodyObject,
-                                               Class<T> typeArgument,
-                                               HttpClient httpClient) {
-        return patchAsync(url, headMap, bodyObject, typeArgument, null, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> patchAsync(String url,
-                                               Object bodyObject,
-                                               Class<T> typeArgument) {
-        return patchAsync(url, null, bodyObject, typeArgument, null, null);
-    }
-
-    @Override
-    public <T> T patchSync(String url,
-                           Map<String, String> headMap,
-                           Object bodyObject,
-                           Class<T> returnType,
-                           HttpClientInterceptor interceptor,
-                           HttpClient httpClient) throws IOException, InterruptedException {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getHttpRequest(HttpMethod.PATCH, url, headMap, bodyObject, interceptor);
-        return handlerSync(httpRequest, returnType, interceptor, null, httpClient);
-    }
-
-    @Override
-    public <T> T patchSync(String url,
-                           Map<String, String> headMap,
-                           Object bodyObject,
-                           Class<T> returnType,
-                           HttpClient httpClient) throws IOException, InterruptedException {
-        return patchSync(url, headMap, bodyObject, returnType, null, httpClient);
-    }
-
-    @Override
-    public <T> T patchSync(String url,
-                           Object bodyObject,
-                           Class<T> returnType) throws IOException, InterruptedException {
-        return patchSync(url, null, bodyObject, returnType, null, null);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> fileAsync(HttpMethod method,
-                                              String url,
-                                              Map<String, String> headMap,
-                                              Object bodyObject,
-                                              Class<T> typeArgument,
-                                              HttpClientInterceptor interceptor,
-                                              MultipartData multipartData,
-                                              HttpClient httpClient) {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getFileHttpRequest(method, url, headMap, bodyObject, multipartData, interceptor);
-        return handlerAsync(httpRequest, typeArgument, interceptor, multipartData, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> fileAsync(HttpMethod method,
-                                              String url,
-                                              Map<String, String> headMap,
-                                              Object bodyObject,
-                                              Class<T> typeArgument,
-                                              MultipartData multipartData,
-                                              HttpClient httpClient) {
-        return fileAsync(method, url, headMap, bodyObject, typeArgument, null, multipartData, httpClient);
-    }
-
-    @Override
-    public <T> T fileSync(HttpMethod method,
-                          String url,
-                          Map<String, String> headMap,
-                          Object bodyObject,
-                          Class<T> returnType,
-                          HttpClientInterceptor interceptor,
-                          MultipartData multipartData,
-                          HttpClient httpClient) throws IOException, InterruptedException {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getFileHttpRequest(method, url, headMap, bodyObject, multipartData, interceptor);
-        return handlerSync(httpRequest, returnType, interceptor, multipartData, httpClient);
-    }
-
-    @Override
-    public <T> T fileSync(HttpMethod method,
-                          String url,
-                          Map<String, String> headMap,
-                          Object bodyObject,
-                          Class<T> returnType,
-                          MultipartData multipartData,
-                          HttpClient httpClient) throws IOException, InterruptedException {
-        return fileSync(method, url, headMap, bodyObject, returnType, null, multipartData, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> formAsync(HttpMethod method,
-                                              String url,
-                                              Map<String, String> headMap,
-                                              Map<String, String> paramMap,
-                                              Object bodyObject,
-                                              Class<T> typeArgument,
-                                              HttpClientInterceptor interceptor,
-                                              HttpClient httpClient) {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getFormHttpRequest(method, url, headMap, paramMap, bodyObject, interceptor);
-        return handlerAsync(httpRequest, typeArgument, interceptor, null, httpClient);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> formAsync(HttpMethod method,
-                                              String url,
-                                              Map<String, String> headMap,
-                                              Map<String, String> paramMap,
-                                              Object bodyObject, Class<T> typeArgument,
-                                              HttpClient httpClient) {
-        return formAsync(method, url, headMap, paramMap, bodyObject, typeArgument, null, httpClient);
-    }
-
-    @Override
-    public <T> T formSync(HttpMethod method,
-                          String url,
-                          Map<String, String> headMap,
-                          Map<String, String> paramMap,
-                          Object bodyObject,
-                          Class<T> returnType,
-                          HttpClientInterceptor interceptor,
-                          HttpClient httpClient) throws IOException, InterruptedException {
-        if (Objects.isNull(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient("default");
-        }
-        HttpRequest httpRequest = getFormHttpRequest(method, url, headMap, paramMap, bodyObject, interceptor);
-        return handlerSync(httpRequest, returnType, interceptor, null, httpClient);
-    }
-
-    @Override
-    public <T> T formSync(HttpMethod method,
-                          String url,
-                          Map<String, String> headMap,
-                          Map<String, String> paramMap,
-                          Object bodyObject,
-                          Class<T> returnType,
-                          HttpClient httpClient) throws IOException, InterruptedException {
-        return formSync(method, url, headMap, paramMap, bodyObject, returnType, null, httpClient);
-    }
-
-    private HttpRequest getHttpRequest(HttpMethod method,
-                                       String url,
-                                       Map<String, String> headMap,
-                                       Map<String, String> paramMap,
-                                       HttpClientInterceptor interceptor) {
-        final HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(this.getRequestUrl(url, paramMap)));
-        if (Objects.nonNull(headMap)) {
-            headMap.forEach(builder::header);
-        }
-        if (Objects.requireNonNull(method) == HttpMethod.DELETE) {
+        if (requestWrap.getHttpMethod() == HttpMethod.DELETE) {
             builder.DELETE();
         } else {
             builder.GET();
         }
         HttpRequest httpRequest = builder.build();
-        httpRequest = requestBefore(interceptor, httpRequest);
+        httpRequest = requestBefore(requestWrap.getInterceptor(), httpRequest);
         printLog(httpRequest);
         return httpRequest;
     }
 
-    private HttpRequest getHttpRequest(HttpMethod method,
-                                       String url,
-                                       Map<String, String> headMap,
-                                       Object bodyObject,
-                                       HttpClientInterceptor interceptor) {
-        HttpRequest.BodyPublisher requestBody = HttpRequest.BodyPublishers.ofString(Objects.isNull(bodyObject) ? "" : JSONUtil.toJsonStr(bodyObject));
-        final HttpRequest.Builder builder = HttpRequest.newBuilder().method(method.name(), requestBody).uri(URI.create(url));
+    private HttpRequest getHttpRequestBody(RequestWrap requestWrap) {
+        String body = Objects.isNull(requestWrap.getBodyObject()) ? "" : JSONUtil.toJsonStr(requestWrap.getBodyObject());
+        HttpRequest.BodyPublisher requestBody = HttpRequest.BodyPublishers.ofString(body);
+        final HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .method(requestWrap.getHttpMethod().name(), requestBody)
+                .uri(URI.create(requestWrap.getUrl()));
+
+        Map<String, String> headMap = requestWrap.getHeadMap();
         if (Objects.nonNull(headMap)) {
             headMap.forEach(builder::header);
         }
-        if (Objects.isNull(headMap.get("Content-Type"))) {
-            builder.header("Content-Type", "application/json;charset=utf-8");
+        if (Objects.isNull(headMap.get(HttpConstants.CONTENT_TYPE))) {
+            builder.header(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
         }
         HttpRequest httpRequest = builder.build();
-        httpRequest = requestBefore(interceptor, httpRequest);
+        httpRequest = requestBefore(requestWrap.getInterceptor(), httpRequest);
         printLog(httpRequest);
         return httpRequest;
     }
 
-    private HttpRequest getFormHttpRequest(HttpMethod method,
-                                           String url,
-                                           Map<String, String> headMap,
-                                           Map<String, String> paramMap,
-                                           Object bodyObject,
-                                           HttpClientInterceptor interceptor) {
+    private HttpRequest getFormHttpRequest(RequestWrap requestWrap) {
+        String url = requestWrap.getUrl();
+        Map<String, String> headMap = requestWrap.getHeadMap();
+        Map<String, String> paramMap = requestWrap.getParamMap();
+        Object bodyObject = requestWrap.getBodyObject();
+        if (Objects.isNull(requestWrap.getHttpClient())) {
+            requestWrap.setHttpClient(HttpBootStrap.getHttpClient(HttpConstants.DEFAULT));
+        }
         if (Objects.nonNull(paramMap) && !paramMap.isEmpty()) {
             url = this.getRequestUrl(url, paramMap);
         }
@@ -537,65 +230,55 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             }
         }
         requestBody = HttpRequest.BodyPublishers.ofString(params.toString());
-        final HttpRequest.Builder builder = HttpRequest.newBuilder().method(method.name(), requestBody).uri(URI.create(url));
+        final HttpRequest.Builder builder = HttpRequest.newBuilder().method(requestWrap.getHttpMethod().name(), requestBody).uri(URI.create(url));
         if (Objects.nonNull(headMap)) {
             headMap.forEach(builder::header);
         }
-        if (Objects.isNull(headMap.get("Content-Type"))) {
-            builder.header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        if (Objects.isNull(headMap.get(HttpConstants.CONTENT_TYPE))) {
+            builder.header(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_FORM);
         }
         HttpRequest httpRequest = builder.build();
-        httpRequest = requestBefore(interceptor, httpRequest);
+        httpRequest = requestBefore(requestWrap.getInterceptor(), httpRequest);
         printLog(httpRequest);
         return httpRequest;
     }
 
-    private HttpRequest getFileHttpRequest(HttpMethod method,
-                                           String url,
-                                           Map<String, String> headMap,
-                                           Object bodyObject,
-                                           MultipartData multipartData,
-                                           HttpClientInterceptor interceptor) {
-        final String boundaryString = boundaryString();
-        final HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(url));
+    private HttpRequest getFileHttpRequest(RequestWrap requestWrap) {
+        if (Objects.isNull(requestWrap.getHttpClient())) {
+            requestWrap.setHttpClient(HttpBootStrap.getHttpClient(HttpConstants.DEFAULT));
+        }
+        final String boundaryString = this.boundaryString();
+        Map<String, String> headMap = requestWrap.getHeadMap();
+        final HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(requestWrap.getUrl()));
         if (Objects.nonNull(headMap)) {
             headMap.forEach(builder::header);
         }
         builder.header("Content-Type", StringUtils.format("multipart/form-data; boundary={}", boundaryString));
-        HttpRequest.BodyPublisher requestBody = new MultiFileBodyProvider(multipartData, bodyObject, boundaryString);
-        builder.method(method.name(), requestBody);
+        HttpRequest.BodyPublisher requestBody = new MultiFileBodyProvider(requestWrap.getMultipartData(), requestWrap.getBodyObject(), boundaryString);
+        builder.method(requestWrap.getHttpMethod().name(), requestBody);
         HttpRequest httpRequest = builder.build();
-        httpRequest = requestBefore(interceptor, httpRequest);
+        httpRequest = requestBefore(requestWrap.getInterceptor(), httpRequest);
         printLog(httpRequest);
         return httpRequest;
     }
 
-    /**
-     * 生成一个随机的boundary字符串
-     *
-     * @return {@link String}
-     */
-    private static String boundaryString() {
-        return StringUtils.format("Boundary {}", System.currentTimeMillis());
-    }
-
     @SuppressWarnings("unchecked")
-    private <T> CompletableFuture<T> handlerAsync(HttpRequest httpRequest,
-                                                  Class<T> typeArgumentClass,
-                                                  HttpClientInterceptor interceptor,
-                                                  MultipartData multipartData,
-                                                  HttpClient httpClient) {
-
+    private <T> CompletableFuture<T> handlerAsync(RequestWrap requestWrap, HttpRequest httpRequest) {
+        Class<?> typeArgumentClass = requestWrap.getTypeArgumentClass();
+        HttpClientInterceptor interceptor = requestWrap.getInterceptor();
+        MultipartData multipartData = requestWrap.getMultipartData();
+        HttpClient httpClient = requestWrap.getHttpClient();
+        if (ObjectUtils.isNullOrEmpty(httpClient)) {
+            httpClient = HttpBootStrap.getHttpClient(HttpConstants.DEFAULT);
+        }
         if (typeArgumentClass.isAssignableFrom(byte[].class)) {
-            CompletableFuture<byte[]> completableFuture = httpClient.sendAsync(
-                    httpRequest,
-                    HttpResponse.BodyHandlers.ofByteArray()).thenApply(res -> requestAfter(res, interceptor).body()
-            );
+            CompletableFuture<byte[]> completableFuture = httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofByteArray())
+                    .thenApply(res -> requestAfter(res, interceptor).body());
             return (CompletableFuture<T>) completableFuture;
         }
         if (typeArgumentClass.isAssignableFrom(Path.class) && Objects.nonNull(multipartData)) {
             final Path path = multipartData.getPath();
-            Assert.notNull(path, "请传入文件保存路径");
+            Assert.notNull(path, "Please pass in the file save path");
             if (path.toFile().isDirectory()) {
                 httpClient
                         .sendAsync(httpRequest, HttpResponse.BodyHandlers.ofFileDownload(path, multipartData.getOpenOptions()))
@@ -612,19 +295,21 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T handlerSync(HttpRequest httpRequest,
-                              Class<T> returnType,
-                              HttpClientInterceptor interceptor,
-                              MultipartData multipartData,
-                              HttpClient httpClient) throws IOException, InterruptedException {
-
+    private <T> T handlerSync(RequestWrap requestWrap, HttpRequest httpRequest) throws IOException, InterruptedException {
+        Class<?> returnType = requestWrap.getReturnType();
+        HttpClient httpClient = requestWrap.getHttpClient();
+        MultipartData multipartData = requestWrap.getMultipartData();
+        HttpClientInterceptor interceptor = requestWrap.getInterceptor();
+        if (ObjectUtils.isNullOrEmpty(httpClient)) {
+            httpClient = HttpBootStrap.getHttpClient(HttpConstants.DEFAULT);
+        }
         if (returnType.isAssignableFrom(byte[].class)) {
             final HttpResponse<byte[]> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
             return requestAfter((HttpResponse<T>) response, interceptor).body();
         }
         if (returnType.isAssignableFrom(Path.class) && Objects.nonNull(multipartData)) {
             final Path path = multipartData.getPath();
-            Assert.notNull(path, "请传入文件保存路径");
+            Assert.notNull(path, "Please pass in the file save path");
             HttpResponse<Path> response;
             if (path.toFile().isDirectory()) {
                 response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofFileDownload(path, multipartData.getOpenOptions()));
@@ -665,7 +350,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             return url;
         } else {
             StringBuilder newUrl = new StringBuilder(url);
-            if (!url.contains("?")) {
+            if (!url.contains(HttpConstants.URL_PARAMETER_SPLIT)) {
                 newUrl.append("?rd=").append(Math.random());
             }
             for (Map.Entry<String, String> item : map.entrySet()) {
@@ -673,7 +358,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
                     String param = StringUtils.format("&{}={}", item.getKey().trim(), URLEncoder.encode(item.getValue().trim(), StandardCharsets.UTF_8));
                     newUrl.append(param);
                 } catch (Exception e) {
-                    log.error("拼接参数异常", e);
+                    throw new RaidenHttpException(e, "join params error");
                 }
             }
             return newUrl.toString();
