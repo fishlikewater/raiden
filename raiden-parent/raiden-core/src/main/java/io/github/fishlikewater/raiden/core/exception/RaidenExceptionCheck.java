@@ -25,7 +25,7 @@ package io.github.fishlikewater.raiden.core.exception;
  */
 public final class RaidenExceptionCheck extends AbstractExceptionCheck {
 
-    public static final RaidenExceptionCheck INSTANCE = RaidenExceptionCheckHolder.check;
+    public static final RaidenExceptionCheck INSTANCE = new RaidenExceptionCheck();
 
     private RaidenExceptionCheck() {
 
@@ -34,10 +34,5 @@ public final class RaidenExceptionCheck extends AbstractExceptionCheck {
     @Override
     protected AbstractException createException(Throwable e, String message, Object... args) {
         return new RaidenException(e, message, args);
-    }
-
-    public static class RaidenExceptionCheckHolder {
-
-        public static RaidenExceptionCheck check = new RaidenExceptionCheck();
     }
 }

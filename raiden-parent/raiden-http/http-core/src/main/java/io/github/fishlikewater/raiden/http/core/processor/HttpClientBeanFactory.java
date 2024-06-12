@@ -16,6 +16,8 @@
 package io.github.fishlikewater.raiden.http.core.processor;
 
 import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
+import io.github.fishlikewater.raiden.http.core.annotation.HttpServer;
+import io.github.fishlikewater.raiden.http.core.annotation.Interceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 
 import java.lang.reflect.Method;
@@ -41,8 +43,10 @@ public interface HttpClientBeanFactory {
     /**
      * 缓存方法
      * @param method 方法
+     * @param httpServer HttpServer注解
+     * @param interceptor Interceptor注解
      */
-    void cacheMethod(Method method);
+    void cacheMethod(Method method, HttpServer httpServer, Interceptor interceptor);
 
     /**
      * 获取代理对象
@@ -70,5 +74,20 @@ public interface HttpClientBeanFactory {
      * 缓存拦截器
      * @param httpClientInterceptor 拦截器
      */
-    void setHttpClientInterceptor(HttpClientInterceptor httpClientInterceptor);
+    void registerHttpClientInterceptor(HttpClientInterceptor httpClientInterceptor);
+
+    /**
+     * 获取异常处理器
+     *
+     * @param name 异常处理器名
+     * @return 异常处理器
+     */
+    ExceptionProcessor getExceptionProcessor(String name);
+
+    /**
+     * 缓存异常处理器
+     *
+     * @param exceptionProcessor 异常处理器
+     */
+    void registerExceptionProcessor(ExceptionProcessor exceptionProcessor);
 }

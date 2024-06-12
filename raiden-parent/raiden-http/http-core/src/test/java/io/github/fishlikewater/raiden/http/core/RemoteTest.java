@@ -15,7 +15,6 @@
  */
 package io.github.fishlikewater.raiden.http.core;
 
-import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
 import io.github.fishlikewater.raiden.http.core.remote.DemoRemote;
 import org.junit.Assert;
 import org.junit.Before;
@@ -43,7 +42,6 @@ public class RemoteTest {
 
     @Test
     public void test() {
-        HttpExceptionCheck.INSTANCE.throwUnchecked(new IllegalArgumentException(), "test is {}", "null");
         DemoRemote remote = HttpBootStrap.getProxy(DemoRemote.class);
         String s = remote.baidu();
         Assert.assertNotNull(s);
@@ -55,6 +53,6 @@ public class RemoteTest {
         CompletableFuture<String> future = remote.baidu5();
         future.thenAcceptAsync(System.out::println);
         System.out.println("11");
-        Thread.sleep(2_000);
+        Thread.sleep(30_000);
     }
 }

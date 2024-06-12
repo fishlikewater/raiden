@@ -26,7 +26,6 @@ import io.github.fishlikewater.raiden.http.core.annotation.Heads;
 import io.github.fishlikewater.raiden.http.core.annotation.Param;
 import io.github.fishlikewater.raiden.http.core.annotation.PathParam;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.HttpClientBeanFactory;
 import io.github.fishlikewater.raiden.http.core.processor.HttpClientProcessor;
 
@@ -69,8 +68,6 @@ public interface InterfaceProxy {
         String url = methodArgsBean.getUrl();
         final Class<?> returnType = methodArgsBean.getReturnType();
         final Type typeArgument = methodArgsBean.getTypeArgument();
-        final String interceptorClassName = methodArgsBean.getInterceptorClassName();
-        final HttpClientInterceptor interceptor = Objects.isNull(interceptorClassName) ? null : HttpBootStrap.getHttpClientInterceptor(interceptorClassName);
         Map<String, String> headMap = methodArgsBean.getHeadMap();
 
         final HttpClient httpClient = HttpBootStrap.getHttpClient(methodArgsBean.getSourceHttpClientName());
@@ -80,7 +77,8 @@ public interface InterfaceProxy {
                 .typeArgumentClass(TypeUtil.getClass(typeArgument))
                 .form(form)
                 .url(url)
-                .interceptor(interceptor)
+                .interceptor(methodArgsBean.getInterceptor())
+                .exceptionProcessor(methodArgsBean.getExceptionProcessor())
                 .httpClient(httpClient)
                 .headMap(headMap)
                 .build();

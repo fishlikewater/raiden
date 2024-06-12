@@ -16,8 +16,13 @@
 package io.github.fishlikewater.raiden.http.core;
 
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
@@ -29,10 +34,13 @@ import java.util.Map;
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月24日 9:37
  * @version 1.0.0
+ * @since 2023年09月24日 9:37
  **/
 @Data
+@Builder
+@Accessors(chain = true)
+@NoArgsConstructor
 @AllArgsConstructor
 public class MethodArgsBean {
 
@@ -44,7 +52,7 @@ public class MethodArgsBean {
 
     private String sourceHttpClientName;
 
-    private String interceptorClassName;
+    private HttpClientInterceptor interceptor;
 
     private HttpMethod requestMethod;
 
@@ -59,4 +67,11 @@ public class MethodArgsBean {
     private Class<?> returnType;
 
     private Type typeArgument;
+
+    /**
+     * 错误处理器
+     *
+     * @since 1.0.2
+     */
+    private ExceptionProcessor exceptionProcessor;
 }

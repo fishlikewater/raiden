@@ -51,54 +51,23 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
     ConcurrentHashMap<String, Object> proxyCache = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, HttpClientInterceptor> interceptorCache = new ConcurrentHashMap<>();
 
+    ConcurrentHashMap<String, ExceptionProcessor> exceptionProcessorCache = new ConcurrentHashMap<>();
+
     @Override
     public MethodArgsBean getMethodArgsBean(String methodName) {
         return methodCache.get(methodName);
     }
 
     @Override
-    public void cacheMethod(Method method) {
-        HttpMethod requestMethodType = null;
-        boolean isForm = false;
-        String path = "";
-        final Annotation[] annotations = method.getAnnotations();
-
-        for (Annotation annotation : annotations) {
-            if (annotation instanceof Form) {
-                isForm = true;
-            }
-            if (annotation instanceof RequireLine requireLine) {
-                requestMethodType = requireLine.method();
-                path = requireLine.path();
-            }
-            if (annotation instanceof GET get) {
-                requestMethodType = HttpMethod.GET;
-                path = get.value();
-            }
-            if (annotation instanceof POST post) {
-                requestMethodType = HttpMethod.POST;
-                path = post.value();
-            }
-            if (annotation instanceof PUT put) {
-                requestMethodType = HttpMethod.PUT;
-                path = put.value();
-            }
-            if (annotation instanceof PATCH patch) {
-                requestMethodType = HttpMethod.PATCH;
-                path = patch.value();
-            }
-            if (annotation instanceof DELETE delete) {
-                requestMethodType = HttpMethod.DELETE;
-                path = delete.value();
-            }
-        }
-        if (Objects.isNull(requestMethodType)) {
+    public void cacheMethod(Method method, HttpServer httpServer, Interceptor interceptor) {
+        MethodArgsBean.MethodArgsBeanBuilder builder = MethodArgsBean.builder();
+        this.handleMethodAnnotation(method, builder);
+        MethodArgsBean argsBean = builder.build();
+        if (Objects.isNull(argsBean.getRequestMethod())) {
             return;
         }
-        final Interceptor interceptor = method.getDeclaringClass().getAnnotation(Interceptor.class);
-        HttpServer httpServer = method.getDeclaringClass().getAnnotation(HttpServer.class);
+        String path = argsBean.getUrl();
         String serverName = httpServer.serverName();
-        String interceptorClassName = ObjectUtils.isNotNullOrEmpty(interceptor) ? interceptor.getClass().getName() : null;
         final Class<?> returnType = method.getReturnType();
         final Type returnType1 = TypeUtil.getReturnType(method);
         final Type typeArgument = TypeUtil.getTypeArgument(returnType1);
@@ -106,46 +75,102 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         Heads heads = method.getAnnotation(Heads.class);
         Map<String, String> headMap = MapUtil.newHashMap();
         if (Objects.nonNull(heads)) {
-            Arrays.stream(heads.value()).map(h -> h.split(":", 2)).forEach(s -> headMap.put(s[0], s[1]));
+
+            Arrays.stream(heads.value())
+                    .map(h -> h.split(HttpConstants.HEAD_SPLIT_SYMBOL, 2))
+                    .forEach(s -> {
+                        String key = StringUtils.trim(s[0]);
+                        String value = StringUtils.trim(s[1]);
+                        headMap.put(key, value);
+                    });
         }
-        final String requestUrl = path.startsWith("http") ? path : getUrl(httpServer.protocol(), httpServer.url(), path);
         final String className = method.getDeclaringClass().getName();
+        final String requestUrl = path.startsWith(HttpConstants.HTTP) ? path : getUrl(httpServer.protocol(), httpServer.url(), path);
+        String interceptorClassName = ObjectUtils.isNotNullOrEmpty(interceptor) ? interceptor.getClass().getName() : null;
+        String exceptionProcessorClassName = ObjectUtils.isNotNullOrEmpty(httpServer.exceptionProcessor()) ? httpServer.exceptionProcessor().getName() : null;
+        argsBean.setClassName(className)
+                .setServerName(serverName)
+                .setInterceptor(getInterceptor(interceptorClassName))
+                .setExceptionProcessor(getExceptionProcessor(exceptionProcessorClassName))
+                .setUrl(requestUrl)
+                .setHeadMap(headMap)
+                .setUrlParameters(parameters)
+                .setReturnType(returnType)
+                .setTypeArgument(typeArgument)
+                .setSourceHttpClientName(httpServer.sourceHttpClient());
+
         String name = method.toGenericString();
-        MethodArgsBean methodArgsBean = new MethodArgsBean(
-                className,
-                method.getName(),
-                serverName,
-                httpServer.sourceHttpClient(),
-                interceptorClassName,
-                requestMethodType,
-                isForm,
-                headMap,
-                requestUrl,
-                parameters,
-                returnType,
-                typeArgument);
-        methodCache.put(name, methodArgsBean);
+        methodCache.put(name, argsBean);
+    }
+
+    private void handleMethodAnnotation(Method method, MethodArgsBean.MethodArgsBeanBuilder builder) {
+        final Annotation[] annotations = method.getAnnotations();
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof Form) {
+                builder.isForm(true);
+            }
+            if (annotation instanceof RequireLine requireLine) {
+                builder.requestMethod(requireLine.method());
+                builder.url(requireLine.path());
+            }
+            if (annotation instanceof GET get) {
+                builder.requestMethod(HttpMethod.GET);
+                builder.url(get.value());
+            }
+            if (annotation instanceof POST post) {
+                builder.requestMethod(HttpMethod.POST);
+                builder.url(post.value());
+            }
+            if (annotation instanceof PUT put) {
+                builder.requestMethod(HttpMethod.PUT);
+                builder.url(put.value());
+            }
+            if (annotation instanceof PATCH patch) {
+                builder.requestMethod(HttpMethod.PATCH);
+                builder.url(patch.value());
+            }
+            if (annotation instanceof DELETE delete) {
+                builder.requestMethod(HttpMethod.DELETE);
+                builder.url(delete.value());
+            }
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProxyObject(Class<T> tClass) {
-        return (T) proxyCache.get(tClass.getName());
+        return (T) this.proxyCache.get(tClass.getName());
     }
 
     @Override
     public void cacheProxyObject(String className, Object proxyObject) {
-        proxyCache.put(className, proxyObject);
+        this.proxyCache.put(className, proxyObject);
     }
 
     @Override
     public HttpClientInterceptor getInterceptor(String interceptorName) {
-        return interceptorCache.get(interceptorName);
+        if (ObjectUtils.isNullOrEmpty(interceptorName)) {
+            return null;
+        }
+        return this.interceptorCache.get(interceptorName);
     }
 
     @Override
-    public void setHttpClientInterceptor(HttpClientInterceptor httpClientInterceptor) {
-        interceptorCache.put(httpClientInterceptor.getClass().getName(), httpClientInterceptor);
+    public void registerHttpClientInterceptor(HttpClientInterceptor httpClientInterceptor) {
+        this.interceptorCache.put(httpClientInterceptor.getClass().getName(), httpClientInterceptor);
+    }
+
+    @Override
+    public ExceptionProcessor getExceptionProcessor(String name) {
+        if (ObjectUtils.isNullOrEmpty(name)) {
+            return null;
+        }
+        return this.exceptionProcessorCache.get(name);
+    }
+
+    @Override
+    public void registerExceptionProcessor(ExceptionProcessor exceptionProcessor) {
+        this.exceptionProcessorCache.put(exceptionProcessor.getClass().getName(), exceptionProcessor);
     }
 
     private String getUrl(String protocol, String url, String path) {

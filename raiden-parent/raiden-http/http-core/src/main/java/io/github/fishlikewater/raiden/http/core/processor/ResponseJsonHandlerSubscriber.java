@@ -15,8 +15,8 @@
  */
 package io.github.fishlikewater.raiden.http.core.processor;
 
-import cn.hutool.json.JSONUtil;
 import io.github.fishlikewater.raiden.http.core.uttils.ByteBufferUtils;
+import io.github.fishlikewater.raiden.json.core.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.http.HttpHeaders;
@@ -35,8 +35,8 @@ import java.util.concurrent.Flow;
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月23日 10:14
  * @version 1.0.0
+ * @since 2023年09月23日 10:14
  **/
 @Slf4j
 public class ResponseJsonHandlerSubscriber<T> implements HttpResponse.BodySubscriber<T> {
@@ -90,10 +90,10 @@ public class ResponseJsonHandlerSubscriber<T> implements HttpResponse.BodySubscr
         final Charset charset = ByteBufferUtils.charsetFrom(headers);
         final String jsonStr = new String(bytes, charset);
         Object bean;
-        if (clazz.isAssignableFrom(String.class) || clazz.isAssignableFrom(Number.class)){
+        if (clazz.isAssignableFrom(String.class) || clazz.isAssignableFrom(Number.class)) {
             bean = jsonStr;
-        }else {
-            bean = JSONUtil.toBean(jsonStr, clazz);
+        } else {
+            bean = JSONUtils.HutoolJSON.toBean(jsonStr, clazz);
         }
         result.complete((T) bean);
     }

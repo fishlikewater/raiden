@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.http.autoconfigure;
 
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
+import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegister;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegistry;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ public class HttpAutoConfig {
     public SourceHttpClientRegister sourceHttpClientRegister(){
         return (registry) -> {
             final HttpClient defaultClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(60)).version(HttpClient.Version.HTTP_1_1).build();
-            registry.register("default", defaultClient);
+            registry.register(HttpConstants.DEFAULT, defaultClient);
         };
     }
 

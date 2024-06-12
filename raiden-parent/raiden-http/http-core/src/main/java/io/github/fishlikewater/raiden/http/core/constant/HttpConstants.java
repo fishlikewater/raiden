@@ -37,7 +37,11 @@ public interface HttpConstants {
 
     String URL_SPLIT = "/";
 
+    String HEAD_SPLIT_SYMBOL = ":";
+
     String HTTP = "http";
+
+    int HTTP_OK = 200;
 
     int DEFAULT_READ_LIMIT = 1024 * 1024;
 

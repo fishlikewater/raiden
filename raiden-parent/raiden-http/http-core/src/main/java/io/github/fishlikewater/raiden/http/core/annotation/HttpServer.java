@@ -15,26 +15,33 @@
  */
 package io.github.fishlikewater.raiden.http.core.annotation;
 
+import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
+
 import java.lang.annotation.*;
 
 /**
- *
  * @author fishlikewater@126.com
- * @since 2023年09月28日 20:30
  * @version 1.0.0
+ * @since 2023年09月28日 20:30
  **/
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface HttpServer {
 
-    /** 请求地址*/
+    /**
+     * 请求地址
+     */
     String url() default "";
 
-    /** 协议 http 或 https*/
+    /**
+     * 协议 http 或 https
+     */
     String protocol() default "http";
 
     String serverName() default "";
 
     String sourceHttpClient() default "default";
+
+    Class<? extends ExceptionProcessor> exceptionProcessor() default ExceptionProcessor.DefaultExceptionProcessor.class;
 }

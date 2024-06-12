@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.http.core;
 
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -65,6 +66,8 @@ public class RequestWrap {
     private Object bodyObject;
 
     private HttpClientInterceptor interceptor;
+
+    private ExceptionProcessor exceptionProcessor;
 
     /**
      * 文件上传下载
