@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.http.autoconfigure;
 
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
+import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegister;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegistry;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,11 @@ public class HttpAutoConfig {
     @Bean
     public HttpBeanProcessor httpBeanProcessor() {
         return new HttpBeanProcessor();
+    }
+
+    @Bean
+    public ExceptionProcessor exceptionProcessor() {
+        return new ExceptionProcessor.DefaultExceptionProcessor();
     }
 
     @Bean
