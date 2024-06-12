@@ -77,11 +77,17 @@ public interface InterfaceProxy {
                 .typeArgumentClass(TypeUtil.getClass(typeArgument))
                 .form(form)
                 .url(url)
-                .interceptor(methodArgsBean.getInterceptor())
-                .exceptionProcessor(methodArgsBean.getExceptionProcessor())
                 .httpClient(httpClient)
                 .headMap(headMap)
                 .build();
+        final String interceptorName = methodArgsBean.getInterceptorName();
+        final String exceptionProcessorName = methodArgsBean.getExceptionProcessorName();
+        if (ObjectUtil.isNotNull(interceptorName)) {
+            requestWrap.setInterceptor(httpClientBeanFactory.getInterceptor(interceptorName));
+        }
+        if (ObjectUtil.isNotNull(exceptionProcessorName)) {
+            requestWrap.setExceptionProcessor(httpClientBeanFactory.getExceptionProcessor(exceptionProcessorName));
+        }
         /* 构建请求参数*/
         if (ObjectUtil.isNotNull(parameters)) {
             this.buildParams(requestWrap, parameters, args);

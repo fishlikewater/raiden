@@ -86,12 +86,12 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         }
         final String className = method.getDeclaringClass().getName();
         final String requestUrl = path.startsWith(HttpConstants.HTTP) ? path : getUrl(httpServer.protocol(), httpServer.url(), path);
-        String interceptorClassName = ObjectUtils.isNotNullOrEmpty(interceptor) ? interceptor.getClass().getName() : null;
+        String interceptorClassName = ObjectUtils.isNotNullOrEmpty(interceptor) ? interceptor.value().getName() : null;
         String exceptionProcessorClassName = ObjectUtils.isNotNullOrEmpty(httpServer.exceptionProcessor()) ? httpServer.exceptionProcessor().getName() : null;
         argsBean.setClassName(className)
                 .setServerName(serverName)
-                .setInterceptor(getInterceptor(interceptorClassName))
-                .setExceptionProcessor(getExceptionProcessor(exceptionProcessorClassName))
+                .setInterceptorName(interceptorClassName)
+                .setExceptionProcessorName(exceptionProcessorClassName)
                 .setUrl(requestUrl)
                 .setHeadMap(headMap)
                 .setUrlParameters(parameters)

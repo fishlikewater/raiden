@@ -16,8 +16,6 @@
 package io.github.fishlikewater.raiden.http.core;
 
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
-import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -52,7 +50,7 @@ public class MethodArgsBean {
 
     private String sourceHttpClientName;
 
-    private HttpClientInterceptor interceptor;
+    private String interceptorName;
 
     private HttpMethod requestMethod;
 
@@ -73,5 +71,5 @@ public class MethodArgsBean {
      *
      * @since 1.0.2
      */
-    private ExceptionProcessor exceptionProcessor;
+    private String exceptionProcessorName;
 }
