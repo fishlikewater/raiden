@@ -29,10 +29,10 @@ import java.io.Serial;
 @SuppressWarnings("unused")
 public abstract class AbstractException extends RuntimeException {
 
-    private static final String DEFAULT_MESSAGE = "系统异常";
+    private static final String DEFAULT_MESSAGE = "system.error";
 
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5881311899429280508L;
 
     protected Integer status;
 
@@ -81,6 +81,4 @@ public abstract class AbstractException extends RuntimeException {
         this.code = ExceptionStatusEnum.BAD_REQUEST.code();
         this.message = StringUtils.format(message, args);
     }
-
-    public abstract AbstractException creat(String message, Object... args);
 }

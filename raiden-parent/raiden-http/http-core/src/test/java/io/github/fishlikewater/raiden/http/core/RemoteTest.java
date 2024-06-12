@@ -43,7 +43,7 @@ public class RemoteTest {
 
     @Test
     public void test() {
-        HttpExceptionCheck.isNull(null, "test is {}", "null");
+        HttpExceptionCheck.INSTANCE.throwUnchecked(new IllegalArgumentException(), "test is {}", "null");
         DemoRemote remote = HttpBootStrap.getProxy(DemoRemote.class);
         String s = remote.baidu();
         Assert.assertNotNull(s);

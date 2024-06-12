@@ -16,7 +16,7 @@
 package io.github.fishlikewater.raiden.redis.core;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
-import io.github.fishlikewater.raiden.core.exception.RaidenException;
+import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayQueue;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayTask;
 
@@ -42,7 +42,7 @@ public class DelayQueueUtils {
         if (ObjectUtils.isNotNullOrEmpty(delayQueue)) {
             delayQueue.add(task);
         } else {
-            throw new RaidenException("topic: [{}].delay.queue.not.found", topic);
+            RaidenExceptionCheck.INSTANCE.throwUnchecked("topic: [{}].delay.queue.not.found", topic);
         }
     }
 

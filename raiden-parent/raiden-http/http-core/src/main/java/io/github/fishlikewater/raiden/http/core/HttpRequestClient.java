@@ -22,7 +22,7 @@ import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
-import io.github.fishlikewater.raiden.http.core.exception.RaidenHttpException;
+import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.LogInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.MultiFileBodyProvider;
@@ -213,7 +213,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
 
     private void checkHttpMethod(RequestWrap requestWrap, HttpMethod httpMethod) {
         if (ObjectUtils.notEquals(requestWrap.getHttpMethod(), httpMethod)) {
-            throw new RaidenHttpException("The current calling method only supports {}", httpMethod.name());
+            HttpExceptionCheck.INSTANCE.throwUnchecked("The current calling method only supports {}", httpMethod.name());
         }
     }
 
@@ -420,7 +420,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
                     String param = StringUtils.format("&{}={}", item.getKey().trim(), URLEncoder.encode(item.getValue().trim(), StandardCharsets.UTF_8));
                     newUrl.append(param);
                 } catch (Exception e) {
-                    throw new RaidenHttpException(e, "join params error");
+                    HttpExceptionCheck.INSTANCE.throwUnchecked(e, "join params error");
                 }
             }
             return newUrl.toString();

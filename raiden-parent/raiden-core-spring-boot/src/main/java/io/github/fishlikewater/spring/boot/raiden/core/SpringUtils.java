@@ -17,7 +17,7 @@ package io.github.fishlikewater.spring.boot.raiden.core;
 
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ArrayUtil;
-import io.github.fishlikewater.raiden.core.exception.RaidenException;
+import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.beans.BeansException;
@@ -76,7 +76,7 @@ public class SpringUtils implements BeanFactoryPostProcessor, ApplicationContext
     public static ListableBeanFactory getBeanFactory() {
         final ListableBeanFactory factory = null == beanFactory ? applicationContext : beanFactory;
         if (null == factory) {
-            throw new RaidenException("No ConfigurableListableBeanFactory or ApplicationContext injected, maybe not in the Spring environment?");
+            RaidenExceptionCheck.INSTANCE.throwUnchecked("No ConfigurableListableBeanFactory or ApplicationContext injected, maybe not in the Spring environment?");
         }
         return factory;
     }
@@ -85,16 +85,15 @@ public class SpringUtils implements BeanFactoryPostProcessor, ApplicationContext
      * 获取{@link ConfigurableListableBeanFactory}
      *
      * @return {@link ConfigurableListableBeanFactory}
-     * @throws RaidenException 当上下文非ConfigurableListableBeanFactory抛出异常
      */
-    public static ConfigurableListableBeanFactory getConfigurableBeanFactory() throws RaidenException {
+    public static ConfigurableListableBeanFactory getConfigurableBeanFactory() {
         final ConfigurableListableBeanFactory factory;
         if (null != beanFactory) {
             factory = beanFactory;
         } else if (applicationContext instanceof ConfigurableApplicationContext) {
             factory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
         } else {
-            throw new RaidenException("No ConfigurableListableBeanFactory from context!");
+            return RaidenExceptionCheck.INSTANCE.throwUnchecked("No ConfigurableListableBeanFactory from context!");
         }
         return factory;
     }
@@ -282,7 +281,7 @@ public class SpringUtils implements BeanFactoryPostProcessor, ApplicationContext
         if (factory instanceof DefaultSingletonBeanRegistry registry) {
             registry.destroySingleton(beanName);
         } else {
-            throw new RaidenException("Can not unregister bean, the factory is not a DefaultSingletonBeanRegistry!");
+            RaidenExceptionCheck.INSTANCE.throwUnchecked("Can not unregister bean, the factory is not a DefaultSingletonBeanRegistry!");
         }
     }
 

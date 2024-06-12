@@ -20,7 +20,7 @@ import cn.hutool.core.io.FileUtil;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.http.core.MultipartData;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
-import io.github.fishlikewater.raiden.http.core.exception.RaidenHttpException;
+import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -74,7 +74,7 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
                 contentLength += bytes.length;
                 contentLength += file.length();
             } catch (Exception e) {
-                throw new RaidenHttpException("build file data error", e);
+                HttpExceptionCheck.INSTANCE.throwUnchecked(e, "build file data error");
             }
         }
         endBytes = (StringUtils.format("\r\n--{}--", boundary)).getBytes();
@@ -104,7 +104,7 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
                     submissionPublisher.submit(copy2(readByte, readCount));
                 }
             } catch (Exception e) {
-                throw new RaidenHttpException(e);
+                HttpExceptionCheck.INSTANCE.throwUnchecked(e);
             }
             i++;
         }

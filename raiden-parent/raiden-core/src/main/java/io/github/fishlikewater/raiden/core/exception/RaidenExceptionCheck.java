@@ -15,41 +15,29 @@
  */
 package io.github.fishlikewater.raiden.core.exception;
 
-import java.io.Serial;
-
 /**
- * {@code RaidenException}
+ * {@code RaidenExceptionCheck}
+ * 异常检测器
  *
  * @author zhangxiang
  * @version 1.0.2
- * @since 2024/06/06
+ * @since 2024/06/12
  */
-public class RaidenException extends AbstractException {
+public final class RaidenExceptionCheck extends AbstractExceptionCheck {
 
-    @Serial
-    private static final long serialVersionUID = -6722279357552749937L;
+    public static final RaidenExceptionCheck INSTANCE = RaidenExceptionCheckHolder.check;
 
-    public RaidenException() {
-        super();
+    private RaidenExceptionCheck() {
+
     }
 
-    public RaidenException(Throwable e) {
-        super(e);
+    @Override
+    protected AbstractException createException(Throwable e, String message, Object... args) {
+        return new RaidenException(e, message, args);
     }
 
-    public RaidenException(ExceptionStatusEnum status) {
-        super(status);
-    }
+    public static class RaidenExceptionCheckHolder {
 
-    public RaidenException(ExceptionStatusEnum status, String message, Object... args) {
-        super(status, message, args);
-    }
-
-    public RaidenException(String message, Object... args) {
-        super(message, args);
-    }
-
-    public RaidenException(Throwable e, String message, Object... args) {
-        super(e, message, args);
+        public static RaidenExceptionCheck check = new RaidenExceptionCheck();
     }
 }
