@@ -38,8 +38,8 @@ import java.util.List;
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月24日 12:37
  * @version 1.0.0
+ * @since 2023年09月24日 12:37
  **/
 @Slf4j
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
@@ -48,7 +48,17 @@ import java.util.List;
 public class HttpAutoConfig {
 
     @Bean
-    public SourceHttpClientRegister sourceHttpClientRegister(){
+    public HttpContextRefreshedEventListener httpApplicationStartedEventListener() {
+        return new HttpContextRefreshedEventListener();
+    }
+
+    @Bean
+    public HttpBeanProcessor httpBeanProcessor() {
+        return new HttpBeanProcessor();
+    }
+
+    @Bean
+    public SourceHttpClientRegister sourceHttpClientRegister() {
         return (registry) -> {
             final HttpClient defaultClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(60)).version(HttpClient.Version.HTTP_1_1).build();
             registry.register(HttpConstants.DEFAULT, defaultClient);
@@ -63,7 +73,7 @@ public class HttpAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    public ServiceChoose serviceChoose(ServiceInstanceChooser serviceInstanceChooser){
+    public ServiceChoose serviceChoose(ServiceInstanceChooser serviceInstanceChooser) {
         final ServiceChoose serviceChoose = new ServiceChoose(serviceInstanceChooser);
         HttpBootStrap.setPredRequest(serviceChoose);
         return serviceChoose;

@@ -18,9 +18,8 @@ package io.github.fishlikewater.raiden.http.autoconfigure;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.net.http.HttpClient;
 
@@ -28,17 +27,16 @@ import java.net.http.HttpClient;
  * 接口注入
  *
  * @author fishlikewater@126.com
- * @since 2023年09月22日 11:12
  * @version 1.0.0
+ * @since 2023年09月22日 11:12
  **/
-@Component
 @Slf4j
-public class HttpApplicationStartedEventListener implements ApplicationListener<ApplicationStartedEvent> {
+public class HttpContextRefreshedEventListener implements ApplicationListener<ContextRefreshedEvent> {
 
     @Override
-    public void onApplicationEvent(ApplicationStartedEvent  event) {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         final String[] namesForType = event.getApplicationContext().getBeanNamesForType(HttpClient.class);
-        if (namesForType.length>0){
+        if (namesForType.length > 0) {
             final HttpClient httpClient = (HttpClient) event.getApplicationContext().getBean(namesForType[0]);
             HttpBootStrap.registerHttpClient("default", httpClient);
         }
