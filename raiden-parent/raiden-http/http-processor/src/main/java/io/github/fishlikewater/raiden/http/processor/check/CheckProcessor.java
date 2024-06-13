@@ -18,11 +18,9 @@ package io.github.fishlikewater.raiden.http.processor.check;
 import com.google.auto.service.AutoService;
 import io.github.fishlikewater.raiden.http.core.HeadWrap;
 import io.github.fishlikewater.raiden.http.core.annotation.Heads;
+import io.github.fishlikewater.raiden.processor.AbstractAnnotationProcessor;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.Processor;
-import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -34,7 +32,6 @@ import javax.tools.Diagnostic;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * {@code CheckProcessor}
@@ -45,7 +42,9 @@ import java.util.TreeSet;
  * @since 2024/03/19
  */
 @AutoService(Processor.class)
-public class CheckProcessor extends AbstractProcessor {
+@SupportedAnnotationTypes("io.github.fishlikewater.raiden.http.core.annotation.Heads")
+@SupportedSourceVersion(SourceVersion.RELEASE_21)
+public class CheckProcessor extends AbstractAnnotationProcessor {
 
     @Override
     public synchronized void init(ProcessingEnvironment env) {
@@ -74,18 +73,6 @@ public class CheckProcessor extends AbstractProcessor {
             return declaredType.asElement().toString().equals(HeadWrap.class.getName());
         }
         return false;
-    }
-
-    @Override
-    public Set<String> getSupportedAnnotationTypes() {
-        Set<String> strings = new TreeSet<>();
-        strings.add("io.github.fishlikewater.raiden.http.core.annotation.Heads");
-        return strings;
-    }
-
-    @Override
-    public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.latestSupported();
     }
 
     private boolean handleMap(Element element, List<? extends TypeMirror> typeArguments) {

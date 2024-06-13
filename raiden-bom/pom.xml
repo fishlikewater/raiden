@@ -127,6 +127,13 @@
                 <artifactId>raiden-validation</artifactId>
                 <version>${revision}</version>
             </dependency>
+
+            <!--processor-->
+            <dependency>
+                <groupId>io.github.fishlikewater</groupId>
+                <artifactId>raiden-processor</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

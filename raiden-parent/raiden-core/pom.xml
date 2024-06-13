@@ -8,12 +8,10 @@
     </parent>
 
     <artifactId>raiden-core</artifactId>
-    <packaging>jar</packaging>
     <name>raiden-core</name>
     <description>常用工具类</description>
 
     <properties>
-
     </properties>
 
     <dependencies>
@@ -28,7 +26,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-    </build>
 </project>

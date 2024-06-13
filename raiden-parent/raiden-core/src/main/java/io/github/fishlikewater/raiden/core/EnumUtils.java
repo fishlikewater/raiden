@@ -56,7 +56,6 @@ public class EnumUtils {
         return obj.getClass().isEnum();
     }
 
-
     /**
      * 字符串转枚举，调用{@link Enum#valueOf(Class, String)}
      *
