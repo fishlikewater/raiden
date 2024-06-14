@@ -17,7 +17,7 @@ package io.github.fishlikewater.raiden.http.core.processor;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
-import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.http.HttpRequest;
@@ -40,12 +40,7 @@ public interface ExceptionProcessor {
      * @param response 响应
      * @return 异常
      */
-    default <T> RuntimeException invalidRespHandle(HttpRequest request, HttpResponse<T> response) {
-        if (ObjectUtils.notEquals(response.statusCode(), HttpConstants.HTTP_OK)) {
-            return HttpExceptionCheck.INSTANCE.throwUnchecked("请求失败, 响应码: {}", response.statusCode());
-        }
-        return null;
-    }
+    <T> RuntimeException invalidRespHandle(HttpRequest request, HttpResponse<T> response);
 
     /**
      * 处理IO异常
@@ -54,9 +49,7 @@ public interface ExceptionProcessor {
      * @param cause   异常
      * @return 异常
      */
-    default RuntimeException ioExceptionHandle(HttpRequest request, IOException cause) {
-        return HttpExceptionCheck.INSTANCE.throwUnchecked(cause, "请求失败, 请求地址: {}", request.uri());
-    }
+    RuntimeException ioExceptionHandle(HttpRequest request, IOException cause);
 
     /**
      * 处理异常 (除IO异常之外的其他异常)
@@ -65,9 +58,29 @@ public interface ExceptionProcessor {
      * @param cause   异常
      * @return 异常
      */
-    default RuntimeException exceptionHandle(HttpRequest request, Throwable cause) {
-        return HttpExceptionCheck.INSTANCE.throwUnchecked(cause, "请求失败, 请求地址: {}", request.uri());
-    }
+    RuntimeException exceptionHandle(HttpRequest request, Throwable cause);
 
-    class DefaultExceptionProcessor implements ExceptionProcessor {}
+    @Slf4j
+    class DefaultExceptionProcessor implements ExceptionProcessor {
+
+        @Override
+        public <T> RuntimeException invalidRespHandle(HttpRequest request, HttpResponse<T> response) {
+            if (ObjectUtils.notEquals(response.statusCode(), HttpConstants.HTTP_OK)) {
+                log.error("request failed, response status code: {}", response.statusCode());
+            }
+            return null;
+        }
+
+        @Override
+        public RuntimeException ioExceptionHandle(HttpRequest request, IOException cause) {
+            log.error("request failed, request address url: {}", request.uri(), cause);
+            return null;
+        }
+
+        @Override
+        public RuntimeException exceptionHandle(HttpRequest request, Throwable cause) {
+            log.error("request failed, request address url: {}", request.uri(), cause);
+            return null;
+        }
+    }
 }
