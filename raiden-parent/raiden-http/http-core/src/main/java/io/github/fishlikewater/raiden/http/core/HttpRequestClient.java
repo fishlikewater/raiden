@@ -481,9 +481,8 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     }
 
     private <T> HttpResponse<T> requestAfter(HttpRequest request, HttpResponse<T> response, RequestWrap requestWrap) {
-        RuntimeException exception = requestWrap.getExceptionProcessor().invalidRespHandle(request, response);
-        if (ObjectUtils.isNotNullOrEmpty(exception)) {
-            throw exception;
+        if (ObjectUtils.notEquals(response.statusCode(), HttpConstants.HTTP_OK)) {
+            throw requestWrap.getExceptionProcessor().invalidRespHandle(request, response);
         }
         if (HttpBootStrap.getLogConfig().isEnableLog()) {
             response = LOG_INTERCEPTOR.requestAfter(response);

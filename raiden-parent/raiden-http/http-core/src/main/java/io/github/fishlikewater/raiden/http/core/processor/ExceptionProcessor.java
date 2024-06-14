@@ -15,8 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core.processor;
 
-import io.github.fishlikewater.raiden.core.ObjectUtils;
-import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
+import io.github.fishlikewater.raiden.http.core.exception.RaidenHttpException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -65,22 +64,20 @@ public interface ExceptionProcessor {
 
         @Override
         public <T> RuntimeException invalidRespHandle(HttpRequest request, HttpResponse<T> response) {
-            if (ObjectUtils.notEquals(response.statusCode(), HttpConstants.HTTP_OK)) {
-                log.error("request failed, response status code: {}", response.statusCode());
-            }
-            return null;
+            log.error("request failed, response status code: {}", response.statusCode());
+            return new RaidenHttpException("request failed, response status code: {}", response.statusCode());
         }
 
         @Override
         public RuntimeException ioExceptionHandle(HttpRequest request, IOException cause) {
             log.error("request failed, request address url: {}", request.uri(), cause);
-            return null;
+            return new RaidenHttpException("request failed, request address url: {}", request.uri(), cause);
         }
 
         @Override
         public RuntimeException exceptionHandle(HttpRequest request, Throwable cause) {
             log.error("request failed, request address url: {}", request.uri(), cause);
-            return null;
+            return new RaidenHttpException("request failed, request address url: {}", request.uri(), cause);
         }
     }
 }
