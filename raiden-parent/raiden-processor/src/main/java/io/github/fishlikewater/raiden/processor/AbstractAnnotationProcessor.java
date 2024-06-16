@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.processor;
 
 import com.sun.tools.javac.api.JavacTrees;
+import com.sun.tools.javac.model.JavacElements;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -39,21 +40,24 @@ import javax.annotation.processing.ProcessingEnvironment;
 @SuppressWarnings("all")
 public abstract class AbstractAnnotationProcessor extends AbstractProcessor {
 
-    private Messager messager;
+    protected Messager messager;
 
-    private JavacTrees tree;
+    protected JavacTrees tree;
 
-    private Context context;
+    protected Context context;
 
-    private TreeMaker treeMaker;
+    protected JavacElements elementUtils;
 
-    private Names names;
+    protected TreeMaker treeMaker;
+
+    protected Names names;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         this.messager = processingEnv.getMessager();
         this.tree = JavacTrees.instance(processingEnv);
         this.context = ((JavacProcessingEnvironment) processingEnv).getContext();
+        this.elementUtils = (JavacElements) processingEnv.getElementUtils();
         this.treeMaker = TreeMaker.instance(context);
         this.names = Names.instance(context);
     }

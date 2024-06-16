@@ -3,17 +3,33 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.fishlikewater</groupId>
-        <artifactId>raiden-parent</artifactId>
+        <artifactId>raiden-redis</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>raiden-processor</artifactId>
-    <name>raiden-processor</name>
-    <description>处理器</description>
+    <artifactId>redis-processor</artifactId>
+    <name>redis-processor</name>
+    <description>redis 缓存注解代码生成</description>
 
     <properties>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.github.fishlikewater</groupId>
+            <artifactId>redis-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.fishlikewater</groupId>
+            <artifactId>raiden-processor</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -42,4 +58,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

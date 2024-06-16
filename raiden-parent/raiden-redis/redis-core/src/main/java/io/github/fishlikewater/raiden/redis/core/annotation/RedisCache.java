@@ -25,7 +25,7 @@ import java.lang.annotation.*;
  * @since 2024/05/17
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 @Documented
 public @interface RedisCache {
 }
