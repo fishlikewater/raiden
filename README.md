@@ -11,3 +11,5 @@
 - [raiden-lock](raiden-parent%2Fraiden-lock) 锁工具
 - [raiden-mapstruct](raiden-parent%2Fraiden-mapstruct) mapstruct工具
 - [raiden-redis](raiden-parent%2Fraiden-redis) redis工具
+- [raiden-processor](raiden-parent%2Fraiden-processor) 编译时注解处理器
+- [raiden-validation](raiden-parent%2Fraiden-validation) 验证工具
