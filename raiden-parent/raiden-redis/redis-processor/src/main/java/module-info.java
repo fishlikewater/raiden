@@ -21,10 +21,12 @@
  * @since 2024/06/17
  */
 module raiden.redis.processor {
+    requires transitive java.compiler;
+    requires transitive jdk.compiler;
+
     requires com.google.auto.service;
     requires raiden.processor;
     requires raiden.redis.core;
 
     exports io.github.fishlikewater.raiden.redis.processor;
-    provides javax.annotation.processing.Processor with io.github.fishlikewater.raiden.redis.processor.RedisCacheProcessor;
 }

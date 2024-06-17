@@ -27,11 +27,11 @@
                     <fork>true</fork>
                     <compilerArgs>
                         <!-- 添加 exports 选项 -->
-                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
-                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
-                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
-                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
-                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.util=raiden.processor</arg>
+                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.api=raiden.processor</arg>
+                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.processing=raiden.processor</arg>
+                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.tree=raiden.processor</arg>
+                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.model=raiden.processor</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
