@@ -18,7 +18,6 @@ package io.github.fishlikewater.raiden.redis.processor;
 import com.google.auto.service.AutoService;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
-import io.github.fishlikewater.raiden.processor.AbstractAnnotationProcessor;
 import io.github.fishlikewater.raiden.redis.core.annotation.RedisCache;
 
 import javax.annotation.processing.Processor;

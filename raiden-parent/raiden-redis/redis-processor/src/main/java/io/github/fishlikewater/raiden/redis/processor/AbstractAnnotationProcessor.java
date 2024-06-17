@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.processor;
+package io.github.fishlikewater.raiden.redis.processor;
 
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.model.JavacElements;

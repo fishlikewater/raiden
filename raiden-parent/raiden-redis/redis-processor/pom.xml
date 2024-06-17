@@ -21,11 +21,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.github.fishlikewater</groupId>
-            <artifactId>raiden-processor</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service</artifactId>
         </dependency>
@@ -44,19 +39,19 @@
                     <compilerArgs>
                         <!-- 添加 exports 选项 -->
                         <arg>
-                            --add-exports=jdk.compiler/com.sun.tools.javac.util=raiden.redis.processor,raiden.processor
+                            --add-exports=jdk.compiler/com.sun.tools.javac.util=raiden.redis.processor
                         </arg>
                         <arg>
-                            --add-exports=jdk.compiler/com.sun.tools.javac.api=raiden.redis.processor,raiden.processor
+                            --add-exports=jdk.compiler/com.sun.tools.javac.api=raiden.redis.processor
                         </arg>
                         <arg>
-                            --add-exports=jdk.compiler/com.sun.tools.javac.processing=raiden.redis.processor,raiden.processor
+                            --add-exports=jdk.compiler/com.sun.tools.javac.processing=raiden.redis.processor
                         </arg>
                         <arg>
-                            --add-exports=jdk.compiler/com.sun.tools.javac.tree=raiden.redis.processor,raiden.processor
+                            --add-exports=jdk.compiler/com.sun.tools.javac.tree=raiden.redis.processor
                         </arg>
                         <arg>
-                            --add-exports=jdk.compiler/com.sun.tools.javac.model=raiden.redis.processor,raiden.processor
+                            --add-exports=jdk.compiler/com.sun.tools.javac.model=raiden.redis.processor
                         </arg>
                     </compilerArgs>
                 </configuration>

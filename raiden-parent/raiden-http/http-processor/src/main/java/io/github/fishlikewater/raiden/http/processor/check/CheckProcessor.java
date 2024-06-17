@@ -18,7 +18,6 @@ package io.github.fishlikewater.raiden.http.processor.check;
 import com.google.auto.service.AutoService;
 import io.github.fishlikewater.raiden.http.core.HeadWrap;
 import io.github.fishlikewater.raiden.http.core.annotation.Heads;
-import io.github.fishlikewater.raiden.processor.AbstractAnnotationProcessor;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -44,7 +43,7 @@ import java.util.Set;
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("io.github.fishlikewater.raiden.http.core.annotation.Heads")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
-public class CheckProcessor extends AbstractAnnotationProcessor {
+public class CheckProcessor extends AbstractProcessor {
 
     @Override
     public synchronized void init(ProcessingEnvironment env) {

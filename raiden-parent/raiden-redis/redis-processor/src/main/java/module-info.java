@@ -25,7 +25,6 @@ module raiden.redis.processor {
     requires transitive jdk.compiler;
 
     requires com.google.auto.service;
-    requires raiden.processor;
     requires raiden.redis.core;
 
     exports io.github.fishlikewater.raiden.redis.processor;

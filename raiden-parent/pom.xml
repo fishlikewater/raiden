@@ -26,7 +26,6 @@
         <module>raiden-crypto</module>
         <module>raiden-generate</module>
         <module>raiden-validation</module>
-        <module>raiden-processor</module>
     </modules>
 
     <properties>
