@@ -15,7 +15,7 @@
  */
 package io.github.fishlikewater.spring.boot.raiden.core.getter;
 
-import cn.hutool.core.util.StrUtil;
+import io.github.fishlikewater.raiden.core.StringUtils;
 import org.springframework.core.env.Environment;
 
 /**
@@ -50,7 +50,7 @@ public interface EnvironmentGetter {
      * @return 是否是线下环境
      */
     default boolean determineOffline(String profiles) {
-        if (StrUtil.isBlank(profiles)) {
+        if (StringUtils.isBlank(profiles)) {
             return false;
         }
 
@@ -64,7 +64,7 @@ public interface EnvironmentGetter {
      * @return 是否是线上环境
      */
     default boolean determineIsLine(String profiles) {
-        if (StrUtil.isBlank(profiles)) {
+        if (StringUtils.isBlank(profiles)) {
             return false;
         }
         return profiles.contains(SPRING_PROFILES_ACTIVE_PRO) || profiles.contains(SPRING_PROFILES_ACTIVE_PROD);
