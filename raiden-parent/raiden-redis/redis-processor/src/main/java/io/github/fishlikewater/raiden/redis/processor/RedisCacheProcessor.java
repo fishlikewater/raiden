@@ -15,18 +15,25 @@
  */
 package io.github.fishlikewater.raiden.redis.processor;
 
-import com.google.auto.service.AutoService;
-import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.util.List;
+import com.github.javaparser.ParseProblemException;
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import io.github.fishlikewater.raiden.redis.core.annotation.RedisCache;
 
-import javax.annotation.processing.Processor;
+import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import java.util.Set;
 
 /**
@@ -39,29 +46,43 @@ import java.util.Set;
  * @version 1.0.2
  * @since 2024年06月16日 20:22
  **/
-@AutoService(Processor.class)
 @SupportedAnnotationTypes("io.github.fishlikewater.raiden.redis.core.annotation.RedisCache")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
-public class RedisCacheProcessor extends AbstractAnnotationProcessor {
+public class RedisCacheProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        final Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(RedisCache.class);
-        for (Element element : elementsAnnotatedWith) {
-            final JCTree.JCMethodDecl jcMethodDecl = (JCTree.JCMethodDecl) this.tree.getTree(element);
-            treeMaker.pos = jcMethodDecl.pos;
-            final JCTree.JCMethodInvocation apply = treeMaker.Apply(
-                    List.of(this.memberAccess("java.lang.String")),
-                    this.memberAccess("java.lang.System.out.println"),
-                    List.of(treeMaker.Literal("xiao test zhen"))
-
-            );
-            final List<JCTree.JCStatement> jcStatements = List.of(
-                    treeMaker.Exec(apply),
-                    jcMethodDecl.body,
-                    treeMaker.Exec(apply)
-            );
-            jcMethodDecl.body = treeMaker.Block(0, jcStatements);
+        for (Element element : roundEnv.getElementsAnnotatedWith(RedisCache.class)) {
+            if (element.getKind() == ElementKind.METHOD) {
+                ExecutableElement methodElement = (ExecutableElement) element;
+                modifyMethod(methodElement);
+            }
         }
-        return false;
+        return true;
+    }
+
+    private void modifyMethod(ExecutableElement methodElement) {
+        TypeElement enclosingElement = (TypeElement) methodElement.getEnclosingElement();
+
+        try {
+            // Parse the source file using JavaParser
+            CompilationUnit cu = StaticJavaParser.parse(enclosingElement.getQualifiedName().toString());
+
+            // Visit and modify the AST
+            new MethodVisitor().visit(cu, null);
+
+        } catch (ParseProblemException e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Failed to parse or modify method: " + e.getMessage());
+        }
+    }
+
+    private static class MethodVisitor extends VoidVisitorAdapter<Void> {
+        @Override
+        public void visit(MethodDeclaration md, Void arg) {
+            // Modify the method AST here
+            super.visit(md, arg);
+            ExpressionStmt expressionStmt = new ExpressionStmt(new NameExpr("System.out.println(\"Before executing method: " + md.getName() + "\");"));
+            // Example: Inserting a print statement at the beginning of the method
+            md.getBody().get().addStatement(0, expressionStmt);
+        }
     }
 }
