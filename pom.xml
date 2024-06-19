@@ -25,7 +25,7 @@
         <maven-compiler.version>3.12.1</maven-compiler.version>
         <maven-source.verion>3.3.0</maven-source.verion>
         <maven-deploy.version>3.1.2</maven-deploy.version>
-        <maven-plugin-plugin.version>3.13.1</maven-plugin-plugin.version>
+        <maven-plugin-plugin.version>3.9.0</maven-plugin-plugin.version>
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <license-maven.version>3.0</license-maven.version>
