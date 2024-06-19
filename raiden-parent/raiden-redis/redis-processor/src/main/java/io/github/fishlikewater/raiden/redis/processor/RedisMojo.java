@@ -28,10 +28,11 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.utils.SourceRoot;
 import io.github.fishlikewater.raiden.redis.core.annotation.RedisCache;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.api.plugin.annotations.Mojo;
-import org.apache.maven.api.plugin.annotations.Parameter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -53,7 +54,7 @@ import java.util.stream.Stream;
  * @since 2024/06/19
  */
 @Slf4j
-@Mojo(name = "rdc")
+@Mojo(name = "rdc", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class RedisMojo extends AbstractMojo {
 
     @Parameter(property = "项目目录", defaultValue = "${project.basedir}/src/main/java")
@@ -133,7 +134,10 @@ public class RedisMojo extends AbstractMojo {
         String formattedCode = cu.toString();
 
         Path relativePath = path.toPath().relativize(originalFile.toPath());
-        File outputFile = new File(out, relativePath.toString());
+        String filepath = relativePath.toString();
+        final String[] split = filepath.split("\\.");
+        filepath = split[0] + "_extend." + split[1];
+        File outputFile = new File(out, filepath);
 
         boolean ignore = outputFile.getParentFile().mkdirs();
 
