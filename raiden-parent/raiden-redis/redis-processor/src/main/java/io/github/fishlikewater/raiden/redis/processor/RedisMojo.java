@@ -110,7 +110,7 @@ public class RedisMojo extends AbstractMojo {
                             log.error("Error processing file: " + path, e);
                         }
                     });
-            //project.addCompileSourceRoot(out.getPath());
+            project.addCompileSourceRoot(out.getPath());
         } catch (IOException e) {
             throw new MojoExecutionException("Error reading source directory", e);
         }
@@ -137,7 +137,7 @@ public class RedisMojo extends AbstractMojo {
 
         boolean ignore = outputFile.getParentFile().mkdirs();
 
-        try (FileWriter writer = new FileWriter(outputFile)) {
+        try (FileWriter writer = new FileWriter(outputFile, StandardCharsets.UTF_8)) {
             writer.write(formattedCode);
         }
     }

@@ -19,13 +19,11 @@
         <dependency>
             <groupId>io.github.fishlikewater</groupId>
             <artifactId>redis-core</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-core</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
