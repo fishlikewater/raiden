@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.redis.core.annotation;
 
 import java.lang.annotation.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * {@code RedisCache}
@@ -25,7 +26,15 @@ import java.lang.annotation.*;
  * @since 2024/05/17
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 @Documented
 public @interface RedisCache {
+
+    String key() default "";
+
+    String prefix() default "";
+
+    long expire();
+
+    TimeUnit timeUnit() default TimeUnit.SECONDS;
 }

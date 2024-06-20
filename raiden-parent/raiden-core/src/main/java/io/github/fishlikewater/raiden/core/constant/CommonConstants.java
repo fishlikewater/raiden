@@ -31,6 +31,7 @@ public interface CommonConstants {
     String GET_METHOD_START_WITH = "get";
     String SET_METHOD_START_WITH = "set";
     String SYMBOL_AND = "&";
+    String SYMBOL_EXPRESSION = "#";
     String SYMBOL_OR = "|";
     String SYMBOL_PATH = "/";
 
