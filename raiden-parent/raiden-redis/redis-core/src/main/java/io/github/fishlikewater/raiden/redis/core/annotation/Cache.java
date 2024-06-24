@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0.0
  * @since 2024/05/17
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Cache {

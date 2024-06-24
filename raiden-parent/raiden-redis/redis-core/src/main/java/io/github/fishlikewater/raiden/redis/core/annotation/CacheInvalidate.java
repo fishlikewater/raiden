@@ -25,7 +25,7 @@ import java.lang.annotation.*;
  * @version 1.0.3
  * @since 2024/06/24
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface CacheInvalidate {
