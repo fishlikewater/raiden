@@ -16,7 +16,6 @@
     <modules>
         <module>redis-core</module>
         <module>raiden-redis-spring-boot-starter</module>
-        <module>redis-processor</module>
     </modules>
 
 
