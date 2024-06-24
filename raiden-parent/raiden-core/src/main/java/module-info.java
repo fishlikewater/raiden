@@ -23,7 +23,7 @@
 module raiden.core {
     requires cn.hutool.core;
     requires static lombok;
-    requires org.slf4j;
+    requires transitive org.slf4j;
 
     exports io.github.fishlikewater.raiden.core;
     exports io.github.fishlikewater.raiden.core.func;

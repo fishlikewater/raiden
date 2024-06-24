@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.http.autoconfigure.annotaion;
+package io.github.fishlikewater.raiden.http.autoconfigure.annotation;
 
 import io.github.fishlikewater.raiden.http.autoconfigure.HttpServerScannerRegistrar;
 import org.springframework.context.annotation.Import;

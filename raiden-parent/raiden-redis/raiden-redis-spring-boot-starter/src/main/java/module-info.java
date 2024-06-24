@@ -17,21 +17,17 @@
  * {@code module-info}
  *
  * @author zhangxiang
- * @since 2024/06/17
+ * @since 2024/06/24
  */
-module raiden.core.spring.boot {
-    requires spring.beans;
-    requires static lombok;
-    requires spring.context;
-    requires spring.core;
+module raiden.redis.spring.boot.starter {
     requires raiden.core;
+    requires raiden.redis.core;
+    requires raiden.core.spring.boot;
+    requires spring.boot.autoconfigure;
     requires spring.boot;
-    requires cn.hutool.core;
+    requires spring.context;
+    requires redisson;
+    requires static lombok;
 
-    exports io.github.fishlikewater.spring.boot.raiden.core;
-    exports io.github.fishlikewater.spring.boot.raiden.core.engine;
-    exports io.github.fishlikewater.spring.boot.raiden.core.getter;
-    exports io.github.fishlikewater.spring.boot.raiden.core.i18n;
-    exports io.github.fishlikewater.spring.boot.raiden.core.property;
-    exports io.github.fishlikewater.spring.boot.raiden.core.processor;
+    exports io.github.fishlikewater.raiden.redis.autoconfig;
 }

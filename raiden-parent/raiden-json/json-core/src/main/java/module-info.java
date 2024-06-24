@@ -23,6 +23,7 @@
 module raiden.json.core {
     requires com.fasterxml.jackson.databind;
     requires cn.hutool.core;
+    requires transitive org.slf4j;
     requires static lombok;
     requires com.google.gson;
     requires cn.hutool.json;

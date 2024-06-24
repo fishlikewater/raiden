@@ -15,7 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.autoconfigure;
 
-import cn.hutool.core.util.StrUtil;
+import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
 import io.github.fishlikewater.raiden.http.core.interceptor.PredRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ import java.net.URI;
  * 注册服务名处理
  *
  * @author fishlikewater@126.com
- * @since 2023年09月26日 14:44
  * @version 1.0.0
+ * @since 2023年09月26日 14:44
  **/
 @RequiredArgsConstructor
 public class ServiceChoose implements PredRequest {
@@ -36,9 +36,9 @@ public class ServiceChoose implements PredRequest {
 
     @Override
     public void handler(MethodArgsBean methodArgsBean) {
-        if (StrUtil.isBlank(methodArgsBean.getUrl())){
+        if (StringUtils.isBlank(methodArgsBean.getUrl())) {
             final String serverName = methodArgsBean.getServerName();
-            if (StrUtil.isBlank(serverName)){
+            if (StringUtils.isBlank(serverName)) {
                 throw new RuntimeException("not config request");
             }
             final URI uri = serviceInstanceChooser.choose(serverName);

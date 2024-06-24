@@ -15,7 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.autoconfigure;
 
-import io.github.fishlikewater.raiden.http.autoconfigure.annotaion.HttpScan;
+import io.github.fishlikewater.raiden.http.autoconfigure.annotation.HttpScan;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.LogConfig;
 import lombok.extern.slf4j.Slf4j;
