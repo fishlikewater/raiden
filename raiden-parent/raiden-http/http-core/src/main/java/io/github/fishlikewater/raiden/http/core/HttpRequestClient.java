@@ -16,7 +16,6 @@
 package io.github.fishlikewater.raiden.http.core;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.json.JSONUtil;
 import io.github.fishlikewater.raiden.core.Assert;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
@@ -27,6 +26,7 @@ import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientIntercepto
 import io.github.fishlikewater.raiden.http.core.interceptor.LogInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.MultiFileBodyProvider;
 import io.github.fishlikewater.raiden.http.core.processor.ResponseJsonHandlerSubscriber;
+import io.github.fishlikewater.raiden.json.core.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 
 /**
  * {@code HttpRequestClient}
@@ -252,7 +253,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     }
 
     private HttpRequest getHttpRequestBody(RequestWrap requestWrap) {
-        String body = Objects.isNull(requestWrap.getBodyObject()) ? "" : JSONUtil.toJsonStr(requestWrap.getBodyObject());
+        String body = Objects.isNull(requestWrap.getBodyObject()) ? "" : JSONUtils.HutoolJSON.toJsonStr(requestWrap.getBodyObject());
         HttpRequest.BodyPublisher requestBody = HttpRequest.BodyPublishers.ofString(body);
         final HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .method(requestWrap.getHttpMethod().name(), requestBody)
@@ -361,16 +362,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         return httpClient
                 .sendAsync(httpRequest, (responseInfo) -> new ResponseJsonHandlerSubscriber<T>(responseInfo.headers(), typeArgumentClass))
                 .thenApply(res -> requestAfter(httpRequest, res, requestWrap).body())
-                .handle((res, ex) -> {
-                    if (ObjectUtils.isNullOrEmpty(ex)) {
-                        return res;
-                    }
-                    if (ex instanceof IOException ioException) {
-                        throw requestWrap.getExceptionProcessor().ioExceptionHandle(httpRequest, ioException);
-                    } else {
-                        throw requestWrap.getExceptionProcessor().exceptionHandle(httpRequest, ex);
-                    }
-                });
+                .handle(this.throwableFunction(requestWrap, httpRequest));
     }
 
     @SuppressWarnings("unchecked")
@@ -378,16 +370,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         return (CompletableFuture<T>) httpClient
                 .sendAsync(httpRequest, HttpResponse.BodyHandlers.ofFile(path, multipartData.getOpenOptions()))
                 .thenApply(res -> requestAfter(httpRequest, res, requestWrap).body())
-                .handle((res, ex) -> {
-                    if (ObjectUtils.isNullOrEmpty(ex)) {
-                        return res;
-                    }
-                    if (ex instanceof IOException ioException) {
-                        return requestWrap.getExceptionProcessor().ioExceptionHandle(httpRequest, ioException);
-                    } else {
-                        return requestWrap.getExceptionProcessor().exceptionHandle(httpRequest, ex);
-                    }
-                });
+                .handle(this.throwableFunction(requestWrap, httpRequest));
     }
 
     @SuppressWarnings("unchecked")
@@ -395,16 +378,21 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         return (CompletableFuture<T>) httpClient
                 .sendAsync(httpRequest, HttpResponse.BodyHandlers.ofFileDownload(path, multipartData.getOpenOptions()))
                 .thenApply(res -> requestAfter(httpRequest, res, requestWrap).body())
-                .handle((res, ex) -> {
-                    if (ObjectUtils.isNullOrEmpty(ex)) {
-                        return res;
-                    }
-                    if (ex instanceof IOException ioException) {
-                        return requestWrap.getExceptionProcessor().ioExceptionHandle(httpRequest, ioException);
-                    } else {
-                        return requestWrap.getExceptionProcessor().exceptionHandle(httpRequest, ex);
-                    }
-                });
+                .handle(this.throwableFunction(requestWrap, httpRequest));
+    }
+
+    private <T> BiFunction<T, Throwable, T> throwableFunction(RequestWrap requestWrap, HttpRequest httpRequest) {
+        return (res, ex) -> {
+            if (ObjectUtils.isNullOrEmpty(ex)) {
+                return res;
+            }
+            if (ex instanceof IOException ioException) {
+                requestWrap.getExceptionProcessor().ioExceptionHandle(httpRequest, ioException);
+            } else {
+                requestWrap.getExceptionProcessor().exceptionHandle(httpRequest, ex);
+            }
+            return null;
+        };
     }
 
     private <T> T handlerSync(RequestWrap requestWrap, HttpRequest httpRequest) {
@@ -430,10 +418,11 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             return this.requestAfter(httpRequest, response, requestWrap).body();
         } catch (Exception e) {
             if (e instanceof IOException ioException) {
-                throw requestWrap.getExceptionProcessor().ioExceptionHandle(httpRequest, ioException);
+                requestWrap.getExceptionProcessor().ioExceptionHandle(httpRequest, ioException);
             } else {
-                throw requestWrap.getExceptionProcessor().exceptionHandle(httpRequest, e);
+                requestWrap.getExceptionProcessor().exceptionHandle(httpRequest, e);
             }
+            return null;
         }
     }
 
@@ -452,25 +441,27 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             return requestAfter(httpRequest, (HttpResponse<T>) response, requestWrap).body();
         } catch (Exception e) {
             if (e instanceof IOException ioException) {
-                throw requestWrap.getExceptionProcessor().ioExceptionHandle(httpRequest, ioException);
+                requestWrap.getExceptionProcessor().ioExceptionHandle(httpRequest, ioException);
             } else {
-                throw requestWrap.getExceptionProcessor().exceptionHandle(httpRequest, e);
+                requestWrap.getExceptionProcessor().exceptionHandle(httpRequest, e);
             }
         }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
     private <T> T handleReturnBytes(RequestWrap requestWrap, HttpRequest httpRequest) {
         try {
-            final HttpResponse<byte[]> response = requestWrap.getHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
+            HttpResponse<byte[]> response = requestWrap.getHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
             return requestAfter(httpRequest, (HttpResponse<T>) response, requestWrap).body();
         } catch (Exception e) {
             if (e instanceof IOException ioException) {
-                throw requestWrap.getExceptionProcessor().ioExceptionHandle(httpRequest, ioException);
+                requestWrap.getExceptionProcessor().ioExceptionHandle(httpRequest, ioException);
             } else {
-                throw requestWrap.getExceptionProcessor().exceptionHandle(httpRequest, e);
+                requestWrap.getExceptionProcessor().exceptionHandle(httpRequest, e);
             }
         }
+        return null;
     }
 
     private HttpRequest requestBefore(HttpClientInterceptor interceptor, HttpRequest httpRequest) {
@@ -482,7 +473,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
 
     private <T> HttpResponse<T> requestAfter(HttpRequest request, HttpResponse<T> response, RequestWrap requestWrap) {
         if (ObjectUtils.notEquals(response.statusCode(), HttpConstants.HTTP_OK)) {
-            throw requestWrap.getExceptionProcessor().invalidRespHandle(request, response);
+            requestWrap.getExceptionProcessor().invalidRespHandle(request, response);
         }
         if (HttpBootStrap.getLogConfig().isEnableLog()) {
             response = LOG_INTERCEPTOR.requestAfter(response);

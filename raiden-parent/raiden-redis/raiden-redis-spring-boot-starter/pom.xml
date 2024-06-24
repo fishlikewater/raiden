@@ -18,6 +18,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>io.github.fishlikewater</groupId>
             <artifactId>redis-core</artifactId>
         </dependency>

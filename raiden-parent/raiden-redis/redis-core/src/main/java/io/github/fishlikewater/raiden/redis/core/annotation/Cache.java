@@ -13,23 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.fishlikewater.raiden.redis.core.annotation;
+
+import java.lang.annotation.*;
+import java.util.concurrent.TimeUnit;
+
 /**
- * {@code module-info}
+ * {@code RedisCache}
  *
  * @author zhangxiang
- * @since 2024/06/24
+ * @version 1.0.0
+ * @since 2024/05/17
  */
-module raiden.redis.spring.boot.starter {
-    requires raiden.core;
-    requires raiden.redis.core;
-    requires raiden.core.spring.boot;
-    requires spring.boot.autoconfigure;
-    requires spring.boot;
-    requires spring.context;
-    requires redisson;
-    requires static lombok;
-    requires org.aspectj.weaver;
-    requires spring.core;
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Cache {
 
-    exports io.github.fishlikewater.raiden.redis.autoconfig;
+    String key() default "";
+
+    String prefix() default "";
+
+    long expire();
+
+    TimeUnit timeUnit() default TimeUnit.SECONDS;
 }

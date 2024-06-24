@@ -39,7 +39,7 @@ public interface ExceptionProcessor {
      * @param response 响应
      * @return 异常
      */
-    <T> RuntimeException invalidRespHandle(HttpRequest request, HttpResponse<T> response);
+    <T> HttpResponse<T> invalidRespHandle(HttpRequest request, HttpResponse<T> response);
 
     /**
      * 处理IO异常
@@ -48,7 +48,7 @@ public interface ExceptionProcessor {
      * @param cause   异常
      * @return 异常
      */
-    RuntimeException ioExceptionHandle(HttpRequest request, IOException cause);
+    void ioExceptionHandle(HttpRequest request, IOException cause);
 
     /**
      * 处理异常 (除IO异常之外的其他异常)
@@ -57,27 +57,27 @@ public interface ExceptionProcessor {
      * @param cause   异常
      * @return 异常
      */
-    RuntimeException exceptionHandle(HttpRequest request, Throwable cause);
+    void exceptionHandle(HttpRequest request, Throwable cause);
 
     @Slf4j
     class DefaultExceptionProcessor implements ExceptionProcessor {
 
         @Override
-        public <T> RuntimeException invalidRespHandle(HttpRequest request, HttpResponse<T> response) {
+        public <T> HttpResponse<T> invalidRespHandle(HttpRequest request, HttpResponse<T> response) {
             log.error("request failed, response status code: {}", response.statusCode());
-            return new RaidenHttpException("request failed, response status code: {}", response.statusCode());
+            return response;
         }
 
         @Override
-        public RuntimeException ioExceptionHandle(HttpRequest request, IOException cause) {
+        public void ioExceptionHandle(HttpRequest request, IOException cause) {
             log.error("request failed, request address url: {}", request.uri(), cause);
-            return new RaidenHttpException("request failed, request address url: {}", request.uri(), cause);
+            throw new RaidenHttpException("request failed, request address url: {}", request.uri(), cause);
         }
 
         @Override
-        public RuntimeException exceptionHandle(HttpRequest request, Throwable cause) {
+        public void exceptionHandle(HttpRequest request, Throwable cause) {
             log.error("request failed, request address url: {}", request.uri(), cause);
-            return new RaidenHttpException("request failed, request address url: {}", request.uri(), cause);
+            throw new RaidenHttpException("request failed, request address url: {}", request.uri(), cause);
         }
     }
 }
