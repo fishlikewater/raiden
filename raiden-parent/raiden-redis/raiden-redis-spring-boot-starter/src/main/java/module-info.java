@@ -30,6 +30,7 @@ module raiden.redis.spring.boot.starter {
     requires spring.core;
     requires spring.boot.autoconfigure;
     requires org.aspectj.weaver;
+    requires spring.expression;
 
     exports io.github.fishlikewater.raiden.redis.autoconfig;
 }

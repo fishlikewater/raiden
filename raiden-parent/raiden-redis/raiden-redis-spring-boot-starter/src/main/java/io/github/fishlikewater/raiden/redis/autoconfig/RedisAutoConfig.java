@@ -22,6 +22,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.ParameterNameDiscoverer;
 
 /**
  * {@code RedisAutoConfig}
@@ -55,5 +56,17 @@ public class RedisAutoConfig {
                 this.redissonClient(properties),
                 this.globalDelayQueueHandler()
         );
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "raiden.redis.cache", name = "enabled", havingValue = "true")
+    public CacheAspect cacheAspect(RedisProperties properties, RedissonClient redissonClient, ParameterNameDiscoverer parameterNameDiscoverer) {
+        return new CacheAspect(redissonClient, properties, parameterNameDiscoverer);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "raiden.redis.cache", name = "enabled", havingValue = "true")
+    public CacheInvalidateAspect cacheInvalidateAspect(RedisProperties properties, RedissonClient redissonClient, ParameterNameDiscoverer parameterNameDiscoverer) {
+        return new CacheInvalidateAspect(redissonClient, properties, parameterNameDiscoverer);
     }
 }

@@ -61,9 +61,8 @@
             <!--lock-->
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>
-                <artifactId>raiden-lock</artifactId>
+                <artifactId>lock-core</artifactId>
                 <version>${revision}</version>
-                <type>pom</type>
             </dependency>
 
             <!--json-->

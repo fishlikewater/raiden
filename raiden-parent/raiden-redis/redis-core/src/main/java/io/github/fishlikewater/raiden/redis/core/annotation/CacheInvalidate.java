@@ -15,6 +15,8 @@
  */
 package io.github.fishlikewater.raiden.redis.core.annotation;
 
+import io.github.fishlikewater.raiden.redis.core.DataTypeEnum;
+
 import java.lang.annotation.*;
 
 /**
@@ -30,7 +32,11 @@ import java.lang.annotation.*;
 @Documented
 public @interface CacheInvalidate {
 
+    String prefix() default "";
+
     String key() default "";
 
-    String prefix() default "";
+    String hashKey() default "";
+
+    DataTypeEnum type() default DataTypeEnum.GENERAL;
 }

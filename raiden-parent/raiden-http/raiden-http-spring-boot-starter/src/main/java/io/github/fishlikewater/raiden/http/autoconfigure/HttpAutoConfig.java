@@ -49,7 +49,7 @@ import java.util.List;
 public class HttpAutoConfig {
 
     @Bean
-    public HttpContextRefreshedEventListener httpApplicationStartedEventListener() {
+    public HttpContextRefreshedEventListener httpContextRefreshedEventListener() {
         return new HttpContextRefreshedEventListener();
     }
 

@@ -15,16 +15,26 @@
  */
 package io.github.fishlikewater.raiden.redis.autoconfig;
 
-import io.github.fishlikewater.raiden.core.StringUtils;
-import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
+import io.github.fishlikewater.raiden.core.DateUtils;
+import io.github.fishlikewater.raiden.core.ObjectUtils;
+import io.github.fishlikewater.raiden.redis.core.DataTypeEnum;
 import io.github.fishlikewater.raiden.redis.core.annotation.Cache;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.redisson.api.RBucket;
+import org.redisson.api.RLock;
+import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.annotation.Order;
+import org.springframework.expression.EvaluationContext;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 /**
  * {@code CacheAspect}
@@ -37,15 +47,18 @@ import org.springframework.core.annotation.Order;
 @Aspect
 @Order(1)
 @ConditionalOnBean(RedissonClient.class)
-public class CacheAspect {
+public class CacheAspect extends AbstractCacheAspect {
 
     private final RedissonClient redissonClient;
 
     private final RedisProperties redisProperties;
 
-    public CacheAspect(RedissonClient redissonClient, RedisProperties redisProperties) {
+    private final ParameterNameDiscoverer parameterNameDiscoverer;
+
+    public CacheAspect(RedissonClient redissonClient, RedisProperties redisProperties, ParameterNameDiscoverer parameterNameDiscoverer) {
         this.redissonClient = redissonClient;
         this.redisProperties = redisProperties;
+        this.parameterNameDiscoverer = parameterNameDiscoverer;
     }
 
     @Pointcut(value = "@annotation(io.github.fishlikewater.raiden.redis.core.annotation.Cache)")
@@ -53,25 +66,74 @@ public class CacheAspect {
     }
 
     @Around(value = "anyMethod() && @annotation(cache)")
-    public Object aroundAdvice4Method(ProceedingJoinPoint pjp, Cache cache) {
-        // 获取缓存key
-        String cacheKey = this.populateCacheKey(cache);
-
-
-        return null;
+    public Object aroundAdvice4Method(ProceedingJoinPoint pjp, Cache cache) throws Throwable {
+        return this.handleCache(cache, pjp);
     }
 
-    private String populateCacheKey(Cache cache) {
-        String key = cache.key();
-        String prefix = cache.prefix();
-        RaidenExceptionCheck.INSTANCE.isNotNull(key, "key is not found");
-        if (StringUtils.isBlank(prefix)) {
-            prefix = redisProperties.getCache().getPrefix();
+    private Object handleCache(Cache cache, ProceedingJoinPoint pjp) throws Throwable {
+        // 获取缓存key
+        DataTypeEnum type = cache.type();
+        if (Objects.requireNonNull(type) == DataTypeEnum.HASH) {
+            return this.handleHash(pjp, cache);
         }
-        String cacheKey = key;
-        if (StringUtils.isNotBlank(prefix)) {
-            cacheKey = StringUtils.format("{}:{}", prefix, key);
+        return this.handleGeneral(pjp, cache);
+    }
+
+    private Object handleGeneral(ProceedingJoinPoint pjp, Cache cache) throws Throwable {
+        String cacheKey = this.populateCacheKey(cache.key(), cache.prefix(), pjp);
+        RBucket<Object> bucket = redissonClient.getBucket(cacheKey);
+        Object obj = bucket.get();
+        if (ObjectUtils.isNotNullOrEmpty(obj)) {
+            return obj;
         }
-        return cacheKey;
+
+        RLock lock = redissonClient.getLock(cacheKey);
+        lock.lock();
+        try {
+            obj = bucket.get();
+            if (ObjectUtils.isNotNullOrEmpty(obj)) {
+                return obj;
+            }
+            Object result = pjp.proceed();
+            ChronoUnit chronoUnit = DateUtils.convertToChronoUnit(cache.timeUnit());
+            bucket.set(result, Duration.of(cache.expire(), chronoUnit));
+            return result;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private Object handleHash(ProceedingJoinPoint pjp, Cache cache) throws Throwable {
+        EvaluationContext context = this.getContext(pjp);
+        String hashKey = this.populateCacheKey(cache.hashKey(), null, pjp);
+        String cacheKey = this.populateCacheKey(cache.key(), cache.prefix(), context);
+        RMapCache<String, Object> map = redissonClient.getMapCache(cacheKey);
+        Object obj = map.get(hashKey);
+        if (ObjectUtils.isNotNullOrEmpty(obj)) {
+            return obj;
+        }
+        RLock lock = redissonClient.getLock(cacheKey);
+        lock.lock();
+        try {
+            obj = map.get(hashKey);
+            if (ObjectUtils.isNotNullOrEmpty(obj)) {
+                return obj;
+            }
+            Object result = pjp.proceed();
+            map.put(hashKey, result, cache.expire(), cache.timeUnit());
+            return result;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    protected ParameterNameDiscoverer parameterNameDiscoverer() {
+        return this.parameterNameDiscoverer;
+    }
+
+    @Override
+    protected RedisProperties redisProperties() {
+        return this.redisProperties;
     }
 }

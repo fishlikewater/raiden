@@ -13,34 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.redis.core.annotation;
-
-import io.github.fishlikewater.raiden.redis.core.DataTypeEnum;
-
-import java.lang.annotation.*;
-import java.util.concurrent.TimeUnit;
+package io.github.fishlikewater.raiden.redis.core;
 
 /**
- * {@code RedisCache}
+ * {@code DataTypeEnum}
+ * 数据类型枚举
  *
  * @author zhangxiang
- * @version 1.0.0
- * @since 2024/05/17
+ * @version 1.0.3
+ * @since 2024/06/25
  */
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface Cache {
+public enum DataTypeEnum {
 
-    String prefix() default "";
+    // 数据类型枚举
+    HASH,
+    GENERAL,
 
-    String key() default "";
+    ;
 
-    String hashKey() default "";
+    DataTypeEnum() {
 
-    DataTypeEnum type() default DataTypeEnum.GENERAL;
+    }
 
-    long expire();
-
-    TimeUnit timeUnit() default TimeUnit.SECONDS;
 }

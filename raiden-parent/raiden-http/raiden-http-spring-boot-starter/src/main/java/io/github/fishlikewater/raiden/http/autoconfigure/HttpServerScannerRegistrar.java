@@ -40,8 +40,8 @@ import java.util.Set;
 
 /**
  * @author fishlikewater@126.com
- * @since 2021年12月26日 13:28
  * @version 1.0.0
+ * @since 2021年12月26日 13:28
  **/
 @Slf4j
 public class HttpServerScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
@@ -53,7 +53,7 @@ public class HttpServerScannerRegistrar implements ImportBeanDefinitionRegistrar
     private Environment environment;
 
     @Override
-    public void setEnvironment(Environment environment) throws BeansException {
+    public void setEnvironment(@lombok.NonNull Environment environment) throws BeansException {
         this.environment = environment;
     }
 

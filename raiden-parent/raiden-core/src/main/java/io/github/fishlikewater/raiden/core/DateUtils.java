@@ -20,6 +20,8 @@ import cn.hutool.core.date.LocalDateTimeUtil;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
 /**
  * {@code DateUtils}
@@ -74,5 +76,17 @@ public class DateUtils extends DateUtil {
         }
 
         return transfer(ts * CommonConstants.MILLIS_UNIT);
+    }
+
+    public static ChronoUnit convertToChronoUnit(TimeUnit timeUnit) {
+        return switch (timeUnit) {
+            case DAYS -> ChronoUnit.DAYS;
+            case HOURS -> ChronoUnit.HOURS;
+            case MINUTES -> ChronoUnit.MINUTES;
+            case SECONDS -> ChronoUnit.SECONDS;
+            case MICROSECONDS -> ChronoUnit.MICROS;
+            case MILLISECONDS -> ChronoUnit.MILLIS;
+            case NANOSECONDS -> ChronoUnit.NANOS;
+        };
     }
 }

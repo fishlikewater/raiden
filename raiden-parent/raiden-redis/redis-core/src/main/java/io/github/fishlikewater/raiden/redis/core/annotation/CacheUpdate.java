@@ -21,16 +21,17 @@ import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * {@code RedisCache}
+ * {@code CacheUpdate}
+ * 缓存更新
  *
  * @author zhangxiang
- * @version 1.0.0
- * @since 2024/05/17
+ * @version 1.0.3
+ * @since 2024/06/25
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Cache {
+public @interface CacheUpdate {
 
     String prefix() default "";
 
