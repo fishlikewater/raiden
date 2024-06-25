@@ -22,6 +22,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * {@code RedisProperties}
@@ -41,6 +43,23 @@ public class RedisProperties extends RedissonPatternCfg {
     private boolean enabled;
 
     private Delay delay;
+
+    private Cache cache;
+
+    @Data
+    public static class Cache implements Serializable {
+
+        @Serial
+        private static final long serialVersionUID = -5450845588631494332L;
+
+        private boolean enabled;
+
+        private String prefix;
+
+        private Duration expirationTime;
+
+        private TimeUnit timeUnit;
+    }
 
     @Data
     public static class Delay implements Serializable {

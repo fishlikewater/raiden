@@ -15,6 +15,8 @@
  */
 package io.github.fishlikewater.raiden.redis.autoconfig;
 
+import io.github.fishlikewater.raiden.core.StringUtils;
+import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 import io.github.fishlikewater.raiden.redis.core.annotation.Cache;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -39,8 +41,11 @@ public class CacheAspect {
 
     private final RedissonClient redissonClient;
 
-    public CacheAspect(RedissonClient redissonClient) {
+    private final RedisProperties redisProperties;
+
+    public CacheAspect(RedissonClient redissonClient, RedisProperties redisProperties) {
         this.redissonClient = redissonClient;
+        this.redisProperties = redisProperties;
     }
 
     @Pointcut(value = "@annotation(io.github.fishlikewater.raiden.redis.core.annotation.Cache)")
@@ -49,6 +54,24 @@ public class CacheAspect {
 
     @Around(value = "anyMethod() && @annotation(cache)")
     public Object aroundAdvice4Method(ProceedingJoinPoint pjp, Cache cache) {
+        // 获取缓存key
+        String cacheKey = this.populateCacheKey(cache);
+
+
         return null;
+    }
+
+    private String populateCacheKey(Cache cache) {
+        String key = cache.key();
+        String prefix = cache.prefix();
+        RaidenExceptionCheck.INSTANCE.isNotNull(key, "key is not found");
+        if (StringUtils.isBlank(prefix)) {
+            prefix = redisProperties.getCache().getPrefix();
+        }
+        String cacheKey = key;
+        if (StringUtils.isNotBlank(prefix)) {
+            cacheKey = StringUtils.format("{}:{}", prefix, key);
+        }
+        return cacheKey;
     }
 }

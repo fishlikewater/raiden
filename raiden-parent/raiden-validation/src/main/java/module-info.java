@@ -20,8 +20,8 @@
  * @since 2024/06/24
  */
 module raiden.validation {
-    requires jakarta.validation;
     requires raiden.core;
+    requires jakarta.validation;
 
     exports io.github.fishlikewater.raiden.validation;
     exports io.github.fishlikewater.raiden.validation.annotation;

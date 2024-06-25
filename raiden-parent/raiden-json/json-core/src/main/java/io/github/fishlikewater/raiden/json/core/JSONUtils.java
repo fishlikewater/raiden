@@ -29,7 +29,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import com.google.gson.Gson;
 import io.github.fishlikewater.raiden.json.core.jackson.BigNumberSerializer;
 import io.github.fishlikewater.raiden.json.core.jackson.JackSonNotNullSerialize;
 import io.github.fishlikewater.raiden.json.core.jackson.JacksonUtils;
@@ -57,18 +56,9 @@ import java.util.TimeZone;
 @SuppressWarnings("all")
 public final class JSONUtils {
 
-    public static Gson GSON;
-
     public static final JacksonUtils JACKSON = new JacksonUtils();
 
     static {
-        try {
-            Class.forName("com.google.gson.Gson");
-            GSON = new Gson();
-        } catch (Exception ignored) {
-
-        }
-
         // 为mapper注册一个带有SerializerModifier的Factory，此modifier主要做的事情为：值为null时序列化为默认值
         JACKSON.setSerializerFactory(JACKSON.getSerializerFactory().withSerializerModifier(new NeedNotNullSerializerModifier()));
         // 设置时区

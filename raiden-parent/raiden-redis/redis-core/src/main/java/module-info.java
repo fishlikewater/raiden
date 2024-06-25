@@ -22,11 +22,11 @@
 module raiden.redis.core {
     requires static lombok;
     requires redisson;
-    requires com.fasterxml.jackson.core;
-    requires raiden.json.core;
-    requires raiden.core;
-    requires cn.hutool.core;
     requires org.slf4j;
+    requires raiden.core;
+    requires raiden.json.core;
+    requires cn.hutool.core;
+    requires com.fasterxml.jackson.core;
 
     exports io.github.fishlikewater.raiden.redis.core;
     exports io.github.fishlikewater.raiden.redis.core.annotation;

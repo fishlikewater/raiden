@@ -20,10 +20,10 @@
  * @since 2024/06/24
  */
 module raiden.generate {
+    requires static lombok;
     requires raiden.core;
     requires raiden.json.core;
     requires pinyin4j;
-    requires static lombok;
 
     exports io.github.fishlikewater.raiden.generate;
 }

@@ -20,18 +20,18 @@
  * @since 2024/06/24
  */
 module raiden.docs.spring.boot.starter {
-    requires org.slf4j;
-    requires org.springdoc.openapi.common;
-    requires spring.web;
     requires static lombok;
+    requires raiden.core;
+    requires org.slf4j;
     requires io.swagger.v3.core;
     requires io.swagger.v3.oas.models;
-    requires org.apache.commons.lang3;
     requires io.swagger.v3.oas.annotations;
-    requires spring.context;
     requires spring.core;
+    requires spring.web;
     requires spring.boot;
+    requires spring.context;
     requires spring.boot.autoconfigure;
+    requires org.springdoc.openapi.common;
 
     exports io.github.fishlikewater.raiden.docs.autoconfig;
     exports io.github.fishlikewater.raiden.docs.autoconfig.handle;

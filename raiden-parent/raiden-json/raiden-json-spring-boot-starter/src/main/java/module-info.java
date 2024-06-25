@@ -20,11 +20,11 @@
  * @since 2024/06/24
  */
 module raiden.json.spring.boot.starter {
-    requires raiden.json.core;
-    requires spring.boot.autoconfigure;
     requires static lombok;
-    requires com.fasterxml.jackson.databind;
+    requires raiden.json.core;
     requires spring.context;
+    requires spring.boot.autoconfigure;
+    requires com.fasterxml.jackson.databind;
 
     exports io.github.fishlikewater.raiden.json.autoconfig;
 }

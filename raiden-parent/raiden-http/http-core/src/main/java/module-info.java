@@ -20,12 +20,12 @@
  * @since 2024/06/24
  */
 module raiden.http.core {
+    requires static lombok;
     requires raiden.core;
     requires raiden.json.core;
-    requires static lombok;
     requires java.net.http;
-    requires io.github.classgraph;
     requires cn.hutool.core;
+    requires io.github.classgraph;
 
     exports io.github.fishlikewater.raiden.http.core;
     exports io.github.fishlikewater.raiden.http.core.source;

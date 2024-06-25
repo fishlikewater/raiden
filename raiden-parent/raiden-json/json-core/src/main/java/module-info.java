@@ -21,13 +21,13 @@
  * @since 2024/06/17
  */
 module raiden.json.core {
-    requires com.fasterxml.jackson.databind;
-    requires transitive org.slf4j;
-    requires static lombok;
-    requires com.google.gson;
-    requires cn.hutool.json;
-    requires com.fasterxml.jackson.datatype.jsr310;
     requires raiden.core;
+    requires cn.hutool.json;
+    requires cn.hutool.core;
+    requires static lombok;
+    requires transitive org.slf4j;
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.datatype.jsr310;
 
     exports io.github.fishlikewater.raiden.json.core;
     exports io.github.fishlikewater.raiden.json.core.annotation;

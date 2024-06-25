@@ -20,13 +20,13 @@
  * @since 2024/06/24
  */
 module raiden.timer.spring.boot.starter {
+    requires static lombok;
     requires raiden.timer.core;
+    requires raiden.core.spring.boot;
     requires spring.boot;
+    requires spring.beans;
     requires spring.context;
     requires spring.boot.autoconfigure;
-    requires spring.beans;
-    requires static lombok;
-    requires raiden.core.spring.boot;
 
     exports io.github.fishlikewater.raiden.timer.autoconfigure;
 }
