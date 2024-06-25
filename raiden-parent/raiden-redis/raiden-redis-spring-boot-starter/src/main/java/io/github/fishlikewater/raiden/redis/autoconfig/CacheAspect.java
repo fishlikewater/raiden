@@ -87,12 +87,12 @@ public class CacheAspect extends AbstractCacheAspect {
             return obj;
         }
 
-        RLock lock = redissonClient.getLock(cacheKey);
+        RLock lock = redissonClient.getLock(this.getLockKey(cacheKey));
         lock.lock();
         try {
-            obj = bucket.get();
-            if (ObjectUtils.isNotNullOrEmpty(obj)) {
-                return obj;
+            Object object = bucket.get();
+            if (ObjectUtils.isNotNullOrEmpty(object)) {
+                return object;
             }
             Object result = pjp.proceed();
             ChronoUnit chronoUnit = DateUtils.convertToChronoUnit(cache.timeUnit());
@@ -112,7 +112,7 @@ public class CacheAspect extends AbstractCacheAspect {
         if (ObjectUtils.isNotNullOrEmpty(obj)) {
             return obj;
         }
-        RLock lock = redissonClient.getLock(cacheKey);
+        RLock lock = redissonClient.getLock(this.getLockKey(cacheKey));
         lock.lock();
         try {
             obj = map.get(hashKey);

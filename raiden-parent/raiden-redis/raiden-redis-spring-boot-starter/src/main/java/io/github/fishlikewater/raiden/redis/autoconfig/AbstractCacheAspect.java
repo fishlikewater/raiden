@@ -97,4 +97,8 @@ public abstract class AbstractCacheAspect {
         }
         return context;
     }
+
+    protected String getLockKey(String cacheKey) {
+        return StringUtils.format("{}:lock", cacheKey);
+    }
 }
