@@ -15,19 +15,19 @@
  */
 package io.github.fishlikewater.raiden.json.core.jackson;
 
-import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.json.core.annotation.JackSonSerializeNotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.time.temporal.Temporal;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -67,7 +67,7 @@ public class JackSonNotNullSerialize extends JsonSerializer<Object> {
             return;
         }
         // 有自定义值
-        if (StrUtil.isNotEmpty(needNotNull.customV())) {
+        if (StringUtils.isNotEmpty(needNotNull.customV())) {
             gen.writeObject(needNotNull.customV());
             return;
         }
@@ -88,7 +88,7 @@ public class JackSonNotNullSerialize extends JsonSerializer<Object> {
         }
         // 集合、数组
         if (needNotNull.collT() && this.determineIsCollection(javaType)) {
-            gen.writeObject(ListUtil.empty());
+            gen.writeObject(Collections.emptyList());
             return;
         }
 

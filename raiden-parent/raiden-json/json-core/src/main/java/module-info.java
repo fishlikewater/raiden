@@ -22,12 +22,12 @@
  */
 module raiden.json.core {
     requires com.fasterxml.jackson.databind;
-    requires cn.hutool.core;
     requires transitive org.slf4j;
     requires static lombok;
     requires com.google.gson;
     requires cn.hutool.json;
     requires com.fasterxml.jackson.datatype.jsr310;
+    requires raiden.core;
 
     exports io.github.fishlikewater.raiden.json.core;
     exports io.github.fishlikewater.raiden.json.core.annotation;

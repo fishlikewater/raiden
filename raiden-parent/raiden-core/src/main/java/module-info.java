@@ -21,8 +21,8 @@
  * @since 2024/06/17
  */
 module raiden.core {
-    requires cn.hutool.core;
     requires static lombok;
+    requires cn.hutool.core;
     requires transitive org.slf4j;
 
     exports io.github.fishlikewater.raiden.core;

@@ -22,9 +22,9 @@
 module raiden.redis.core {
     requires static lombok;
     requires redisson;
-    requires raiden.core;
     requires com.fasterxml.jackson.core;
     requires raiden.json.core;
+    requires raiden.core;
     requires cn.hutool.core;
     requires org.slf4j;
 

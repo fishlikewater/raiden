@@ -24,7 +24,6 @@ module raiden.generate {
     requires raiden.json.core;
     requires pinyin4j;
     requires static lombok;
-    requires cn.hutool.json;
 
     exports io.github.fishlikewater.raiden.generate;
 }
