@@ -40,11 +40,11 @@ public @interface Cache {
 
     DataTypeEnum type() default DataTypeEnum.GENERAL;
 
-    long expire();
+    long expire() default 0L;
 
     TimeUnit timeUnit() default TimeUnit.SECONDS;
 
-    long updateTime();
+    long updateTime() default 0L;
 
     TimeUnit updatetimeUnit() default TimeUnit.SECONDS;
 }

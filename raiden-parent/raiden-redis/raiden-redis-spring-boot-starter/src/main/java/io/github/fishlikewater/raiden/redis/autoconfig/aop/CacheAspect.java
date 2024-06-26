@@ -36,6 +36,7 @@ import org.springframework.expression.EvaluationContext;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * {@code CacheAspect}
@@ -96,8 +97,12 @@ public class CacheAspect extends AbstractCacheAspect {
                 return object;
             }
             Object result = pjp.proceed();
-            ChronoUnit chronoUnit = DateUtils.convertToChronoUnit(cache.timeUnit());
-            bucket.set(result, Duration.of(cache.expire(), chronoUnit));
+            if (cache.expire() <= 0) {
+                bucket.set(result, this.redisProperties.getCache().getExpirationTime());
+            } else {
+                ChronoUnit chronoUnit = DateUtils.convertToChronoUnit(cache.timeUnit());
+                bucket.set(result, Duration.of(cache.expire(), chronoUnit));
+            }
             this.addUpdateTask(pjp, cache, cacheKey, null);
             return result;
         } finally {
@@ -122,7 +127,12 @@ public class CacheAspect extends AbstractCacheAspect {
                 return obj;
             }
             Object result = pjp.proceed();
-            map.put(hashKey, result, cache.expire(), cache.timeUnit());
+            if (cache.expire() <= 0) {
+                Duration expirationTime = this.redisProperties.getCache().getExpirationTime();
+                map.put(hashKey, result, expirationTime.toSeconds(), TimeUnit.SECONDS);
+            } else {
+                map.put(hashKey, result, cache.expire(), cache.timeUnit());
+            }
             this.addUpdateTask(pjp, cache, cacheKey, hashKey);
             return result;
         } finally {

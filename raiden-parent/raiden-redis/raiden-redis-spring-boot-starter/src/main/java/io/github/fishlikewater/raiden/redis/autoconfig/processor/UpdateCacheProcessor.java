@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,40 +44,40 @@ public class UpdateCacheProcessor {
 
     private final DelayQueue delayQueue;
 
-    private final Map<String, UpdateCacheProcessorHolder> cacheUpdate = new ConcurrentHashMap<>();
+    private final Map<String, UpdateCacheProcessorHolder> map = new ConcurrentHashMap<>();
 
     public UpdateCacheProcessor(DelayQueue delayQueue) {
         this.delayQueue = delayQueue;
     }
 
     public void add(UpdateCacheProcessorHolder value) {
-        if (this.cacheUpdate.containsKey(value.getKey())) {
-            return;
+        if (!this.map.containsKey(value.getKey())) {
+            this.map.put(value.getKey(), value);
         }
-        try {
-            this.cacheUpdate.put(value.getKey(), value);
-            DelayTask<Serializable> task = DelayTask.builder()
-                    .taskId(value.getKey())
-                    .topic(getTopic(value.getPrefix()))
-                    .payload(value.getKey())
-                    .delayTime(value.getDelayTime())
-                    .timeUnit(value.getDelayTimeUnit())
-                    .build();
+        this.toDelayTask(value, false);
+    }
 
+    public void toDelayTask(UpdateCacheProcessorHolder value, boolean async) {
+        DelayTask<Serializable> task = DelayTask.builder()
+                .taskId(value.getKey())
+                .topic(getTopic(value.getPrefix()))
+                .payload(value.getKey())
+                .delayTime(value.getDelayTime())
+                .timeUnit(value.getDelayTimeUnit())
+                .build();
+        if (async) {
+            Future<Void> ignore = this.delayQueue.addAsync(task);
+        } else {
             this.delayQueue.add(task);
-        } catch (Exception e) {
-            if (this.cacheUpdate.containsKey(value.getKey())) {
-                this.remove(value.getKey());
-            }
         }
     }
 
     public void remove(String key) {
-        this.cacheUpdate.remove(key);
+        this.map.remove(key);
     }
 
     public UpdateCacheProcessorHolder get(String key) {
-        return this.cacheUpdate.get(key);
+        return this.map.get(key);
     }
 
     private String getTopic(String prefix) {
@@ -90,7 +91,7 @@ public class UpdateCacheProcessor {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class UpdateCacheProcessorHolder {
+    public static class UpdateCacheProcessorHolder implements Serializable {
 
         private String key;
 

@@ -25,4 +25,6 @@ package io.github.fishlikewater.raiden.redis.core.constant;
 public interface RedisConstants {
 
     String UPDATE_TASK_SUFFIX = "cache:update:task";
+
+    String UPDATE_TASK_MAP_CACHE_KEY = "cache:update:task:map";
 }

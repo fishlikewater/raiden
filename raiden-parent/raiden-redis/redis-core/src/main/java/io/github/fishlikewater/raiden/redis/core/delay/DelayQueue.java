@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.github.fishlikewater.raiden.core.DateUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
+import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
 import io.github.fishlikewater.raiden.redis.core.DelayQueueUtils;
 import lombok.Getter;
@@ -31,6 +32,7 @@ import org.redisson.client.codec.StringCodec;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 /**
  * <p>
@@ -89,6 +91,17 @@ public class DelayQueue implements Serializable {
             this.delayedQueue.offer(dequePayload, delay.getDelayTime(), delay.getTimeUnit());
         } catch (JsonProcessingException e) {
             log.error("delay: add.delay.task.failed, error.msg: ", e);
+        }
+    }
+
+    public <R extends Serializable> Future<Void> addAsync(DelayTask<R> delay) {
+        try {
+            delay.setPublishTime(DateUtils.current());
+            // 避免序列化方式的差异 统一JSON 序列化
+            String dequePayload = JSONUtils.JACKSON.writeValueAsString(delay);
+            return this.delayedQueue.offerAsync(dequePayload, delay.getDelayTime(), delay.getTimeUnit());
+        } catch (JsonProcessingException e) {
+            return RaidenExceptionCheck.INSTANCE.throwUnchecked("delay: add.delay.task.failed, error.msg: ", e);
         }
     }
 }

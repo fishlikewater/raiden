@@ -17,14 +17,12 @@ package io.github.fishlikewater.raiden.redis.autoconfig.processor;
 
 import io.github.fishlikewater.raiden.core.DateUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
-import io.github.fishlikewater.raiden.redis.autoconfig.CacheComposite;
 import io.github.fishlikewater.raiden.redis.core.constant.RedisConstants;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayQueueListener;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayTask;
 import io.github.fishlikewater.raiden.redis.core.enums.DataTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
-import org.redisson.api.RLock;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 
@@ -42,7 +40,7 @@ import java.time.temporal.ChronoUnit;
  * @since 2024/06/26
  */
 @Slf4j
-public class UpdateCacheListener implements DelayQueueListener, CacheComposite {
+public class UpdateCacheListener implements DelayQueueListener {
 
     private final UpdateCacheProcessor updateCacheProcessor;
 
@@ -70,24 +68,22 @@ public class UpdateCacheListener implements DelayQueueListener, CacheComposite {
             try {
                 obj = method.invoke(target, args);
             } catch (Exception e) {
-                log.error("Failed to perform automatic update", e);
+                log.error("Failed.to.perform.automatic.update", e);
                 // 继续添加延迟任务
-                updateCacheProcessor.add(holder);
+                updateCacheProcessor.toDelayTask(holder, true);
                 return;
             }
 
-            RLock lock = redissonClient.getLock(this.getLockKey(holder.getKey()));
-            if (lock.tryLock()) {
-                ChronoUnit chronoUnit = DateUtils.convertToChronoUnit(holder.getExpireTimeUnit());
-                if (holder.getType() == DataTypeEnum.GENERAL) {
-                    RBucket<Object> bucket = redissonClient.getBucket(holder.getKey());
-                    bucket.set(obj, Duration.of(holder.getExpireTime(), chronoUnit));
-                }
-                if (holder.getType() == DataTypeEnum.HASH) {
-                    RMapCache<String, Object> map = redissonClient.getMapCache(holder.getKey());
-                    map.put(holder.getHashKey(), obj, holder.getExpireTime(), holder.getExpireTimeUnit());
-                }
+            ChronoUnit chronoUnit = DateUtils.convertToChronoUnit(holder.getExpireTimeUnit());
+            if (holder.getType() == DataTypeEnum.GENERAL) {
+                RBucket<Object> bucket = redissonClient.getBucket(holder.getKey());
+                bucket.setAsync(obj, Duration.of(holder.getExpireTime(), chronoUnit));
             }
+            if (holder.getType() == DataTypeEnum.HASH) {
+                RMapCache<String, Object> map = redissonClient.getMapCache(holder.getKey());
+                map.putAsync(holder.getHashKey(), obj, holder.getExpireTime(), holder.getExpireTimeUnit());
+            }
+            updateCacheProcessor.toDelayTask(holder, true);
         }
     }
 }

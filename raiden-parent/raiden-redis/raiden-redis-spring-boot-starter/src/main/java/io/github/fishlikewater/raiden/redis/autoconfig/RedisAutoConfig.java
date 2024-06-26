@@ -57,11 +57,11 @@ public class RedisAutoConfig {
 
     @Bean
     @ConditionalOnProperty(prefix = "raiden.redis.delay", name = "enabled", havingValue = "true")
-    public DelayQueue delayQueue(RedisProperties properties) {
+    public DelayQueue delayQueue(RedisProperties properties, RedissonClient redissonClient, GlobalDelayQueueHandler globalDelayQueueHandler) {
         return new DelayQueue(
                 properties.getDelay().getTopic(),
-                this.redissonClient(properties),
-                this.globalDelayQueueHandler()
+                redissonClient,
+                globalDelayQueueHandler
         );
     }
 

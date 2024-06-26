@@ -23,7 +23,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 /**
  * {@code RedisProperties}
@@ -57,8 +56,6 @@ public class RedisProperties extends RedissonPatternCfg {
         private String prefix;
 
         private Duration expirationTime;
-
-        private TimeUnit timeUnit;
     }
 
     @Data

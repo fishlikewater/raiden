@@ -32,6 +32,9 @@ import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+
 /**
  * {@code AbstractCacheAspect}
  *
@@ -96,7 +99,7 @@ public abstract class AbstractCacheAspect implements CacheComposite {
         String[] parameterNames = this.parameterNameDiscoverer().getParameterNames(methodSignature.getMethod());
         Object[] args = pjp.getArgs();
         if (ObjectUtils.isNullOrEmpty(parameterNames) || ObjectUtils.isNullOrEmpty(args)) {
-            return RaidenExceptionCheck.INSTANCE.throwUnchecked("args is null");
+            return RaidenExceptionCheck.INSTANCE.throwUnchecked("args.is.null");
         }
         EvaluationContext context = new StandardEvaluationContext();
         for (int i = 0; i < args.length; i++) {
@@ -106,15 +109,22 @@ public abstract class AbstractCacheAspect implements CacheComposite {
     }
 
     protected void addUpdateTask(ProceedingJoinPoint pjp, Cache cache, String cacheKey, String hashKey) {
-        UpdateCacheProcessor processor = SpringUtils.getBean(UpdateCacheProcessor.class);
-        if (ObjectUtils.isNullOrEmpty(processor)) {
-            log.warn("cache update task is not enable");
+        if (cache.updateTime() <= 0) {
             return;
         }
+
+        UpdateCacheProcessor processor = SpringUtils.getBean(UpdateCacheProcessor.class);
+        if (ObjectUtils.isNullOrEmpty(processor)) {
+            log.warn("cache.update.task.is.not.enable");
+            return;
+        }
+
         UpdateCacheProcessor.UpdateCacheProcessorHolder holder = processor.get(cacheKey);
         if (ObjectUtils.isNotNullOrEmpty(holder)) {
             return;
         }
+
+        Duration expirationTime = this.redisProperties().getCache().getExpirationTime();
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
         UpdateCacheProcessor.UpdateCacheProcessorHolder processorHolder = UpdateCacheProcessor.UpdateCacheProcessorHolder.builder()
                 .key(cacheKey)
@@ -124,8 +134,8 @@ public abstract class AbstractCacheAspect implements CacheComposite {
                 .args(pjp.getArgs())
                 .delayTime(cache.updateTime())
                 .delayTimeUnit(cache.updatetimeUnit())
-                .expireTime(cache.expire())
-                .expireTimeUnit(cache.timeUnit())
+                .expireTime(cache.expire() <= 0 ? expirationTime.toSeconds() : cache.expire())
+                .expireTimeUnit(cache.expire() <= 0 ? TimeUnit.SECONDS : cache.timeUnit())
                 .type(cache.type())
                 .build();
         processor.add(processorHolder);
