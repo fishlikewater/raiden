@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.redis.core;
 
+import io.github.fishlikewater.raiden.redis.core.enums.ServerPattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.redisson.client.codec.Codec;

@@ -13,35 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.redis.core;
-
-import lombok.Getter;
+package io.github.fishlikewater.raiden.redis.core.constant;
 
 /**
- * {@code ServerPattern}
- * 服务模式
+ * {@code RedisConstants}
  *
  * @author zhangxiang
- * @version 1.0.0
- * @since 2024/05/15
+ * @version 1.0.3
+ * @since 2024/06/26
  */
-@Getter
-public enum ServerPattern {
+public interface RedisConstants {
 
-    // 单机模式  集群模式 哨兵模式 主从模式 云托管模式
-    SINGLE("单机模式"),
-
-    CLUSTER("集群模式"),
-
-    SENTINEL("哨兵模式"),
-
-    MASTER_SLAVE("主从模式"),
-
-    REPLICATED("云托管模式");
-
-    private final String desc;
-
-    ServerPattern(String desc) {
-        this.desc = desc;
-    }
+    String UPDATE_TASK_SUFFIX = "cache:update:task";
 }

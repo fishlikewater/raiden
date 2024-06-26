@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.fishlikewater.raiden.redis.core.enums;
+
 /**
- * {@code module-info}
+ * {@code DataTypeEnum}
+ * 数据类型枚举
  *
  * @author zhangxiang
- * @since 2024/06/17
+ * @version 1.0.3
+ * @since 2024/06/25
  */
-module raiden.redis.core {
-    requires static lombok;
-    requires redisson;
-    requires org.slf4j;
-    requires raiden.core;
-    requires raiden.json.core;
-    requires cn.hutool.core;
-    requires com.fasterxml.jackson.core;
+public enum DataTypeEnum {
 
-    exports io.github.fishlikewater.raiden.redis.core;
-    exports io.github.fishlikewater.raiden.redis.core.annotation;
-    exports io.github.fishlikewater.raiden.redis.core.delay;
-    exports io.github.fishlikewater.raiden.redis.core.enums;
-    exports io.github.fishlikewater.raiden.redis.core.constant
-            to raiden.redis.spring.boot.starter;
+    // 数据类型枚举
+    HASH,
+    GENERAL,
+
+    ;
+
+    DataTypeEnum() {
+
+    }
+
 }

@@ -15,7 +15,7 @@
  */
 package io.github.fishlikewater.raiden.redis.core.annotation;
 
-import io.github.fishlikewater.raiden.redis.core.DataTypeEnum;
+import io.github.fishlikewater.raiden.redis.core.enums.DataTypeEnum;
 
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;

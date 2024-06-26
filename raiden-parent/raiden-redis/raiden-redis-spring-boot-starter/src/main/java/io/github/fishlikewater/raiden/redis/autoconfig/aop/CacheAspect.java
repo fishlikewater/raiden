@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.redis.autoconfig;
+package io.github.fishlikewater.raiden.redis.autoconfig.aop;
 
 import io.github.fishlikewater.raiden.core.DateUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
-import io.github.fishlikewater.raiden.redis.core.DataTypeEnum;
+import io.github.fishlikewater.raiden.redis.autoconfig.RedisProperties;
 import io.github.fishlikewater.raiden.redis.core.annotation.Cache;
+import io.github.fishlikewater.raiden.redis.core.enums.DataTypeEnum;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -97,6 +98,7 @@ public class CacheAspect extends AbstractCacheAspect {
             Object result = pjp.proceed();
             ChronoUnit chronoUnit = DateUtils.convertToChronoUnit(cache.timeUnit());
             bucket.set(result, Duration.of(cache.expire(), chronoUnit));
+            this.addUpdateTask(pjp, cache, cacheKey, null);
             return result;
         } finally {
             lock.unlock();
@@ -105,7 +107,7 @@ public class CacheAspect extends AbstractCacheAspect {
 
     private Object handleHash(ProceedingJoinPoint pjp, Cache cache) throws Throwable {
         EvaluationContext context = this.getContext(pjp);
-        String hashKey = this.populateCacheKey(cache.hashKey(), null, pjp);
+        String hashKey = this.populateCacheKey(cache.hashKey(), null, context);
         String cacheKey = this.populateCacheKey(cache.key(), cache.prefix(), context);
         RMapCache<String, Object> map = redissonClient.getMapCache(cacheKey);
         Object obj = map.get(hashKey);
@@ -121,6 +123,7 @@ public class CacheAspect extends AbstractCacheAspect {
             }
             Object result = pjp.proceed();
             map.put(hashKey, result, cache.expire(), cache.timeUnit());
+            this.addUpdateTask(pjp, cache, cacheKey, hashKey);
             return result;
         } finally {
             lock.unlock();

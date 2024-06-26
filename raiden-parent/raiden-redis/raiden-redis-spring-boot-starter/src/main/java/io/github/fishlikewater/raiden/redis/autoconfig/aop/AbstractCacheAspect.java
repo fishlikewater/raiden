@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.redis.autoconfig;
+package io.github.fishlikewater.raiden.redis.autoconfig.aop;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
+import io.github.fishlikewater.raiden.redis.autoconfig.CacheComposite;
+import io.github.fishlikewater.raiden.redis.autoconfig.RedisProperties;
+import io.github.fishlikewater.raiden.redis.autoconfig.processor.UpdateCacheProcessor;
+import io.github.fishlikewater.raiden.redis.core.annotation.Cache;
 import io.github.fishlikewater.spring.boot.raiden.core.ExpressionUtils;
+import io.github.fishlikewater.spring.boot.raiden.core.SpringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -33,7 +39,8 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  * @version 1.0.3
  * @since 2024/06/25
  */
-public abstract class AbstractCacheAspect {
+@Slf4j
+public abstract class AbstractCacheAspect implements CacheComposite {
 
     /**
      * 获取参数名称解析器
@@ -98,7 +105,29 @@ public abstract class AbstractCacheAspect {
         return context;
     }
 
-    protected String getLockKey(String cacheKey) {
-        return StringUtils.format("{}:lock", cacheKey);
+    protected void addUpdateTask(ProceedingJoinPoint pjp, Cache cache, String cacheKey, String hashKey) {
+        UpdateCacheProcessor processor = SpringUtils.getBean(UpdateCacheProcessor.class);
+        if (ObjectUtils.isNullOrEmpty(processor)) {
+            log.warn("cache update task is not enable");
+            return;
+        }
+        UpdateCacheProcessor.UpdateCacheProcessorHolder holder = processor.get(cacheKey);
+        if (ObjectUtils.isNotNullOrEmpty(holder)) {
+            return;
+        }
+        MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
+        UpdateCacheProcessor.UpdateCacheProcessorHolder processorHolder = UpdateCacheProcessor.UpdateCacheProcessorHolder.builder()
+                .key(cacheKey)
+                .hashKey(hashKey)
+                .method(methodSignature.getMethod())
+                .target(pjp.getTarget())
+                .args(pjp.getArgs())
+                .delayTime(cache.updateTime())
+                .delayTimeUnit(cache.updatetimeUnit())
+                .expireTime(cache.expire())
+                .expireTimeUnit(cache.timeUnit())
+                .type(cache.type())
+                .build();
+        processor.add(processorHolder);
     }
 }

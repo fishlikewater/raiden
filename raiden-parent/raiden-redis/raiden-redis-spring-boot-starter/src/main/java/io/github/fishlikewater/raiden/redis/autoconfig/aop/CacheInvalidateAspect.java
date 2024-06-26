@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.redis.autoconfig;
+package io.github.fishlikewater.raiden.redis.autoconfig.aop;
 
-import io.github.fishlikewater.raiden.redis.core.DataTypeEnum;
+import io.github.fishlikewater.raiden.redis.autoconfig.RedisProperties;
 import io.github.fishlikewater.raiden.redis.core.annotation.CacheInvalidate;
+import io.github.fishlikewater.raiden.redis.core.enums.DataTypeEnum;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

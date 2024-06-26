@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.fishlikewater.raiden.redis.autoconfig;
+
+import io.github.fishlikewater.raiden.core.StringUtils;
+
 /**
- * {@code module-info}
+ * {@code CacheComposite}
  *
  * @author zhangxiang
- * @since 2024/06/17
+ * @version 1.0.3
+ * @since 2024/06/26
  */
-module raiden.redis.core {
-    requires static lombok;
-    requires redisson;
-    requires org.slf4j;
-    requires raiden.core;
-    requires raiden.json.core;
-    requires cn.hutool.core;
-    requires com.fasterxml.jackson.core;
+public interface CacheComposite {
 
-    exports io.github.fishlikewater.raiden.redis.core;
-    exports io.github.fishlikewater.raiden.redis.core.annotation;
-    exports io.github.fishlikewater.raiden.redis.core.delay;
-    exports io.github.fishlikewater.raiden.redis.core.enums;
-    exports io.github.fishlikewater.raiden.redis.core.constant
-            to raiden.redis.spring.boot.starter;
+    /**
+     * 获取锁的key
+     *
+     * @param cacheKey 缓存key
+     * @return 锁的key
+     */
+    default String getLockKey(String cacheKey) {
+        return StringUtils.format("{}:lock", cacheKey);
+    }
 }

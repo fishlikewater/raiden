@@ -13,26 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.redis.core;
+package io.github.fishlikewater.raiden.redis.core.enums;
+
+import lombok.Getter;
 
 /**
- * {@code DataTypeEnum}
- * 数据类型枚举
+ * {@code ServerPattern}
+ * 服务模式
  *
  * @author zhangxiang
- * @version 1.0.3
- * @since 2024/06/25
+ * @version 1.0.0
+ * @since 2024/05/15
  */
-public enum DataTypeEnum {
+@Getter
+public enum ServerPattern {
 
-    // 数据类型枚举
-    HASH,
-    GENERAL,
+    // 单机模式  集群模式 哨兵模式 主从模式 云托管模式
+    SINGLE("单机模式"),
 
-    ;
+    CLUSTER("集群模式"),
 
-    DataTypeEnum() {
+    SENTINEL("哨兵模式"),
 
+    MASTER_SLAVE("主从模式"),
+
+    REPLICATED("云托管模式");
+
+    private final String desc;
+
+    ServerPattern(String desc) {
+        this.desc = desc;
     }
-
 }

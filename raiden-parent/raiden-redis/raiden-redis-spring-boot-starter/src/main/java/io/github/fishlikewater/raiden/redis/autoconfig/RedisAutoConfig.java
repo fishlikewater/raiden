@@ -15,10 +15,15 @@
  */
 package io.github.fishlikewater.raiden.redis.autoconfig;
 
+import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheAspect;
+import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheInvalidateAspect;
+import io.github.fishlikewater.raiden.redis.autoconfig.processor.UpdateCacheListener;
+import io.github.fishlikewater.raiden.redis.autoconfig.processor.UpdateCacheProcessor;
 import io.github.fishlikewater.raiden.redis.core.RedissonUtils;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayQueue;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +47,8 @@ public class RedisAutoConfig {
         return RedissonUtils.redissonClient(properties);
     }
 
+    // ---------------------------------------------------------------- delay
+
     @Bean
     @ConditionalOnProperty(prefix = "raiden.redis.delay", name = "enabled", havingValue = "true")
     public GlobalDelayQueueHandler globalDelayQueueHandler() {
@@ -58,6 +65,8 @@ public class RedisAutoConfig {
         );
     }
 
+    // ---------------------------------------------------------------- cache aop
+
     @Bean
     @ConditionalOnProperty(prefix = "raiden.redis.cache", name = "enabled", havingValue = "true")
     public CacheAspect cacheAspect(RedisProperties properties, RedissonClient redissonClient, ParameterNameDiscoverer parameterNameDiscoverer) {
@@ -68,5 +77,21 @@ public class RedisAutoConfig {
     @ConditionalOnProperty(prefix = "raiden.redis.cache", name = "enabled", havingValue = "true")
     public CacheInvalidateAspect cacheInvalidateAspect(RedisProperties properties, RedissonClient redissonClient, ParameterNameDiscoverer parameterNameDiscoverer) {
         return new CacheInvalidateAspect(redissonClient, properties, parameterNameDiscoverer);
+    }
+
+    // ---------------------------------------------------------------- cache update
+
+    @Bean
+    @ConditionalOnBean(DelayQueue.class)
+    @ConditionalOnProperty(prefix = "raiden.redis.cache", name = "enabled", havingValue = "true")
+    public UpdateCacheProcessor updateCacheProcessor(DelayQueue delayQueue) {
+        return new UpdateCacheProcessor(delayQueue);
+    }
+
+    @Bean
+    @ConditionalOnBean(DelayQueue.class)
+    @ConditionalOnProperty(prefix = "raiden.redis.cache", name = "enabled", havingValue = "true")
+    public UpdateCacheListener updateCacheListener(UpdateCacheProcessor updateCacheProcessor, RedissonClient redissonClient) {
+        return new UpdateCacheListener(updateCacheProcessor, redissonClient);
     }
 }

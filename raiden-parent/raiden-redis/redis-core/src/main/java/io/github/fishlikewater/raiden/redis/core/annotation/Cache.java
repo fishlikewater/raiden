@@ -15,7 +15,7 @@
  */
 package io.github.fishlikewater.raiden.redis.core.annotation;
 
-import io.github.fishlikewater.raiden.redis.core.DataTypeEnum;
+import io.github.fishlikewater.raiden.redis.core.enums.DataTypeEnum;
 
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
@@ -43,4 +43,8 @@ public @interface Cache {
     long expire();
 
     TimeUnit timeUnit() default TimeUnit.SECONDS;
+
+    long updateTime();
+
+    TimeUnit updatetimeUnit() default TimeUnit.SECONDS;
 }
