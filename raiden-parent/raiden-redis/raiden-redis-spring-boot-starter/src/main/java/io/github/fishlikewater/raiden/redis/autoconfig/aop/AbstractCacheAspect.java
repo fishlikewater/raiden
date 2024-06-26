@@ -108,6 +108,18 @@ public abstract class AbstractCacheAspect implements CacheComposite {
         return context;
     }
 
+    protected void removeTask(String cacheKey, String hashKey) {
+        UpdateCacheProcessor processor = SpringUtils.getBean(UpdateCacheProcessor.class);
+        if (ObjectUtils.isNullOrEmpty(processor)) {
+            return;
+        }
+        String key = cacheKey;
+        if (StringUtils.isNotBlank(hashKey)) {
+            key = StringUtils.format("{}#{}", cacheKey, hashKey);
+        }
+        processor.remove(key);
+    }
+
     protected void addUpdateTask(ProceedingJoinPoint pjp, Cache cache, String cacheKey, String hashKey) {
         if (cache.updateTime() <= 0) {
             return;
@@ -118,8 +130,11 @@ public abstract class AbstractCacheAspect implements CacheComposite {
             log.warn("cache.update.task.is.not.enable");
             return;
         }
-
-        UpdateCacheProcessor.UpdateCacheProcessorHolder holder = processor.get(cacheKey);
+        String key = cacheKey;
+        if (StringUtils.isNotBlank(hashKey)) {
+            key = StringUtils.format("{}#{}", cacheKey, hashKey);
+        }
+        UpdateCacheProcessor.UpdateCacheProcessorHolder holder = processor.get(key);
         if (ObjectUtils.isNotNullOrEmpty(holder)) {
             return;
         }

@@ -51,8 +51,12 @@ public class UpdateCacheProcessor {
     }
 
     public void add(UpdateCacheProcessorHolder value) {
-        if (!this.map.containsKey(value.getKey())) {
-            this.map.put(value.getKey(), value);
+        String key = value.getKey();
+        if (StringUtils.isNotBlank(value.getHashKey())) {
+            key = StringUtils.format("{}#{}", value.getKey(), value.getHashKey());
+        }
+        if (!this.map.containsKey(key)) {
+            this.map.put(key, value);
         }
         this.toDelayTask(value, false);
     }
