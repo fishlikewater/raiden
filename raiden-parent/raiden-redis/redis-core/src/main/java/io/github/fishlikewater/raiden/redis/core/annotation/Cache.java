@@ -43,8 +43,4 @@ public @interface Cache {
     long expire() default 0L;
 
     TimeUnit timeUnit() default TimeUnit.SECONDS;
-
-    long updateTime() default 0L;
-
-    TimeUnit updatetimeUnit() default TimeUnit.SECONDS;
 }
