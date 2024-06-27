@@ -13,32 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.crypto;
+package io.github.fishlikewater.raiden.crypto.exception;
 
-import java.security.Provider;
-import java.security.Security;
+import io.github.fishlikewater.raiden.core.exception.AbstractException;
+import io.github.fishlikewater.raiden.core.exception.AbstractExceptionCheck;
 
 /**
  * <p>
- * {@code ProviderFactory}
+ * {@code CryptoExceptionCheck}
  * </p>
- * Provider工厂类
  *
  * @author fishlikewater@126.com
- * @version 1.0.2
- * @since 2024年06月10日 9:23
+ * @version 1.0.3
+ * @since 2024年06月27日 22:30
  **/
-public class ProviderFactory {
+public final class CryptoExceptionCheck extends AbstractExceptionCheck {
+    public static final CryptoExceptionCheck INSTANCE = new CryptoExceptionCheck();
 
-    /**
-     * 创建Bouncy Castle 提供者
-     *
-     * @return {@link Provider}
-     */
-    public static Provider createBouncyCastleProvider() throws Exception {
-        Class<?> aClass = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
-        Provider provider = (Provider) aClass.getConstructor().newInstance();
-        Security.insertProviderAt(provider, 0);
-        return provider;
+    private CryptoExceptionCheck() {
+
+    }
+
+    @Override
+    protected AbstractException createException(Throwable e, String message, Object... args) {
+        return new RaidenCryptoException(e, message, args);
     }
 }
