@@ -34,5 +34,4 @@ module raiden.redis.spring.boot.starter {
 
     exports io.github.fishlikewater.raiden.redis.autoconfig;
     exports io.github.fishlikewater.raiden.redis.autoconfig.aop;
-    exports io.github.fishlikewater.raiden.redis.autoconfig.processor;
 }

@@ -21,19 +21,13 @@ import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 import io.github.fishlikewater.raiden.redis.autoconfig.CacheComposite;
 import io.github.fishlikewater.raiden.redis.autoconfig.RedisProperties;
-import io.github.fishlikewater.raiden.redis.autoconfig.processor.UpdateCacheProcessor;
-import io.github.fishlikewater.raiden.redis.core.annotation.Cache;
 import io.github.fishlikewater.spring.boot.raiden.core.ExpressionUtils;
-import io.github.fishlikewater.spring.boot.raiden.core.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 /**
  * {@code AbstractCacheAspect}
@@ -106,53 +100,5 @@ public abstract class AbstractCacheAspect implements CacheComposite {
             context.setVariable(parameterNames[i], args[i]);
         }
         return context;
-    }
-
-    protected void removeTask(String cacheKey, String hashKey) {
-        UpdateCacheProcessor processor = SpringUtils.getBean(UpdateCacheProcessor.class);
-        if (ObjectUtils.isNullOrEmpty(processor)) {
-            return;
-        }
-        String key = cacheKey;
-        if (StringUtils.isNotBlank(hashKey)) {
-            key = StringUtils.format("{}#{}", cacheKey, hashKey);
-        }
-        processor.remove(key);
-    }
-
-    protected void addUpdateTask(ProceedingJoinPoint pjp, Cache cache, String cacheKey, String hashKey) {
-        if (cache.updateTime() <= 0) {
-            return;
-        }
-
-        UpdateCacheProcessor processor = SpringUtils.getBean(UpdateCacheProcessor.class);
-        if (ObjectUtils.isNullOrEmpty(processor)) {
-            log.warn("cache.update.task.is.not.enable");
-            return;
-        }
-        String key = cacheKey;
-        if (StringUtils.isNotBlank(hashKey)) {
-            key = StringUtils.format("{}#{}", cacheKey, hashKey);
-        }
-        UpdateCacheProcessor.UpdateCacheProcessorHolder holder = processor.get(key);
-        if (ObjectUtils.isNotNullOrEmpty(holder)) {
-            return;
-        }
-
-        Duration expirationTime = this.redisProperties().getCache().getExpirationTime();
-        MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
-        UpdateCacheProcessor.UpdateCacheProcessorHolder processorHolder = UpdateCacheProcessor.UpdateCacheProcessorHolder.builder()
-                .key(cacheKey)
-                .hashKey(hashKey)
-                .method(methodSignature.getMethod())
-                .target(pjp.getTarget())
-                .args(pjp.getArgs())
-                .delayTime(cache.updateTime())
-                .delayTimeUnit(cache.updatetimeUnit())
-                .expireTime(cache.expire() <= 0 ? expirationTime.toSeconds() : cache.expire())
-                .expireTimeUnit(cache.expire() <= 0 ? TimeUnit.SECONDS : cache.timeUnit())
-                .type(cache.type())
-                .build();
-        processor.add(processorHolder);
     }
 }

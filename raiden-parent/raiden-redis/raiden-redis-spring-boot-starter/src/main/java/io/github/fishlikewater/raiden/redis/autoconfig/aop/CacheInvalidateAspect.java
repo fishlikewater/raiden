@@ -80,7 +80,6 @@ public class CacheInvalidateAspect extends AbstractCacheAspect {
         RBucket<Object> bucket = redissonClient.getBucket(cacheKey);
         if (bucket.isExists()) {
             bucket.delete();
-            this.removeTask(cacheKey, null);
         }
         return pjp.proceed();
     }
@@ -92,7 +91,6 @@ public class CacheInvalidateAspect extends AbstractCacheAspect {
         RMapCache<String, Object> map = redissonClient.getMapCache(cacheKey);
         if (map.isExists()) {
             map.remove(hashKey);
-            this.removeTask(cacheKey, hashKey);
         }
         return pjp.proceed();
     }

@@ -17,13 +17,10 @@ package io.github.fishlikewater.raiden.redis.autoconfig;
 
 import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheAspect;
 import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheInvalidateAspect;
-import io.github.fishlikewater.raiden.redis.autoconfig.processor.UpdateCacheListener;
-import io.github.fishlikewater.raiden.redis.autoconfig.processor.UpdateCacheProcessor;
 import io.github.fishlikewater.raiden.redis.core.RedissonUtils;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayQueue;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -80,18 +77,4 @@ public class RedisAutoConfig {
     }
 
     // ---------------------------------------------------------------- cache update
-
-    @Bean
-    @ConditionalOnBean(DelayQueue.class)
-    @ConditionalOnProperty(prefix = "raiden.redis.cache", name = "enabled", havingValue = "true")
-    public UpdateCacheProcessor updateCacheProcessor(DelayQueue delayQueue) {
-        return new UpdateCacheProcessor(delayQueue);
-    }
-
-    @Bean
-    @ConditionalOnBean(DelayQueue.class)
-    @ConditionalOnProperty(prefix = "raiden.redis.cache", name = "enabled", havingValue = "true")
-    public UpdateCacheListener updateCacheListener(UpdateCacheProcessor updateCacheProcessor, RedissonClient redissonClient) {
-        return new UpdateCacheListener(updateCacheProcessor, redissonClient);
-    }
 }

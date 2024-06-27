@@ -103,7 +103,6 @@ public class CacheAspect extends AbstractCacheAspect {
                 ChronoUnit chronoUnit = DateUtils.convertToChronoUnit(cache.timeUnit());
                 bucket.set(result, Duration.of(cache.expire(), chronoUnit));
             }
-            this.addUpdateTask(pjp, cache, cacheKey, null);
             return result;
         } finally {
             lock.unlock();
@@ -133,7 +132,6 @@ public class CacheAspect extends AbstractCacheAspect {
             } else {
                 map.put(hashKey, result, cache.expire(), cache.timeUnit());
             }
-            this.addUpdateTask(pjp, cache, cacheKey, hashKey);
             return result;
         } finally {
             lock.unlock();
