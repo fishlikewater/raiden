@@ -34,9 +34,17 @@ public interface CommonConstants {
     String SYMBOL_EXPRESSION = "#";
     String SYMBOL_OR = "|";
     String SYMBOL_PATH = "/";
+    String HEX_PREFIX = "0x";
+    String HEX_PREFIX_UPPERCASE = "0X";
 
     // ---------------------------------------------------------------- NUMBER
 
+    /**
+     * 默认缓存大小 8192
+     */
+    int DEFAULT_BUFFER_SIZE = 2 << 12;
     long MILLIS_UNIT = 1000L;
     int TIME_STAMP_LENGTH = 13;
+    int INT_ZERO = 0;
+    int INT_ONE = 1;
 }

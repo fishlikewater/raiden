@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.crypto;
 
 import io.github.fishlikewater.raiden.core.StringUtils;
+import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -51,9 +52,9 @@ public class Hex {
      */
     public static boolean isHexNumber(String value) {
         int index = 0;
-        if (value.startsWith("0x", index) || value.startsWith("0X", index)) {
+        if (value.startsWith(CommonConstants.HEX_PREFIX, index) || value.startsWith(CommonConstants.HEX_PREFIX_UPPERCASE, index)) {
             index += 2;
-        } else if (value.startsWith("#", index)) {
+        } else if (value.startsWith(CommonConstants.SYMBOL_EXPRESSION, index)) {
             index++;
         }
         final Matcher matcher = PATTERN.matcher(value);

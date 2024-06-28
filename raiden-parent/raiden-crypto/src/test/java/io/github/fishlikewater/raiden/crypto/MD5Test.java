@@ -15,26 +15,23 @@
  */
 package io.github.fishlikewater.raiden.crypto;
 
+import org.junit.Test;
+
 /**
- * <p>
- * {@code MD5}
- * </p>
- * MD5 工具类
+ * {@code MD5Test}
+ * MD5 测试
  *
- * @author fishlikewater@126.com
- * @version 1.0.2
- * @since 2024年06月09日 23:28
- **/
-public final class MD5 extends Digest {
+ * @author zhangxiang
+ * @version 1.0.3
+ * @since 2024/06/28
+ */
+public class MD5Test {
 
-    public MD5() {
-        super(DigestAlgorithm.MD5.name(), true);
-    }
-
-    public MD5(byte[] salt, int saltPosition, int digestCount) {
-        this();
-        this.salt = salt;
-        this.saltPosition = saltPosition;
-        this.digestCount = digestCount;
+    @Test
+    public void testMD5() {
+        String testString = "这是一段测试字符串";
+        MD5 md5 = new MD5();
+        String hex = md5.digestHex(testString);
+        System.out.println(hex);
     }
 }
