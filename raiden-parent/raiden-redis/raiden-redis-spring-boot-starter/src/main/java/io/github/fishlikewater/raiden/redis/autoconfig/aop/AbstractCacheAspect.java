@@ -54,7 +54,7 @@ public abstract class AbstractCacheAspect implements CacheComposite {
     protected abstract RedisProperties redisProperties();
 
     protected String populateCacheKey(String key, String prefix, ProceedingJoinPoint pjp) {
-        RaidenExceptionCheck.INSTANCE.isNotNull(key, "key is not found");
+        RaidenExceptionCheck.INSTANCE.isNotNull(key, "key.is.not.found");
         // 判断key 是否为el表达式
         if (key.startsWith(CommonConstants.SYMBOL_EXPRESSION)) {
             EvaluationContext context = this.getContext(pjp);
@@ -72,7 +72,7 @@ public abstract class AbstractCacheAspect implements CacheComposite {
     }
 
     protected String populateCacheKey(String key, String prefix, EvaluationContext context) {
-        RaidenExceptionCheck.INSTANCE.isNotNull(key, "key is not found");
+        RaidenExceptionCheck.INSTANCE.isNotNull(key, "key.is.not.found");
         // 判断key 是否为el表达式
         if (key.startsWith(CommonConstants.SYMBOL_EXPRESSION)) {
             key = ExpressionUtils.getExpressionValue(context, key, String.class);
