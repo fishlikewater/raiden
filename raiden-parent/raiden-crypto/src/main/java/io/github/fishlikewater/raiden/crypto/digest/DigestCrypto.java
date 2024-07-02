@@ -16,10 +16,10 @@
 package io.github.fishlikewater.raiden.crypto.digest;
 
 import io.github.fishlikewater.raiden.core.FileUtils;
+import io.github.fishlikewater.raiden.core.Hex;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
-import io.github.fishlikewater.raiden.crypto.Hex;
 import io.github.fishlikewater.raiden.crypto.RaidenCryptoUtils;
 import io.github.fishlikewater.raiden.crypto.exception.CryptoExceptionCheck;
 import io.github.fishlikewater.raiden.crypto.exception.RaidenCryptoException;

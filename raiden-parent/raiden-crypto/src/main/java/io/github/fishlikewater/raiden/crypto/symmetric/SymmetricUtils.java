@@ -43,11 +43,13 @@ import java.security.spec.KeySpec;
 @SuppressWarnings("all")
 public class SymmetricUtils {
 
-    private static final String DES = "AES";
+    public static final String DES = "DES";
 
-    private static final String PBE = "PBE";
+    public static final String AES = "AES";
 
-    private static final String DES_ADE = "DESede";
+    public static final String PBE = "PBE";
+
+    public static final String DES_ADE = "DESede";
 
     // ---------------------------------------------------------------- SecretKey
 
@@ -76,29 +78,6 @@ public class SymmetricUtils {
      * 生成密钥
      *
      * @param algorithm 算法
-     * @param key       密钥
-     * @return 密钥
-     */
-    public static SecretKey generateKey(String algorithm, byte[] key) {
-        CryptoExceptionCheck.INSTANCE.isNotNull(algorithm, "Algorithm is null!");
-        SecretKey secretKey;
-        if (algorithm.startsWith(PBE)) {
-            // PBE密钥
-            secretKey = generatePBEKey(algorithm, (null == key) ? null : StringUtils.utf8Str(key).toCharArray());
-        } else if (algorithm.startsWith(DES)) {
-            // DES密钥
-            secretKey = generateDESKey(algorithm, key);
-        } else {
-            // 其它算法密钥
-            secretKey = (null == key) ? generateKey(algorithm) : new SecretKeySpec(key, algorithm);
-        }
-        return secretKey;
-    }
-
-    /**
-     * 生成密钥
-     *
-     * @param algorithm 算法
      * @param keySize   密钥长度
      * @param random    随机数
      * @return 密钥
@@ -120,6 +99,29 @@ public class SymmetricUtils {
             }
         }
         return keyGenerator.generateKey();
+    }
+
+    /**
+     * 生成密钥
+     *
+     * @param algorithm 算法
+     * @param key       密钥
+     * @return 密钥
+     */
+    public static SecretKey generateKey(String algorithm, byte[] key) {
+        CryptoExceptionCheck.INSTANCE.isNotNull(algorithm, "Algorithm is null!");
+        SecretKey secretKey;
+        if (algorithm.startsWith(PBE)) {
+            // PBE密钥
+            secretKey = generatePBEKey(algorithm, (null == key) ? null : StringUtils.utf8Str(key).toCharArray());
+        } else if (algorithm.startsWith(DES)) {
+            // DES密钥
+            secretKey = generateDESKey(algorithm, key);
+        } else {
+            // 其它算法密钥
+            secretKey = (null == key) ? generateKey(algorithm) : new SecretKeySpec(key, algorithm);
+        }
+        return secretKey;
     }
 
     /**

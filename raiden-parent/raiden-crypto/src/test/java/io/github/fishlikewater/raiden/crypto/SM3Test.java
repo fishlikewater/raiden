@@ -15,34 +15,23 @@
  */
 package io.github.fishlikewater.raiden.crypto;
 
-import io.github.fishlikewater.raiden.core.Hex;
-import org.junit.Assert;
+import io.github.fishlikewater.raiden.crypto.digest.SM3;
 import org.junit.Test;
 
-import java.nio.charset.StandardCharsets;
-
 /**
- * <p>
- * {@code HexTest}
- * </p>
+ * {@code SM3Test}
  *
- * @author fishlikewater@126.com
- * @version 1.0.2
- * @since 2024年06月08日 12:10
- **/
-public class HexTest {
+ * @author zhangxiang
+ * @version 1.0.3
+ * @since 2024/07/02
+ */
+public class SM3Test {
 
     @Test
-    public void testHex16() {
-        String s = "0FF123456";
-        final boolean hexNumber = Hex.isHexNumber(s);
-        Assert.assertTrue(hexNumber);
-
-        String string = "testHex";
-        final String hexStr = Hex.encodeHexStr(string);
-        System.out.println(hexStr);
-
-        final byte[] bytes = Hex.decodeHex(hexStr);
-        System.out.println(new String(bytes, StandardCharsets.UTF_8));
+    public void testSM3() {
+        String testString = "这是一段测试字符串";
+        SM3 sm3 = new SM3();
+        String hex = sm3.digestHex(testString);
+        System.out.println(hex);
     }
 }
