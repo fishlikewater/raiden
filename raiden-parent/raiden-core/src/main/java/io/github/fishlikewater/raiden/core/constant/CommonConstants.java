@@ -47,4 +47,6 @@ public interface CommonConstants {
     int TIME_STAMP_LENGTH = 13;
     int INT_ZERO = 0;
     int INT_ONE = 1;
+
+    int FILE_HEADER_LENGTH = 28;
 }

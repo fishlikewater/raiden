@@ -13,23 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.fishlikewater;
+
+import io.github.fishlikewater.raiden.core.FileUtils;
+import io.github.fishlikewater.raiden.core.enums.FileMagicNumberEnum;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.InputStream;
+
 /**
- * {@code module-info}
- * 常用工具包依赖模块管理
+ * {@code FileUtilsTest}
  *
  * @author zhangxiang
- * @since 2024/06/17
+ * @version 1.0.3
+ * @since 2024/07/02
  */
-module raiden.core {
-    requires static lombok;
-    requires cn.hutool.core;
-    requires transitive org.slf4j;
+public class FileUtilsTest {
 
-    exports io.github.fishlikewater.raiden.core;
-    exports io.github.fishlikewater.raiden.core.enums;
-    exports io.github.fishlikewater.raiden.core.func;
-    exports io.github.fishlikewater.raiden.core.model;
-    exports io.github.fishlikewater.raiden.core.constant;
-    exports io.github.fishlikewater.raiden.core.exception;
-    exports io.github.fishlikewater.raiden.core.references.org.springframework.scheduling.support;
+    @Test
+    public void testFileUtils() {
+        String fileName = "E:\\test\\test.jpg";
+        InputStream inputStream = FileUtils.getInputStream(new File(fileName));
+        FileMagicNumberEnum read = FileUtils.read("test.jpg", inputStream);
+        Assert.assertNotNull(read);
+    }
 }

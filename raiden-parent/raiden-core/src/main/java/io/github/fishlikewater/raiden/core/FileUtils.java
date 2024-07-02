@@ -15,6 +15,8 @@
  */
 package io.github.fishlikewater.raiden.core;
 
+import io.github.fishlikewater.raiden.core.constant.CommonConstants;
+import io.github.fishlikewater.raiden.core.enums.FileMagicNumberEnum;
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 
 import java.io.*;
@@ -79,6 +81,26 @@ public class FileUtils {
      */
     public static BufferedInputStream getBufferInputStream(File file) {
         return new BufferedInputStream(getInputStream(file));
+    }
+
+    /**
+     * 读取文件头 魔数
+     *
+     * @param fileName    文件名
+     * @param inputStream 文件输入流
+     * @return 文件头
+     */
+    public static FileMagicNumberEnum read(String fileName, InputStream inputStream) {
+        try {
+            byte[] head = new byte[CommonConstants.FILE_HEADER_LENGTH];
+            int ignored = inputStream.read(head, 0, CommonConstants.FILE_HEADER_LENGTH);
+            String header = Hex.encodeHexStr(head);
+            String suffix = getFileSuffix(fileName);
+
+            return FileMagicNumberEnum.codeOf(header, suffix);
+        } catch (Exception e) {
+            return RaidenExceptionCheck.INSTANCE.throwUnchecked(e);
+        }
     }
 
 }

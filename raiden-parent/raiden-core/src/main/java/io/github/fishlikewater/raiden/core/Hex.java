@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.crypto;
+package io.github.fishlikewater.raiden.core;
 
-import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 
 import java.math.BigInteger;
