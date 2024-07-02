@@ -13,15 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.fishlikewater.raiden.crypto.digest;
+
 /**
- * {@code module-info}
+ * {@code SM3}
+ * 国密摘要算法
  *
  * @author zhangxiang
- * @since 2024/06/17
+ * @version 1.0.3
+ * @since 2024/07/02
  */
-module raiden.crypto {
-    requires static lombok;
-    requires raiden.core;
-    exports io.github.fishlikewater.raiden.crypto;
-    exports io.github.fishlikewater.raiden.crypto.digest;
+public class SM3 extends DigestCrypto {
+
+    public SM3() {
+        super(DigestAlgorithm.SM3);
+    }
+
+    public SM3(byte[] salt, int saltPosition, int digestCount) {
+        this();
+        this.salt = salt;
+        this.saltPosition = saltPosition;
+        this.digestCount = digestCount;
+    }
 }

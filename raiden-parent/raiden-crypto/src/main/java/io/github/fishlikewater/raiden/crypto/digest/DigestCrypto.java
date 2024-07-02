@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.crypto;
+package io.github.fishlikewater.raiden.crypto.digest;
 
 import io.github.fishlikewater.raiden.core.FileUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
+import io.github.fishlikewater.raiden.crypto.Hex;
+import io.github.fishlikewater.raiden.crypto.RaidenCryptoUtils;
 import io.github.fishlikewater.raiden.crypto.exception.CryptoExceptionCheck;
 import io.github.fishlikewater.raiden.crypto.exception.RaidenCryptoException;
 import lombok.Getter;
@@ -42,7 +44,7 @@ import java.security.Provider;
  * @since 2024/06/11
  */
 @SuppressWarnings("unused")
-public class Digest {
+public class DigestCrypto {
 
     @Getter
     private MessageDigest digest;
@@ -66,12 +68,14 @@ public class Digest {
     @Setter
     protected int digestCount;
 
+    // ---------------------------------------------------------------- constructor
+
     /**
      * 构造
      *
      * @param algorithm 算法枚举
      */
-    public Digest(DigestAlgorithm algorithm) {
+    public DigestCrypto(DigestAlgorithm algorithm) {
         this(algorithm.getValue());
     }
 
@@ -80,11 +84,11 @@ public class Digest {
      *
      * @param algorithm 算法枚举
      */
-    public Digest(String algorithm) {
+    public DigestCrypto(String algorithm) {
         this(algorithm, null);
     }
 
-    public Digest(String algorithm, boolean useDefaultProvider) {
+    public DigestCrypto(String algorithm, boolean useDefaultProvider) {
         if (useDefaultProvider) {
             try {
                 this.digest = MessageDigest.getInstance(algorithm);
@@ -102,7 +106,7 @@ public class Digest {
      * @param algorithm 算法
      * @param provider  算法提供者，null表示JDK默认，可以引入Bouncy Castle等来提供更多算法支持
      */
-    public Digest(DigestAlgorithm algorithm, Provider provider) {
+    public DigestCrypto(DigestAlgorithm algorithm, Provider provider) {
         init(algorithm.getValue(), provider);
     }
 
@@ -112,7 +116,7 @@ public class Digest {
      * @param algorithm 算法
      * @param provider  算法提供者，null表示JDK默认，可以引入Bouncy Castle等来提供更多算法支持
      */
-    public Digest(String algorithm, Provider provider) {
+    public DigestCrypto(String algorithm, Provider provider) {
         init(algorithm, provider);
     }
 
@@ -121,9 +125,11 @@ public class Digest {
      *
      * @param digest {@link MessageDigest}
      */
-    public Digest(MessageDigest digest) {
+    public DigestCrypto(MessageDigest digest) {
         this.digest = digest;
     }
+
+    // ---------------------------------------------------------------- init
 
     /**
      * 初始化
@@ -143,6 +149,8 @@ public class Digest {
             }
         }
     }
+
+    // ---------------------------------------------------------------- common digest
 
     public void reset() {
         this.digest.reset();

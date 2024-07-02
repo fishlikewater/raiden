@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.crypto;
+package io.github.fishlikewater.raiden.crypto.digest;
 
 /**
  * <p>
@@ -25,7 +25,7 @@ package io.github.fishlikewater.raiden.crypto;
  * @version 1.0.2
  * @since 2024年06月09日 23:28
  **/
-public final class MD5 extends Digest {
+public final class MD5 extends DigestCrypto {
 
     public MD5() {
         super(DigestAlgorithm.MD5.name(), true);

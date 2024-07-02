@@ -13,42 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.crypto;
+package io.github.fishlikewater.raiden.crypto.symmetric;
 
-import lombok.Getter;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
 
 /**
- * <p>
- * {@code DigestAlgorithm}
- * </p>
- * 摘要算法
+ * {@code SymmetricCrypto}
+ * 对称加密
  *
- * @author fishlikewater@126.com
- * @version 1.0.2
- * @since 2024年06月10日 9:33
- **/
-@Getter
-public enum DigestAlgorithm {
+ * @author zhangxiang
+ * @version 1.0.3
+ * @since 2024/07/02
+ */
+public class SymmetricCrypto {
 
-    // MD2 MD5 SHA1 SHA256 SHA384 SHA512
-    MD2("MD2"),
-    MD5("MD5"),
-    SHA1("SHA-1"),
-    SHA256("SHA-256"),
-    SHA384("SHA-384"),
-    SHA512("SHA-512")
+    private Cipher cipher;
 
-    ;
+    private SecretKey secretKey;
 
+    // ---------------------------------------------------------------- constructor
 
-    private final String value;
-
-    /**
-     * 构造
-     *
-     * @param value 算法字符串表示
-     */
-    DigestAlgorithm(String value) {
-        this.value = value;
+    public SymmetricCrypto(Cipher cipher, SecretKey secretKey) {
+        this.cipher = cipher;
+        this.secretKey = secretKey;
     }
 }

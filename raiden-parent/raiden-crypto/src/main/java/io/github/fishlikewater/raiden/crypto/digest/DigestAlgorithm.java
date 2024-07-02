@@ -13,26 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.crypto;
+package io.github.fishlikewater.raiden.crypto.digest;
 
-import io.github.fishlikewater.raiden.crypto.digest.MD5;
-import org.junit.Test;
+import lombok.Getter;
 
 /**
- * {@code MD5Test}
- * MD5 测试
+ * <p>
+ * {@code DigestAlgorithm}
+ * </p>
+ * 摘要算法
  *
- * @author zhangxiang
- * @version 1.0.3
- * @since 2024/06/28
- */
-public class MD5Test {
+ * @author fishlikewater@126.com
+ * @version 1.0.2
+ * @since 2024年06月10日 9:33
+ **/
+@Getter
+public enum DigestAlgorithm {
 
-    @Test
-    public void testMD5() {
-        String testString = "这是一段测试字符串";
-        MD5 md5 = new MD5();
-        String hex = md5.digestHex(testString);
-        System.out.println(hex);
+    // MD2 MD5 SHA1 SHA256 SHA384 SHA512
+    MD2("MD2"),
+    MD5("MD5"),
+    SM3("SM3"),
+    SHA1("SHA-1"),
+    SHA256("SHA-256"),
+    SHA384("SHA-384"),
+    SHA512("SHA-512")
+
+    ;
+
+
+    private final String value;
+
+    /**
+     * 构造
+     *
+     * @param value 算法字符串表示
+     */
+    DigestAlgorithm(String value) {
+        this.value = value;
     }
 }

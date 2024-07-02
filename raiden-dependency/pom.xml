@@ -14,7 +14,7 @@
     <description>raiden-dependency</description>
 
     <properties>
-        <spring.boot.version>3.2.5</spring.boot.version>
+        <spring.boot.version>3.3.0</spring.boot.version>
         <hutool.version>5.8.25</hutool.version>
         <slf4j-api.veresion>2.0.9</slf4j-api.veresion>
         <gson.version>2.11.0</gson.version>
