@@ -59,6 +59,10 @@ public class DelayQueue implements Serializable {
 
     private final DelayQueueHandler handler;
 
+    private int subscribeId;
+
+    private RBlockingQueue<String> blockingQueue = null;
+
     public DelayQueue(String topic, RedissonClient redissonClient, DelayQueueHandler handler) {
         this.topic = topic;
         this.redissonClient = redissonClient;
@@ -68,9 +72,9 @@ public class DelayQueue implements Serializable {
 
     private void init() {
         DelayQueueUtils.getRegisters().put(topic, this);
-        RBlockingQueue<String> blockingQueue = redissonClient.getBlockingQueue(topic, StringCodec.INSTANCE);
-        delayedQueue = redissonClient.getDelayedQueue(blockingQueue);
-        blockingQueue.subscribeOnElements(element -> {
+        this.blockingQueue = redissonClient.getBlockingQueue(topic, StringCodec.INSTANCE);
+        delayedQueue = redissonClient.getDelayedQueue(this.blockingQueue);
+        this.subscribeId = this.blockingQueue.subscribeOnElements(element -> {
             try {
                 DelayTask<? extends Serializable> delayTask = JSONUtils.JACKSON.readValue(element, new TypeReference<>() {});
                 if (ObjectUtils.isNotNullOrEmpty(handler)) {
@@ -102,6 +106,15 @@ public class DelayQueue implements Serializable {
             return this.delayedQueue.offerAsync(dequePayload, delay.getDelayTime(), delay.getTimeUnit());
         } catch (JsonProcessingException e) {
             return RaidenExceptionCheck.INSTANCE.throwUnchecked("delay: add.delay.task.failed, error.msg: ", e);
+        }
+    }
+
+    public void destroy() {
+        if (this.delayedQueue != null) {
+            this.delayedQueue.destroy();
+        }
+        if (this.subscribeId != 0) {
+            this.blockingQueue.unsubscribe(this.subscribeId);
         }
     }
 }

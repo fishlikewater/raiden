@@ -86,7 +86,7 @@ public class CacheInvalidateAspect extends AbstractCacheAspect {
 
     private Object cleanHash(ProceedingJoinPoint pjp, CacheInvalidate cache) throws Throwable {
         EvaluationContext context = this.getContext(pjp);
-        String cacheKey = this.populateCacheKey(cache.key(), cache.prefix(), context);
+        String cacheKey = this.populateHashKey(cache.key(), context);
         String hashKey = this.populateCacheKey(cache.hashKey(), null, pjp);
         RMapCache<String, Object> map = redissonClient.getMapCache(cacheKey);
         if (map.isExists()) {

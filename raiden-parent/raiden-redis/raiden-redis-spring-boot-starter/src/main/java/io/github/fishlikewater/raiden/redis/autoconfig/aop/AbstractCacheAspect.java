@@ -88,6 +88,15 @@ public abstract class AbstractCacheAspect implements CacheComposite {
         return cacheKey;
     }
 
+    protected String populateHashKey(String hashKey, EvaluationContext context) {
+        RaidenExceptionCheck.INSTANCE.isNotNull(hashKey, "hashKey.is.not.found");
+        // 判断key 是否为el表达式
+        if (hashKey.startsWith(CommonConstants.SYMBOL_EXPRESSION)) {
+            hashKey = ExpressionUtils.getExpressionValue(context, hashKey, String.class);
+        }
+        return hashKey;
+    }
+
     protected EvaluationContext getContext(ProceedingJoinPoint pjp) {
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
         String[] parameterNames = this.parameterNameDiscoverer().getParameterNames(methodSignature.getMethod());

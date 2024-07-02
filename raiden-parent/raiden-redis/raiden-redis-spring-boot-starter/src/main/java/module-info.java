@@ -27,6 +27,7 @@ module raiden.redis.spring.boot.starter {
     requires raiden.core.spring.boot;
     requires spring.context;
     requires spring.boot;
+    requires spring.beans;
     requires spring.core;
     requires spring.boot.autoconfigure;
     requires org.aspectj.weaver;

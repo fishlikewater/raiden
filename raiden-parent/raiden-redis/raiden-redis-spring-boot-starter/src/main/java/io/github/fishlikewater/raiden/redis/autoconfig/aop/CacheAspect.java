@@ -111,7 +111,7 @@ public class CacheAspect extends AbstractCacheAspect {
 
     private Object handleHash(ProceedingJoinPoint pjp, Cache cache) throws Throwable {
         EvaluationContext context = this.getContext(pjp);
-        String hashKey = this.populateCacheKey(cache.hashKey(), null, context);
+        String hashKey = this.populateHashKey(cache.hashKey(), context);
         String cacheKey = this.populateCacheKey(cache.key(), cache.prefix(), context);
         RMapCache<String, Object> map = redissonClient.getMapCache(cacheKey);
         Object obj = map.get(hashKey);
