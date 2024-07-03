@@ -94,6 +94,7 @@ public class DelayQueue implements Serializable {
 
     public <R extends Serializable> void add(DelayTask<R> delay) {
         try {
+            delay.setTopic(topic);
             delay.setPublishTime(DateUtils.current());
             // 避免序列化方式的差异 统一JSON 序列化
             String dequePayload = JSONUtils.JACKSON.writeValueAsString(delay);
@@ -105,6 +106,7 @@ public class DelayQueue implements Serializable {
 
     public <R extends Serializable> Future<Void> addAsync(DelayTask<R> delay) {
         try {
+            delay.setTopic(topic);
             delay.setPublishTime(DateUtils.current());
             // 避免序列化方式的差异 统一JSON 序列化
             String dequePayload = JSONUtils.JACKSON.writeValueAsString(delay);
