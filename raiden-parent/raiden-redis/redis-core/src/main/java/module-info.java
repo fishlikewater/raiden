@@ -33,6 +33,4 @@ module raiden.redis.core {
     exports io.github.fishlikewater.raiden.redis.core.annotation;
     exports io.github.fishlikewater.raiden.redis.core.delay;
     exports io.github.fishlikewater.raiden.redis.core.enums;
-    exports io.github.fishlikewater.raiden.redis.core.constant
-            to raiden.redis.spring.boot.starter;
 }
