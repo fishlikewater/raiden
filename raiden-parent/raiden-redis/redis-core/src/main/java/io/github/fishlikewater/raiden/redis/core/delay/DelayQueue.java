@@ -22,7 +22,6 @@ import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
 import io.github.fishlikewater.raiden.redis.core.DelayQueueUtils;
-import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBlockingQueue;
@@ -32,6 +31,7 @@ import org.redisson.client.codec.StringCodec;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -57,13 +57,13 @@ public class DelayQueue implements Serializable {
     @Getter
     private final String topic;
 
-    private RDelayedQueue<String> delayedQueue;
+    private RDelayedQueue<Object> delayedQueue;
+
+    private RBlockingQueue<Object> blockingQueue = null;
 
     private final DelayQueueHandler handler;
 
     private int subscribeId;
-
-    private RBlockingQueue<String> blockingQueue = null;
 
     private final ExecutorService workerThreadPool = Executors.newVirtualThreadPerTaskExecutor();
 
@@ -80,14 +80,16 @@ public class DelayQueue implements Serializable {
         delayedQueue = redissonClient.getDelayedQueue(this.blockingQueue);
         this.subscribeId = this.blockingQueue.subscribeOnElements(element -> {
             try {
-                DelayTask<? extends Serializable> delayTask = JSONUtils.JACKSON.readValue(element, new TypeReference<>() {});
+                DelayTask<? extends Serializable> delayTask = JSONUtils.JACKSON.readValue((String) element, new TypeReference<>() {});
                 if (ObjectUtils.isNotNullOrEmpty(handler)) {
                     workerThreadPool.submit(() -> handler.handle(delayTask));
                 }
             } catch (Exception e) {
                 log.error("delay: handle.delay.task.failed, error.msg: ", e);
             }
+            return CompletableFuture.completedFuture(null);
         });
+        Runtime.getRuntime().addShutdownHook(new Thread(this::destroy));
     }
 
     public <R extends Serializable> void add(DelayTask<R> delay) {
@@ -112,19 +114,15 @@ public class DelayQueue implements Serializable {
         }
     }
 
-    @PreDestroy
     public void destroy() {
         try {
             if (this.subscribeId != 0) {
-                this.blockingQueue.unsubscribe(this.subscribeId);
+                this.blockingQueue.removeListener(this.subscribeId);
             }
         } catch (Exception ignored) {
 
         } finally {
             this.workerThreadPool.shutdown();
-            if (!this.redissonClient.isShutdown()) {
-                redissonClient.shutdown();
-            }
         }
     }
 }
