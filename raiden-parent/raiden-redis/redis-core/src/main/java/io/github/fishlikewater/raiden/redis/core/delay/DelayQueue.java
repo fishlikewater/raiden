@@ -57,9 +57,9 @@ public class DelayQueue implements Serializable {
     @Getter
     private final String topic;
 
-    private RDelayedQueue<Object> delayedQueue;
+    private RDelayedQueue<String> delayedQueue;
 
-    private RBlockingQueue<Object> blockingQueue = null;
+    private RBlockingQueue<String> blockingQueue = null;
 
     private final DelayQueueHandler handler;
 
@@ -80,7 +80,7 @@ public class DelayQueue implements Serializable {
         delayedQueue = redissonClient.getDelayedQueue(this.blockingQueue);
         this.subscribeId = this.blockingQueue.subscribeOnElements(element -> {
             try {
-                DelayTask<? extends Serializable> delayTask = JSONUtils.JACKSON.readValue((String) element, new TypeReference<>() {});
+                DelayTask<? extends Serializable> delayTask = JSONUtils.JACKSON.readValue(element, new TypeReference<>() {});
                 if (ObjectUtils.isNotNullOrEmpty(handler)) {
                     workerThreadPool.submit(() -> handler.handle(delayTask));
                 }
