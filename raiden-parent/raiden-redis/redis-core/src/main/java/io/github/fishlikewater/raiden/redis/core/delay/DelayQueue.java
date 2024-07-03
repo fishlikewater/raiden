@@ -22,6 +22,7 @@ import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
 import io.github.fishlikewater.raiden.redis.core.DelayQueueUtils;
+import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBlockingQueue;
@@ -32,6 +33,8 @@ import org.redisson.client.codec.StringCodec;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -63,6 +66,8 @@ public class DelayQueue implements Serializable {
 
     private RBlockingQueue<String> blockingQueue = null;
 
+    private final ExecutorService workerThreadPool = Executors.newVirtualThreadPerTaskExecutor();
+
     public DelayQueue(String topic, RedissonClient redissonClient, DelayQueueHandler handler) {
         this.topic = topic;
         this.redissonClient = redissonClient;
@@ -78,10 +83,10 @@ public class DelayQueue implements Serializable {
             try {
                 DelayTask<? extends Serializable> delayTask = JSONUtils.JACKSON.readValue(element, new TypeReference<>() {});
                 if (ObjectUtils.isNotNullOrEmpty(handler)) {
-                    handler.handle(delayTask);
+                    workerThreadPool.submit(() -> handler.handle(delayTask));
                 }
             } catch (JsonProcessingException e) {
-                log.error("delay: add.delay.task.failed, error.msg: ", e);
+                log.error("delay: handle.delay.task.failed, error.msg: ", e);
             }
             return CompletableFuture.completedFuture(null);
         });
@@ -109,12 +114,19 @@ public class DelayQueue implements Serializable {
         }
     }
 
+    @PreDestroy
     public void destroy() {
-        if (this.delayedQueue != null) {
-            this.delayedQueue.destroy();
-        }
-        if (this.subscribeId != 0) {
-            this.blockingQueue.unsubscribe(this.subscribeId);
+        try {
+            if (this.subscribeId != 0) {
+                this.blockingQueue.unsubscribe(this.subscribeId);
+            }
+        } catch (Exception ignored) {
+
+        } finally {
+            this.workerThreadPool.shutdown();
+            if (!this.redissonClient.isShutdown()) {
+                redissonClient.shutdown();
+            }
         }
     }
 }

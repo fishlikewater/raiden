@@ -27,6 +27,7 @@ module raiden.core.spring.boot {
     requires raiden.core;
     requires spring.boot;
     requires spring.expression;
+    requires cn.hutool.core;
 
     exports io.github.fishlikewater.spring.boot.raiden.core;
     exports io.github.fishlikewater.spring.boot.raiden.core.engine;

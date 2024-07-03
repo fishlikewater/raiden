@@ -15,21 +15,16 @@
  */
 package io.github.fishlikewater.raiden.redis.autoconfig;
 
-import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheAspect;
 import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheInvalidateAspect;
 import io.github.fishlikewater.raiden.redis.core.RedissonUtils;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayQueue;
-import io.github.fishlikewater.spring.boot.raiden.core.SpringUtils;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterNameDiscoverer;
-
-import java.util.List;
 
 /**
  * {@code RedisAutoConfig}
@@ -41,7 +36,7 @@ import java.util.List;
  */
 @AutoConfiguration
 @EnableConfigurationProperties(RedisProperties.class)
-public class RedisAutoConfig implements DisposableBean {
+public class RedisAutoConfig {
 
     @Bean
     @ConditionalOnProperty(prefix = "raiden.redis", name = "enabled", havingValue = "true")
@@ -82,15 +77,4 @@ public class RedisAutoConfig implements DisposableBean {
     }
 
     // ---------------------------------------------------------------- cache update
-
-    @Override
-    public void destroy() throws Exception {
-        List<DelayQueue> list = SpringUtils.getBeanListOfType(DelayQueue.class);
-        if (ObjectUtils.isNullOrEmpty(list)) {
-            return;
-        }
-        for (DelayQueue delayQueue : list) {
-            delayQueue.destroy();
-        }
-    }
 }

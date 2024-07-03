@@ -23,7 +23,7 @@
         <knife4j-openapi3.version>4.5.0</knife4j-openapi3.version>
         <junit.version>4.13.1</junit.version>
         <classgraph.version>4.8.162</classgraph.version>
-        <redisson.version>3.30.0</redisson.version>
+        <redisson.version>3.32.0</redisson.version>
         <javapoet.version>1.13.0</javapoet.version>
         <jakarta.validation.version>3.0.2</jakarta.validation.version>
         <bouncycastle.version>1.78.1</bouncycastle.version>
@@ -32,6 +32,7 @@
         <maven-plugin-annotations.version>3.13.1</maven-plugin-annotations.version>
         <javaparser.version>3.26.0</javaparser.version>
         <javassist.version>3.30.2-GA</javassist.version>
+        <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
     </properties>
 
     <dependencyManagement>
@@ -192,6 +193,12 @@
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${javassist.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta.annotation-api.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

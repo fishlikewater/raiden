@@ -26,6 +26,7 @@ module raiden.redis.core {
     requires raiden.core;
     requires raiden.json.core;
     requires cn.hutool.core;
+    requires jakarta.annotation;
     requires com.fasterxml.jackson.core;
 
     exports io.github.fishlikewater.raiden.redis.core;

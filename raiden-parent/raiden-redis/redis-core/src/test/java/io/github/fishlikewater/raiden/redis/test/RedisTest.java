@@ -113,9 +113,11 @@ public class RedisTest {
 
     private static RedissonClient getRedissonClient() {
         final RedissonPatternCfg cfg = new RedissonPatternCfg();
+        RedissonPatternCfg.Single single = new RedissonPatternCfg.Single();
+        cfg.setSingle(single);
         cfg.setServerPattern(ServerPattern.SINGLE);
         cfg.getSingle().setAddress("redis://127.0.0.1:6379");
-        cfg.getSingle().setDatabase(1);
+        cfg.getSingle().setDatabase(2);
         return RedissonUtils.redissonClient(cfg);
     }
 
