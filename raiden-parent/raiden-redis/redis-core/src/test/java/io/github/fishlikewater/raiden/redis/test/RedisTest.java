@@ -84,7 +84,7 @@ public class RedisTest {
                 .timeUnit(TimeUnit.SECONDS)
                 .build();
         delayQueue.add(task);
-        Thread.sleep(10_000L);
+        Thread.sleep(5_000L);
     }
 
     @Test

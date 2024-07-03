@@ -32,7 +32,6 @@ import org.redisson.client.codec.StringCodec;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -85,10 +84,9 @@ public class DelayQueue implements Serializable {
                 if (ObjectUtils.isNotNullOrEmpty(handler)) {
                     workerThreadPool.submit(() -> handler.handle(delayTask));
                 }
-            } catch (JsonProcessingException e) {
+            } catch (Exception e) {
                 log.error("delay: handle.delay.task.failed, error.msg: ", e);
             }
-            return CompletableFuture.completedFuture(null);
         });
     }
 
