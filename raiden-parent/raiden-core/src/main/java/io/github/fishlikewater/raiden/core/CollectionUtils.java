@@ -68,4 +68,32 @@ public final class CollectionUtils {
             }
         }
     }
+
+    /**
+     * 判断对象是否不为空
+     *
+     * @param object 对象
+     * @return 是否不为空
+     */
+    public static boolean isNotEmpty(Object object) {
+        return !isEmpty(object);
+    }
+
+    /**
+     * 改变数组大小
+     *
+     * @param bytes   原数组
+     * @param newSize 新大小
+     * @return 新数组
+     */
+    public static byte[] resize(byte[] bytes, int newSize) {
+        if (newSize < 0) {
+            return bytes;
+        }
+        final byte[] newArray = new byte[newSize];
+        if (newSize > 0 && isNotEmpty(bytes)) {
+            System.arraycopy(bytes, 0, newArray, 0, Math.min(bytes.length, newSize));
+        }
+        return newArray;
+    }
 }
