@@ -17,7 +17,7 @@ package io.github.fishlikewater;
 
 import cn.hutool.core.util.StrUtil;
 import io.github.fishlikewater.raiden.core.Assert;
-import io.github.fishlikewater.raiden.core.func.LambdaMeta;
+import io.github.fishlikewater.raiden.core.LambdaUtils;
 import org.junit.Test;
 
 /**
@@ -31,7 +31,7 @@ public class LambdaTest {
 
     @Test
     public void testLambda() {
-        String resolve = LambdaMeta.resolve(TestBean::name);
+        String resolve = LambdaUtils.resolve(TestBean::name);
         Assert.isTrue(StrUtil.isNotBlank(resolve), "");
         Assert.isTrue(resolve.equals("name"), "");
     }

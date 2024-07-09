@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
-import java.util.stream.Collectors;
 
 /**
  * {@code Composite}
@@ -47,11 +46,9 @@ public interface Composite {
         if (executor == null) {
             RaidenExceptionCheck.INSTANCE.throwUnchecked("Executor is not properly initialized.");
         }
-
-        List<CompletableFuture<?>> futures = tasks.stream()
-                .map(task -> CompletableFuture.runAsync(task, executor))
-                .collect(Collectors.toList());
-
+        List<CompletableFuture<?>> futures = LambdaUtils.toList(
+                tasks,
+                task -> CompletableFuture.runAsync(task, executor));
         try {
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
         } catch (CompletionException e) {

@@ -15,6 +15,12 @@
  */
 package io.github.fishlikewater.raiden.core;
 
+import cn.hutool.core.util.StrUtil;
+import io.github.fishlikewater.raiden.core.constant.CommonConstants;
+import io.github.fishlikewater.raiden.core.func.LambdaFunction;
+
+import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -30,6 +36,25 @@ import java.util.stream.Stream;
  * @since 2024/07/09
  */
 public class LambdaUtils {
+
+    /**
+     * 将方法名转换为属性名
+     *
+     * @param fx 方法
+     * @return 属性名
+     */
+
+    public static <T, R> String resolve(LambdaFunction<T, R> fx) {
+        try {
+            Method method = fx.getClass().getDeclaredMethod(CommonConstants.LAMBDA_FUNCTION_NAME);
+            method.setAccessible(Boolean.TRUE);
+            SerializedLambda serializedLambda = (SerializedLambda) method.invoke(fx);
+            String methodName = serializedLambda.getImplMethodName();
+            return methodToProperty(methodName);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * 将集合中的元素映射到新的集合中
@@ -231,5 +256,27 @@ public class LambdaUtils {
                 .flatMap(Collection<T>::stream)
                 .filter(collections[0]::contains)
                 .collect(Collectors.toList());
+    }
+
+    // ---------------------------------------------------------------- private
+
+    /**
+     * 把方法名转换成字段名
+     *
+     * @param name 方法名
+     * @return 字段名
+     */
+    private static String methodToProperty(String name) {
+        if (name.startsWith(CommonConstants.BOOLEAN_FIELD_START_WITH)) {
+            name = name.substring(2);
+        } else if (name.startsWith(CommonConstants.GET_METHOD_START_WITH) || name.startsWith(CommonConstants.SET_METHOD_START_WITH)) {
+            name = name.substring(3);
+        }
+
+        if (StrUtil.isNotBlank(name) && !Character.isUpperCase(name.charAt(1))) {
+            name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
+        }
+
+        return name;
     }
 }

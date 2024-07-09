@@ -90,7 +90,7 @@ public final class StringUtils extends StrUtil {
             if (ObjectUtils.isNullOrEmpty(key) || ObjectUtils.isNullOrEmpty(value)) {
                 continue;
             }
-            content.append("&")
+            content.append(symbol)
                     .append(key)
                     .append("=")
                     .append(value);

@@ -38,5 +38,7 @@ public class StringUtilsTest {
         map.put("b", 2);
         String str = StringUtils.toStr(map);
         Assert.isTrue(str.equals("a=1&b=2"), "map to str error");
+        String str1 = StringUtils.toStr(map, "|");
+        Assert.isTrue(str1.equals("a=1|b=2"), "map to str error");
     }
 }

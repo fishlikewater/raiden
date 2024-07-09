@@ -15,8 +15,8 @@
  */
 package io.github.fishlikewater.raiden.redis.core;
 
+import io.github.fishlikewater.raiden.core.LambdaUtils;
 import io.github.fishlikewater.raiden.core.func.LambdaFunction;
-import io.github.fishlikewater.raiden.core.func.LambdaMeta;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 
@@ -45,7 +45,7 @@ public class DefaultRedisClientProxyImpl implements RedisClientProxy {
 
     @Override
     public <R, T extends Serializable> void put(LambdaFunction<R, ?> keyFunc, T value) {
-        String key = LambdaMeta.resolve(keyFunc);
+        String key = LambdaUtils.resolve(keyFunc);
         this.put(key, value);
     }
 }
