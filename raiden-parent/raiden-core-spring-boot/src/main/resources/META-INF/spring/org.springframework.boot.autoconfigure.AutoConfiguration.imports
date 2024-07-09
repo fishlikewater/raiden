@@ -1,1 +1,2 @@
 io.github.fishlikewater.spring.boot.raiden.core.SpringUtils
+io.github.fishlikewater.spring.boot.raiden.core.i18n.LocalMessageUtils

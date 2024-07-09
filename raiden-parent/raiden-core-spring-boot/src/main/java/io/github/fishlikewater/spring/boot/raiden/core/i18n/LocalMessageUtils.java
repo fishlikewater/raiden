@@ -16,6 +16,7 @@
 package io.github.fishlikewater.spring.boot.raiden.core.i18n;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -31,31 +32,37 @@ import java.util.Locale;
  */
 @SuppressWarnings("unused")
 @RequiredArgsConstructor
+@ConditionalOnBean(MessageSource.class)
 public class LocalMessageUtils {
 
-    private final MessageSource messageSource;
+    private static MessageSource messageSource;
 
-    public String getMessage(String code) {
-        return this.getMessage(code, new Object[]{});
+    public LocalMessageUtils(MessageSource messageSource) {
+        LocalMessageUtils.messageSource = messageSource;
     }
 
-    public String getMessage(String code, Object[] args) {
-        return this.getMessage(code, args, "");
+    public static String getMessage(String code) {
+        return getMessage(code, new Object[]{});
     }
 
-    public String getMessage(String code, Locale locale) {
+    public static String getMessage(String code, Object[] args) {
+        return getMessage(code, args, "");
+    }
+
+    public static String getMessage(String code, Locale locale) {
         return messageSource.getMessage(code, null, "", locale);
     }
 
-    public String getMessage(String code, String defaultMessage, Locale locale) {
-        return this.getMessage(code, null, defaultMessage, locale);
+    public static String getMessage(String code, String defaultMessage, Locale locale) {
+        return getMessage(code, null, defaultMessage, locale);
     }
 
-    public String getMessage(String code, Object[] args, String defaultMessage) {
-        return this.getMessage(code, args, defaultMessage, LocaleContextHolder.getLocale());
+    public static String getMessage(String code, Object[] args, String defaultMessage) {
+        return getMessage(code, args, defaultMessage, LocaleContextHolder.getLocale());
     }
 
-    public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+    public static String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
         return messageSource.getMessage(code, args, defaultMessage, locale);
     }
 }
+
