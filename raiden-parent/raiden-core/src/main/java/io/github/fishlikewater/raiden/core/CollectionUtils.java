@@ -15,11 +15,10 @@
  */
 package io.github.fishlikewater.raiden.core;
 
+import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
+
 import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * {@code CollectionUtils}
@@ -29,6 +28,67 @@ import java.util.Map;
  * @since 2024/04/30
  */
 public final class CollectionUtils {
+
+    /**
+     * 构建集合
+     */
+    @SafeVarargs
+    public static <T> List<T> ofList(T... t) {
+        return new ArrayList<>(Arrays.asList(t));
+    }
+
+    /**
+     * 获取空的集合
+     */
+    public static <T> List<T> emptyList() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * 构建集合
+     */
+    public static <T> List<T> newList() {
+        return new ArrayList<T>();
+    }
+
+    /**
+     * 获取空的集合
+     */
+    public static <T> Set<T> emptySet() {
+        return Collections.emptySet();
+    }
+
+    /**
+     * 获取空的MAP
+     */
+    public static <K, T> Map<K, T> emptyMap() {
+        return Collections.emptyMap();
+    }
+
+    public static <T> List<T> sort(Collection<T> collection, Comparator<T> comparator) {
+        if (collection instanceof List<T> list) {
+            list.sort(comparator);
+            return list;
+        }
+        if (collection instanceof SortedSet<T> sortedSet) {
+            return sortedSet
+                    .stream()
+                    .sorted(comparator)
+                    .toList();
+        }
+        return RaidenExceptionCheck.INSTANCE.throwUnchecked("not support!!!");
+    }
+
+    /**
+     * 获取集合的第一个元素
+     *
+     * @param collection 集合
+     * @param <T>        泛型
+     * @return 第一个元素
+     */
+    public static <T> T getFirst(Collection<T> collection) {
+        return isNotEmpty(collection) ? collection.iterator().next() : null;
+    }
 
     /**
      * 判断对象是否为空

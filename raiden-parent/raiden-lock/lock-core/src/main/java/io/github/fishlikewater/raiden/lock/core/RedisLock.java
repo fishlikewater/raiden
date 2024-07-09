@@ -18,6 +18,8 @@ package io.github.fishlikewater.raiden.lock.core;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
+import java.util.function.Supplier;
+
 /**
  * {@code RedisLock}
  * Redis 锁
@@ -36,7 +38,7 @@ public interface RedisLock {
     RedissonClient redisClient();
 
     /**
-     * 尝试获取锁
+     * 尝试获取锁 并执行逻辑
      *
      * @param key      锁的key
      * @param runnable 获取到锁后的执行逻辑
@@ -46,6 +48,23 @@ public interface RedisLock {
         lock.lock();
         try {
             runnable.run();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * 尝试获取锁 并执行逻辑
+     *
+     * @param key      锁的key
+     * @param supplier 执行的逻辑
+     * @return 返回数据
+     */
+    default <T> T tryLock(String key, Supplier<T> supplier) {
+        RLock lock = this.redisClient().getLock(key);
+        lock.lock();
+        try {
+            return supplier.get();
         } finally {
             lock.unlock();
         }
