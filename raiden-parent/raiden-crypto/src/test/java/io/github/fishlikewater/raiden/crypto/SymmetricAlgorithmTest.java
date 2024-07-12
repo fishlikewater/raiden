@@ -49,4 +49,18 @@ public class SymmetricAlgorithmTest {
         byte[] decrypted = symmetricCrypto.decrypt(encrypt);
         System.out.println(new String(decrypted, StandardCharsets.UTF_8));
     }
+
+    @Test
+    public void testSm4() {
+        SecretKey secretKey = SymmetricUtils.generateKey(SymmetricAlgorithm.SM4.name(), -1);
+        SymmetricCrypto symmetricCrypto = SymmetricCrypto.create(SymmetricAlgorithm.SM4.name(), secretKey);
+
+        byte[] origin = "test hell world, this test crypto length change".getBytes(StandardCharsets.UTF_8);
+
+        byte[] encrypt = symmetricCrypto.encrypt(origin);
+        System.out.println(Hex.encodeHex(encrypt, false));
+
+        byte[] decrypted = symmetricCrypto.decrypt(encrypt);
+        System.out.println(new String(decrypted, StandardCharsets.UTF_8));
+    }
 }

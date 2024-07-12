@@ -56,6 +56,10 @@ public class SymmetricCrypto {
 
     private final Lock lock = new ReentrantLock();
 
+    public static SymmetricCrypto create(String algorithm, SecretKey key) {
+        return new SymmetricCrypto(algorithm, key, null);
+    }
+
     // ---------------------------------------------------------------- constructor
 
     public SymmetricCrypto(Cipher cipher, SecretKey secretKey) {

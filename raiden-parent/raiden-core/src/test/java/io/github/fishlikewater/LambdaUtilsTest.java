@@ -98,4 +98,11 @@ public class LambdaUtilsTest {
         List<Integer> intersection = LambdaUtils.intersection(integerList1, integerList2);
         Assert.assertEquals(intersection.size(), 5);
     }
+
+    @Test
+    public void testLambdaReduce() {
+        List<Integer> integerList1 = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7);
+        long reduce = LambdaUtils.sum(integerList1);
+        Assert.assertEquals(reduce, 29);
+    }
 }

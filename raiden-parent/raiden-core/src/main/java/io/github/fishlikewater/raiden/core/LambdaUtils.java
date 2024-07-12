@@ -21,6 +21,7 @@ import io.github.fishlikewater.raiden.core.func.LambdaFunction;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -257,6 +258,94 @@ public class LambdaUtils {
                 .filter(collections[0]::contains)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * 统计集合中的元素
+     *
+     * @param collection 集合
+     * @return 统计结果
+     */
+    public static IntSummaryStatistics statisticsInt(Collection<Integer> collection) {
+        return collection.stream()
+                .filter(Objects::nonNull)
+                .mapToInt(Integer::intValue)
+                .summaryStatistics();
+    }
+
+    /**
+     * 统计集合中的元素
+     *
+     * @param collection 集合
+     * @return 统计结果
+     */
+    public static LongSummaryStatistics statisticsLong(Collection<Long> collection) {
+        return collection.stream()
+                .filter(Objects::nonNull)
+                .mapToLong(Long::longValue)
+                .summaryStatistics();
+    }
+
+    /**
+     * 求和
+     *
+     * @param collection 集合
+     * @return 求和结果
+     */
+    @SuppressWarnings("all")
+    public static <T extends Number> T sum(Collection<T> collection) {
+        if (collection == null || collection.isEmpty()) {
+            throw new IllegalArgumentException("Collection must not be null or empty");
+        }
+
+        T firstElement = collection.iterator().next();
+
+        return switch (firstElement) {
+            case Integer ignored -> (T) (Integer) collection.stream()
+                    .mapToInt(Number::intValue)
+                    .sum();
+            case Long ignored -> (T) (Long) collection.stream()
+                    .mapToLong(Number::longValue)
+                    .sum();
+            case Double ignored -> (T) (Double) collection.stream()
+                    .mapToDouble(Number::doubleValue)
+                    .sum();
+            case BigDecimal ignored -> (T) collection.stream()
+                    .map(BigDecimal.class::cast)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            default -> throw new UnsupportedOperationException("Type not supported");
+        };
+    }
+
+    /**
+     * 求最小值
+     *
+     * @param collection 集合
+     * @return 最小值
+     */
+    @SuppressWarnings("all")
+    public static <T extends Number> T min(Collection<T> collection) {
+        if (collection == null || collection.isEmpty()) {
+            throw new IllegalArgumentException("Collection must not be null or empty");
+        }
+
+        T firstElement = collection.iterator().next();
+        return switch (firstElement) {
+            case Integer ignored -> (T) (Integer) collection.stream()
+                    .mapToInt(Number::intValue)
+                    .reduce(0, Math::min);
+            case Long ignored -> (T) (Long) collection.stream()
+                    .mapToLong(Number::longValue)
+                    .reduce(0L, Math::min);
+            case Double ignored -> (T) (Double) collection.stream()
+                    .mapToDouble(Number::doubleValue)
+                    .reduce(0, Math::min);
+            case BigDecimal ignored -> (T) collection.stream()
+                    .map(BigDecimal.class::cast)
+                    .reduce(BigDecimal.ZERO, BigDecimal::min);
+            default -> throw new UnsupportedOperationException("Type not supported");
+        };
+    }
+
 
     // ---------------------------------------------------------------- private
 
