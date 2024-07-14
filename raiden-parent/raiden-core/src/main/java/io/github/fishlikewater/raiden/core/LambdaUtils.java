@@ -327,21 +327,20 @@ public class LambdaUtils {
         if (collection == null || collection.isEmpty()) {
             throw new IllegalArgumentException("Collection must not be null or empty");
         }
-
         T firstElement = collection.iterator().next();
         return switch (firstElement) {
             case Integer ignored -> (T) (Integer) collection.stream()
                     .mapToInt(Number::intValue)
-                    .reduce(0, Math::min);
+                    .reduce((int) firstElement, Math::min);
             case Long ignored -> (T) (Long) collection.stream()
                     .mapToLong(Number::longValue)
-                    .reduce(0L, Math::min);
+                    .reduce((long) firstElement, Math::min);
             case Double ignored -> (T) (Double) collection.stream()
                     .mapToDouble(Number::doubleValue)
-                    .reduce(0, Math::min);
+                    .reduce((double) firstElement, Math::min);
             case BigDecimal ignored -> (T) collection.stream()
                     .map(BigDecimal.class::cast)
-                    .reduce(BigDecimal.ZERO, BigDecimal::min);
+                    .reduce((BigDecimal) firstElement, BigDecimal::min);
             default -> throw new UnsupportedOperationException("Type not supported");
         };
     }

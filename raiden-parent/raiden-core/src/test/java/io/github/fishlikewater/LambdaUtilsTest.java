@@ -20,6 +20,7 @@ import io.github.fishlikewater.raiden.core.LambdaUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -100,9 +101,24 @@ public class LambdaUtilsTest {
     }
 
     @Test
-    public void testLambdaReduce() {
+    public void testLambdaReduceSum() {
         List<Integer> integerList1 = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7);
         long reduce = LambdaUtils.sum(integerList1);
         Assert.assertEquals(reduce, 29);
     }
+
+    @Test
+    public void testLambdaReduceMin() {
+        List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
+        Integer min = LambdaUtils.min(integerList);
+        Assert.assertEquals((int) min, 1);
+    }
+
+    @Test
+    public void testLambdaReduceMin2() {
+        List<BigDecimal> integerList = CollectionUtils.ofList(BigDecimal.valueOf(1.50), BigDecimal.valueOf(2.120));
+        BigDecimal min = LambdaUtils.min(integerList);
+        Assert.assertEquals(min, BigDecimal.valueOf(1.50));
+    }
+
 }
