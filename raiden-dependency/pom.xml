@@ -181,7 +181,7 @@
                 <version>${maven-plugin-plugin.version}</version>
             </dependency>
 
-            <!--javaparser-->
+            <!--java parser-->
             <dependency>
                 <groupId>com.github.javaparser</groupId>
                 <artifactId>javaparser-core</artifactId>
