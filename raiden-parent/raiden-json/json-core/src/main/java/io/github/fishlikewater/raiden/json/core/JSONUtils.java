@@ -18,6 +18,7 @@ package io.github.fishlikewater.raiden.json.core;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
@@ -66,6 +67,7 @@ public final class JSONUtils {
         JACKSON.setConfig(JACKSON.getDeserializationConfig().with(TimeZone.getTimeZone(ZoneId.of("Asia/Shanghai"))));
         JACKSON.setConfig(JACKSON.getSerializationConfig().with(Locale.CHINA));
         JACKSON.setConfig(JACKSON.getDeserializationConfig().with(Locale.CHINA));
+        JACKSON.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         JACKSON.registerModule(new JavaTimeModule());
     }
 
