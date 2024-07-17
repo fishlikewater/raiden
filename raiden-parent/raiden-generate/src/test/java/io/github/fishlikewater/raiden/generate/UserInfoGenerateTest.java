@@ -51,13 +51,30 @@ public class UserInfoGenerateTest {
     public void testGeneratePhoneNumber() {
         System.out.println(GenerateUtils.TELEPHONE.generate());
         System.out.println(GenerateUtils.TELEPHONE_AREA.generate());
-        System.out.println(GenerateUtils.MOBILEPHONE.generate());
+        System.out.println(GenerateUtils.MOBILE_PHONE.generate());
     }
 
     @Test
     public void testGenerateEmail() {
         for (int i = 0; i < 10; i++) {
             System.out.println(GenerateUtils.EMAIL.generate());
+        }
+    }
+
+    @Test
+    public void testGenerateTime() {
+        System.out.println(GenerateUtils.TIME.generate());
+    }
+
+    @Test
+    public void testGenerateDateTime() {
+        System.out.println(GenerateUtils.DATETIME.generate());
+    }
+
+    @Test
+    public void testGenerateIdCard() {
+        for (int i = 0; i < 10; i++) {
+            System.out.println(GenerateUtils.ID_CARD.generate());
         }
     }
 }

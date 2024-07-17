@@ -39,4 +39,10 @@ public class RandomTest {
         String randNum = RandomUtils.randomNumberAndAlphabet(6);
         Assert.isTrue(randNum.length() == 6, "随机数长度不为6");
     }
+
+    @Test
+    public void testRandomNumWithCount() {
+        String randNum = RandomUtils.randomInt(0, 100, true);
+        Assert.isTrue(randNum.length() == 3, "随机数长度不为6");
+    }
 }

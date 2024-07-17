@@ -97,6 +97,34 @@ public class RandomUtils {
     }
 
     /**
+     * 范围内随机数字
+     *
+     * @param from          开始
+     * @param to            结束
+     * @param isZeroPadding 是否补零
+     * @return String
+     */
+    public static String randomInt(int from, int to, boolean isZeroPadding) {
+        int num = from + SECURE_RANDOM.nextInt(to - from);
+        int width = (int) Math.log10(to) + 1;
+        return isZeroPadding ? String.format("%0" + width + "d", num) : String.valueOf(num);
+    }
+
+    /**
+     * 范围内随机数字
+     *
+     * @param from          开始
+     * @param to            结束
+     * @param isZeroPadding 是否补零
+     * @return String
+     */
+    public static String randomLong(int from, int to, boolean isZeroPadding) {
+        long num = from + SECURE_RANDOM.nextLong(to - from);
+        int width = (int) Math.log10(to) + 1;
+        return isZeroPadding ? String.format("%0" + width + "d", num) : String.valueOf(num);
+    }
+
+    /**
      * 指定位数数字
      *
      * @param charCount 位数

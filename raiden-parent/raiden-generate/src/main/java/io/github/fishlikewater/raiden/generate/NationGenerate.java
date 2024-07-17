@@ -42,7 +42,7 @@ public class NationGenerate extends AbstractGenerate<String> {
 
     private void init() {
         if (this.determineIsNotInitialized()) {
-            JSONObject jsonObject = this.readFile("nation.json");
+            JSONObject jsonObject = this.readFileAsJsonObject("nation.json");
             nationList = jsonObject.getBeanList("nation", String.class);
         }
     }

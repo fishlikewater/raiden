@@ -43,7 +43,7 @@ public class PhoneNumberGenerate {
             this.areaCode = areaCode;
         }
 
-        private static final String[] prefix = {
+        private static final String[] PREFIX = {
                 "010", "020", "021", "022", "023", "024", "025", "027", "028", "029",
                 "030", "031", "032", "033", "034", "035", "036", "037", "038", "039",
                 "040", "041", "042", "043", "044", "045", "046", "047", "048", "049",
@@ -53,15 +53,15 @@ public class PhoneNumberGenerate {
         @Override
         public String generate() {
             if (areaCode) {
-                return StringUtils.format("{}{}", prefix[RandomUtils.randomInt(0, prefix.length)], RandomUtils.randNum(8));
+                return StringUtils.format("{}{}", PREFIX[RandomUtils.randomInt(0, PREFIX.length)], RandomUtils.randNum(8));
             }
             return RandomUtils.randNum(8);
         }
     }
 
-    public static class Mobilephone extends AbstractGenerate<String> {
+    public static class MobilePhone extends AbstractGenerate<String> {
 
-        private static final String[] prefix = {
+        private static final String[] PREFIX = {
                 "130", "131", "132", "133", "134", "135", "136", "137", "138", "139",
                 "147", "150", "151", "152", "153", "155", "156", "157", "158", "159",
                 "170", "171", "172", "173", "174", "175", "176", "177", "178"
@@ -69,7 +69,7 @@ public class PhoneNumberGenerate {
 
         @Override
         public String generate() {
-            return StringUtils.format("{}{}", prefix[RandomUtils.randomInt(0, prefix.length)], RandomUtils.randNum(8));
+            return StringUtils.format("{}{}", PREFIX[RandomUtils.randomInt(0, PREFIX.length)], RandomUtils.randNum(8));
         }
     }
 }

@@ -24,6 +24,9 @@ module raiden.generate {
     requires raiden.core;
     requires raiden.json.core;
     requires pinyin4j;
+    requires cn.hutool.json;
+    requires cn.hutool.core;
+    requires com.fasterxml.jackson.annotation;
 
     exports io.github.fishlikewater.raiden.generate;
 }

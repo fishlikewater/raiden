@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.generate;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
 
@@ -31,8 +32,13 @@ import java.nio.charset.StandardCharsets;
  */
 public abstract class AbstractGenerate<T> implements Generate<T> {
 
-    protected JSONObject readFile(String path) {
+    protected JSONObject readFileAsJsonObject(String path) {
         File file = FileUtil.file(path);
         return JSONUtils.HutoolJSON.readJSONObject(file, StandardCharsets.UTF_8);
+    }
+
+    protected JSONArray readFileAsJsonArray(String path) {
+        File file = FileUtil.file(path);
+        return JSONUtils.HutoolJSON.readJSONArray(file, StandardCharsets.UTF_8);
     }
 }

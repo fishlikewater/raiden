@@ -37,7 +37,15 @@ public interface GenerateUtils {
 
     io.github.fishlikewater.raiden.generate.Generate<String> TELEPHONE_AREA = new io.github.fishlikewater.raiden.generate.PhoneNumberGenerate.Telephone(true);
 
-    io.github.fishlikewater.raiden.generate.Generate<String> MOBILEPHONE = new io.github.fishlikewater.raiden.generate.PhoneNumberGenerate.Mobilephone();
+    io.github.fishlikewater.raiden.generate.Generate<String> MOBILE_PHONE = new PhoneNumberGenerate.MobilePhone();
 
     io.github.fishlikewater.raiden.generate.Generate<String> EMAIL = new io.github.fishlikewater.raiden.generate.EmailGenerate();
+
+    io.github.fishlikewater.raiden.generate.Generate<String> DATE = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.DateGenerate();
+
+    io.github.fishlikewater.raiden.generate.Generate<String> TIME = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.TimeGenerate();
+
+    io.github.fishlikewater.raiden.generate.Generate<String> DATETIME = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.FullDateTimeGenerate();
+
+    io.github.fishlikewater.raiden.generate.Generate<String> ID_CARD = new io.github.fishlikewater.raiden.generate.IdCardGenerate();
 }

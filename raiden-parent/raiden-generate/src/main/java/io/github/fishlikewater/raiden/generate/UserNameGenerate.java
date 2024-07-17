@@ -52,7 +52,7 @@ public class UserNameGenerate extends AbstractGenerate<String> {
 
     private void init() {
         if (this.determineIsNotInitialized()) {
-            JSONObject jsonObject = this.readFile("userName.json");
+            JSONObject jsonObject = this.readFileAsJsonObject("userName.json");
             lastName = jsonObject.getBeanList("lastName", String.class);
             name = jsonObject.getBeanList("name", String.class);
         }
