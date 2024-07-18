@@ -94,7 +94,6 @@ public class DateTimeGenerate {
     }
 
     public static long tryAcquireRandomLong() {
-        long current = DateUtils.current();
         return RandomUtils.randomLong(0, MS);
     }
 }
