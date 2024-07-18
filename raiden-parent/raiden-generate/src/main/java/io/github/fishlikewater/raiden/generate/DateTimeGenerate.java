@@ -32,6 +32,8 @@ import java.time.LocalDateTime;
  */
 public class DateTimeGenerate {
 
+    private static final Long MS = 70L * 365 * 24 * 60 * 60 * 1000;
+
     /**
      * 生成完整格式时间
      */
@@ -73,11 +75,26 @@ public class DateTimeGenerate {
         }
     }
 
+    /**
+     * 生成时间戳
+     */
+    public static class TimeStampGenerate extends AbstractGenerate<Long> {
+
+        @Override
+        public Long generate() {
+            return DateUtils.current() - DateTimeGenerate.tryAcquireRandomLong();
+        }
+    }
+
     public static LocalDateTime tryAcquireDateTime() {
-        long ms = 70L * 365 * 24 * 60 * 60 * 1000;
         long current = DateUtils.current();
-        long randomLong = RandomUtils.randomLong(0, ms);
+        long randomLong = RandomUtils.randomLong(0, MS);
         current -= randomLong;
         return LocalDateTimeUtil.of(current);
+    }
+
+    public static long tryAcquireRandomLong() {
+        long current = DateUtils.current();
+        return RandomUtils.randomLong(0, MS);
     }
 }

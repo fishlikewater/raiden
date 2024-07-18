@@ -47,6 +47,8 @@ public interface GenerateUtils {
 
     io.github.fishlikewater.raiden.generate.Generate<String> DATETIME = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.FullDateTimeGenerate();
 
+    io.github.fishlikewater.raiden.generate.Generate<Long> TIMESTAMP = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.TimeStampGenerate();
+
     io.github.fishlikewater.raiden.generate.Generate<String> ID_CARD = new io.github.fishlikewater.raiden.generate.IdCardGenerate();
 
     io.github.fishlikewater.raiden.generate.Generate<String> IP = new io.github.fishlikewater.raiden.generate.IpGenerate();
