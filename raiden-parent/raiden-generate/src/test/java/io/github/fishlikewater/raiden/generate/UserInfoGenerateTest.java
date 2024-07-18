@@ -77,4 +77,18 @@ public class UserInfoGenerateTest {
             System.out.println(GenerateUtils.ID_CARD.generate());
         }
     }
+
+    @Test
+    public void testGenerateAddress() {
+        for (int i = 0; i < 10; i++) {
+            System.out.println(GenerateUtils.ADDRESS.generate().address());
+        }
+    }
+
+    @Test
+    public void testGenerateIp() {
+        for (int i = 0; i < 10; i++) {
+            System.out.println(GenerateUtils.IP.generate());
+        }
+    }
 }

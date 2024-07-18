@@ -15,13 +15,26 @@
  */
 package io.github.fishlikewater.raiden.generate;
 
+import io.github.fishlikewater.raiden.core.RandomUtils;
+
 /**
- * {@code AbstractGenerate}
+ * {@code IpGenerate}
+ * IP生成器
  *
  * @author zhangxiang
- * @version 1.0.0
- * @since 2024/05/31
+ * @version 1.0.3
+ * @since 2024/07/18
  */
-public abstract class AbstractGenerate<T> implements Generate<T>, FileConfigRead {
+public class IpGenerate extends AbstractGenerate<String> {
 
+    @Override
+    public String generate() {
+        return String.format(
+                "%d.%d.%d.%d",
+                RandomUtils.randomInt(100, 255),
+                RandomUtils.randomInt(0, 255),
+                RandomUtils.randomInt(0, 255),
+                RandomUtils.randomInt(0, 255)
+        );
+    }
 }

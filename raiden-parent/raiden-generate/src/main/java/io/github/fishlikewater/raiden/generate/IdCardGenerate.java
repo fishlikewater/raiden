@@ -16,7 +16,6 @@
 package io.github.fishlikewater.raiden.generate;
 
 import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.RandomUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
@@ -44,25 +43,7 @@ public class IdCardGenerate extends AbstractGenerate<String> {
     @Override
     public String generate() {
         this.init();
-        String areaCode;
-        int i = RandomUtils.randomInt(0, provinces.size());
-        JSONObject province = provinces.getJSONObject(i);
-        JSONArray cs = province.getJSONArray("districts");
-        if (ObjectUtils.isNullOrEmpty(cs)) {
-            areaCode = province.getStr("areaCode");
-        } else {
-            int j = RandomUtils.randomInt(0, cs.size());
-            JSONObject city = cs.getJSONObject(j);
-            JSONArray districts = city.getJSONArray("districts");
-            if (ObjectUtils.isNullOrEmpty(districts)) {
-                areaCode = city.getStr("areaCode");
-            } else {
-                int k = RandomUtils.randomInt(0, districts.size());
-                JSONObject district = districts.getJSONObject(k);
-                areaCode = district.getStr("areaCode");
-            }
-        }
-
+        String areaCode = GenerateUtils.ADDRESS.generate().areaCode();
         String date = GENERATE.generate("yyyyMMdd");
         String sexCode = RandomUtils.randomLong(0, 999, true);
         String lastCode = RandomUtils.randNum(1);

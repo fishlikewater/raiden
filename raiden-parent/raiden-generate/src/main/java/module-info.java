@@ -29,4 +29,5 @@ module raiden.generate {
     requires com.fasterxml.jackson.annotation;
 
     exports io.github.fishlikewater.raiden.generate;
+    exports io.github.fishlikewater.raiden.generate.model;
 }
