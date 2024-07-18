@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.config.ini;
 
 import io.github.fishlikewater.raiden.core.LambdaUtils;
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import lombok.NonNull;
 
 import java.io.Serial;
@@ -38,8 +39,6 @@ public class Ini implements Serializable {
     @Serial
     private static final long serialVersionUID = 4502090835088587726L;
 
-    private Section defaultSection = new Section("default", new HashMap<>());
-
     private Map<String, Section> sectionMap;
 
     public Ini() {
@@ -51,7 +50,7 @@ public class Ini implements Serializable {
     }
 
     public <T> T get(@NonNull String key) {
-        return (T) this.defaultSection.get(key);
+        return (T) this.getSection("default").get(key);
     }
 
     public <T> T get(@NonNull String section, @NonNull String key) {
@@ -63,7 +62,12 @@ public class Ini implements Serializable {
     }
 
     public <T> void add(@NonNull String key, @NonNull T value) {
-        this.defaultSection.set(key, value);
+        Section section = this.getSection("default");
+        if (ObjectUtils.isNullOrEmpty(section)) {
+            section = new Section("default", new HashMap<>());
+            this.add(section);
+        }
+        section.set(key, value);
     }
 
     public List<Section> getSections() {

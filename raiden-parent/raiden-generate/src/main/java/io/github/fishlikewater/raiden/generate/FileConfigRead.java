@@ -15,13 +15,10 @@
  */
 package io.github.fishlikewater.raiden.generate;
 
-import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
 
 /**
  * {@code FileConfigRead}
@@ -41,8 +38,7 @@ public interface FileConfigRead {
      */
 
     default JSONObject readFileAsJsonObject(String path) {
-        File file = FileUtil.file(path);
-        return JSONUtils.HutoolJSON.readJSONObject(file, StandardCharsets.UTF_8);
+        return JSONUtils.HutoolJSON.parseObj(ResourceUtil.readUtf8Str(path));
     }
 
     /**
@@ -52,7 +48,6 @@ public interface FileConfigRead {
      * @return JSONArray
      */
     default JSONArray readFileAsJsonArray(String path) {
-        File file = FileUtil.file(path);
-        return JSONUtils.HutoolJSON.readJSONArray(file, StandardCharsets.UTF_8);
+        return JSONUtils.HutoolJSON.parseArray(ResourceUtil.readUtf8Str(path));
     }
 }
