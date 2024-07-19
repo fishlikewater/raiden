@@ -60,9 +60,7 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
 
     @Override
     public void cacheMethod(Method method, HttpServer httpServer, Interceptor interceptor) {
-        MethodArgsBean.MethodArgsBeanBuilder builder = MethodArgsBean.builder();
-        this.handleMethodAnnotation(method, builder);
-        MethodArgsBean argsBean = builder.build();
+        MethodArgsBean argsBean = this.handleMethodAnnotation(method);
         if (Objects.isNull(argsBean.getRequestMethod())) {
             return;
         }
@@ -103,7 +101,8 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         methodCache.put(name, argsBean);
     }
 
-    private void handleMethodAnnotation(Method method, MethodArgsBean.MethodArgsBeanBuilder builder) {
+    private MethodArgsBean handleMethodAnnotation(Method method) {
+        MethodArgsBean.MethodArgsBeanBuilder builder = MethodArgsBean.builder();
         final Annotation[] annotations = method.getAnnotations();
         for (Annotation annotation : annotations) {
             if (annotation instanceof Form) {
@@ -134,6 +133,7 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
                 builder.url(delete.value());
             }
         }
+        return builder.build();
     }
 
     @Override

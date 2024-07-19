@@ -246,7 +246,7 @@
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>${gpg.version}</version>
                         <configuration>
-                            <keyname>io.github.fishlikewater</keyname>
+                            <keyname>github</keyname>
                         </configuration>
                         <executions>
                             <execution>
