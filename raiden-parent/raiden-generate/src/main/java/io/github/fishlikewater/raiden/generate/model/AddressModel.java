@@ -66,6 +66,13 @@ public class AddressModel implements Serializable {
     }
 
     public String address() {
-        return this.province + this.city + this.district;
+        String address = this.province;
+        if (StringUtils.isNotBlank(this.city)) {
+            address += this.city;
+        }
+        if (StringUtils.isNotBlank(this.district)) {
+            address += this.district;
+        }
+        return address;
     }
 }
