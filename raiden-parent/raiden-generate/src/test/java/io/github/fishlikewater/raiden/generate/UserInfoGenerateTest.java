@@ -64,6 +64,7 @@ public class UserInfoGenerateTest {
     @Test
     public void testGenerateTime() {
         System.out.println(GenerateUtils.TIME.generate());
+        System.out.println(GenerateUtils.TIME.generate("HHmm:ss"));
     }
 
     @Test

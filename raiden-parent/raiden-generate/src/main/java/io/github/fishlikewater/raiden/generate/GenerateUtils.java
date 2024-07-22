@@ -41,13 +41,13 @@ public interface GenerateUtils {
 
     io.github.fishlikewater.raiden.generate.Generate<String> EMAIL = new io.github.fishlikewater.raiden.generate.EmailGenerate();
 
-    io.github.fishlikewater.raiden.generate.Generate<String> DATE = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.DateGenerate();
+    io.github.fishlikewater.raiden.generate.DateTimeGenerate.DateGenerate DATE = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.DateGenerate();
 
-    io.github.fishlikewater.raiden.generate.Generate<String> TIME = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.TimeGenerate();
+    io.github.fishlikewater.raiden.generate.DateTimeGenerate.TimeGenerate TIME = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.TimeGenerate();
 
-    io.github.fishlikewater.raiden.generate.Generate<String> DATETIME = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.FullDateTimeGenerate();
+    io.github.fishlikewater.raiden.generate.DateTimeGenerate.FullDateTimeGenerate DATETIME = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.FullDateTimeGenerate();
 
-    io.github.fishlikewater.raiden.generate.Generate<Long> TIMESTAMP = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.TimeStampGenerate();
+    io.github.fishlikewater.raiden.generate.DateTimeGenerate.TimeStampGenerate TIMESTAMP = new io.github.fishlikewater.raiden.generate.DateTimeGenerate.TimeStampGenerate();
 
     io.github.fishlikewater.raiden.generate.Generate<String> ID_CARD = new io.github.fishlikewater.raiden.generate.IdCardGenerate();
 

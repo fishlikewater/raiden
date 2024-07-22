@@ -58,6 +58,10 @@ public class DateTimeGenerate {
         public String generate() {
             return DateUtils.format(DateTimeGenerate.tryAcquireDateTime(), "yyyy-MM-dd");
         }
+
+        public String generate(String format) {
+            return DateUtils.format(DateTimeGenerate.tryAcquireDateTime(), format);
+        }
     }
 
     /**
@@ -72,6 +76,15 @@ public class DateTimeGenerate {
             String second = RandomUtils.randomInt(0, 59, true);
 
             return StringUtils.format("{}:{}:{}", hour, minute, second);
+        }
+
+        public String generate(String format) {
+            int hour = RandomUtils.randomInt(0, 12);
+            int minute = RandomUtils.randomInt(0, 59);
+            int second = RandomUtils.randomInt(0, 59);
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime localDateTime = now.withHour(hour).withMinute(minute).withSecond(second);
+            return DateUtils.format(localDateTime, format);
         }
     }
 
