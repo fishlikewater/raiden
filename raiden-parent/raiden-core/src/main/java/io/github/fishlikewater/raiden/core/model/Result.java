@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.core.model;
 
+import io.github.fishlikewater.raiden.core.enums.StatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -62,14 +63,23 @@ public class Result<T> implements Serializable {
      */
     private String requestId;
 
-    public static <T> Result<T> of(String message, String code) {
+    // ----------------------------------------------------------------
+
+    public static <T> Result<T> of(String code, String message) {
         return Result.<T>builder()
                 .code(code)
                 .message(message)
                 .build();
     }
 
-    public static <T> Result<T> of(String message, String code, T result) {
+    public static <T> Result<T> of(String code, T result) {
+        return Result.<T>builder()
+                .code(code)
+                .result(result)
+                .build();
+    }
+
+    public static <T> Result<T> of(String code, T result, String message) {
         return Result.<T>builder()
                 .code(code)
                 .message(message)
@@ -77,9 +87,20 @@ public class Result<T> implements Serializable {
                 .build();
     }
 
-    public static <T> Result<T> of(String code, T result) {
+    // ----------------------------------------------------------------
+
+    public static <T> Result<T> of(T result) {
         return Result.<T>builder()
-                .code(code)
+                .code(StatusEnum.OK.code())
+                .message(StatusEnum.OK.message())
+                .result(result)
+                .build();
+    }
+
+    public static <T> Result<T> of(StatusEnum statusEnum, T result) {
+        return Result.<T>builder()
+                .code(statusEnum.code())
+                .message(statusEnum.message())
                 .result(result)
                 .build();
     }

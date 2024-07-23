@@ -15,6 +15,8 @@
  */
 package io.github.fishlikewater.raiden.core.exception;
 
+import io.github.fishlikewater.raiden.core.enums.StatusEnum;
+
 import java.io.Serial;
 
 /**
@@ -37,11 +39,11 @@ public class RaidenException extends AbstractException {
         super(e);
     }
 
-    public RaidenException(ExceptionStatusEnum status) {
+    public RaidenException(StatusEnum status) {
         super(status);
     }
 
-    public RaidenException(ExceptionStatusEnum status, String message, Object... args) {
+    public RaidenException(StatusEnum status, String message, Object... args) {
         super(status, message, args);
     }
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.core.exception;
+package io.github.fishlikewater.raiden.core.enums;
 
 /**
  * {@code ExceptionStatusEnum}
@@ -23,7 +23,7 @@ package io.github.fishlikewater.raiden.core.exception;
  * @since 2024/04/30
  */
 @SuppressWarnings("unused")
-public enum ExceptionStatusEnum {
+public enum StatusEnum {
 
     // 请求成功
     OK("handle.ok", 200, "000000", "请求成功"),
@@ -88,15 +88,15 @@ public enum ExceptionStatusEnum {
     private final String code;
     private final String message;
 
-    ExceptionStatusEnum(String alias, int status, String code, String message) {
+    StatusEnum(String alias, int status, String code, String message) {
         this.alias = alias;
         this.status = status;
         this.code = code;
         this.message = message;
     }
 
-    public static ExceptionStatusEnum resolve(int status) {
-        for (ExceptionStatusEnum anEnum : values()) {
+    public static StatusEnum resolve(int status) {
+        for (StatusEnum anEnum : values()) {
             if (status == anEnum.status()) {
                 return anEnum;
             }
@@ -105,8 +105,8 @@ public enum ExceptionStatusEnum {
         return INNER_ERROR;
     }
 
-    public static ExceptionStatusEnum resolve(String code) {
-        for (ExceptionStatusEnum anEnum : values()) {
+    public static StatusEnum resolve(String code) {
+        for (StatusEnum anEnum : values()) {
             if (anEnum.code().equalsIgnoreCase(code)) {
                 return anEnum;
             }
