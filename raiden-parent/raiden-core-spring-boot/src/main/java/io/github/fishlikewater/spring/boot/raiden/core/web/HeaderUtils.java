@@ -41,4 +41,70 @@ public class HeaderUtils {
         HttpServletRequest request = RequestUtils.getRequest();
         return request.getHeader(header);
     }
+
+    /**
+     * 获取请求头-转换为-int
+     *
+     * @param header 请求头
+     * @return 请求头
+     */
+    public static int getInt(String header) {
+        HttpServletRequest request = RequestUtils.getRequest();
+        return Integer.parseInt(request.getHeader(header));
+    }
+
+    /**
+     * 获取请求头-转换为-Integer
+     *
+     * @param header 请求头
+     * @return 请求头
+     */
+    public static Integer getInteger(String header) {
+        HttpServletRequest request = RequestUtils.getRequest();
+        return Integer.getInteger(request.getHeader(header));
+    }
+
+    /**
+     * 获取请求头-转换为-long
+     *
+     * @param header 请求头
+     * @return 请求头
+     */
+    public static long getLong(String header) {
+        HttpServletRequest request = RequestUtils.getRequest();
+        return Long.parseLong(request.getHeader(header));
+    }
+
+    /**
+     * 获取请求头-转换为-Long
+     *
+     * @param header 请求头
+     * @return 请求头
+     */
+    public static Long getLongObj(String header) {
+        HttpServletRequest request = RequestUtils.getRequest();
+        return Long.getLong(request.getHeader(header));
+    }
+
+    /**
+     * 获取请求头-转换为-boolean
+     *
+     * @param header 请求头
+     * @return 请求头
+     */
+    public static boolean getBoolean(String header) {
+        HttpServletRequest request = RequestUtils.getRequest();
+        return Boolean.getBoolean(request.getHeader(header));
+    }
+
+    /**
+     * 获取请求头-转换为-Boolean
+     *
+     * @param header 请求头
+     * @return 请求头
+     */
+    public static Boolean getBooleanObj(String header) {
+        HttpServletRequest request = RequestUtils.getRequest();
+        return Boolean.valueOf(request.getHeader(header));
+    }
 }
