@@ -53,7 +53,7 @@ public class Hex {
         int index = 0;
         if (value.startsWith(CommonConstants.HEX_PREFIX, index) || value.startsWith(CommonConstants.HEX_PREFIX_UPPERCASE, index)) {
             index += 2;
-        } else if (value.startsWith(CommonConstants.SYMBOL_EXPRESSION, index)) {
+        } else if (value.startsWith(CommonConstants.Symbol.SYMBOL_EXPRESSION, index)) {
             index++;
         }
         final Matcher matcher = PATTERN.matcher(value);

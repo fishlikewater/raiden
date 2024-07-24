@@ -121,7 +121,7 @@ public final class RaidenCryptoUtils {
      */
     public static String getMainAlgorithm(String algorithm) {
         CryptoExceptionCheck.INSTANCE.isNotNull(algorithm, "Algorithm must be not blank!");
-        final int slashIndex = algorithm.indexOf(CommonConstants.SYMBOL_PATH);
+        final int slashIndex = algorithm.indexOf(CommonConstants.Symbol.SYMBOL_PATH);
         if (slashIndex > 0) {
             return algorithm.substring(0, slashIndex);
         }

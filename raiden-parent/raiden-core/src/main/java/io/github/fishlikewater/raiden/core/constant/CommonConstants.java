@@ -30,10 +30,6 @@ public interface CommonConstants {
     String BOOLEAN_FIELD_START_WITH = "is";
     String GET_METHOD_START_WITH = "get";
     String SET_METHOD_START_WITH = "set";
-    String SYMBOL_AND = "&";
-    String SYMBOL_EXPRESSION = "#";
-    String SYMBOL_OR = "|";
-    String SYMBOL_PATH = "/";
     String HEX_PREFIX = "0x";
     String HEX_PREFIX_UPPERCASE = "0X";
 
@@ -49,4 +45,27 @@ public interface CommonConstants {
     int INT_ONE = 1;
 
     int FILE_HEADER_LENGTH = 28;
+
+    interface Symbol {
+
+        String SYMBOL_AT = "@";
+        String SYMBOL_AND = "&";
+        String SYMBOL_OR = "|";
+        String SYMBOL_PATH = "/";
+        String SYMBOL_COLON = ":";
+        String SYMBOL_COMMA = ",";
+        String SYMBOL_DOT = ".";
+        String SYMBOL_DASH = "-";
+        String SYMBOL_EQUAL = "=";
+        String SYMBOL_QUESTION = "?";
+        String SYMBOL_LEFT_BRACKET = "{";
+        String SYMBOL_RIGHT_BRACKET = "}";
+        String SYMBOL_LEFT_BRACKET_SQUARE = "[";
+        String SYMBOL_RIGHT_BRACKET_SQUARE = "]";
+        String SYMBOL_LEFT_BRACKET_ROUND = "(";
+        String SYMBOL_RIGHT_BRACKET_ROUND = ")";
+        String SYMBOL_LEFT_BRACKET_ANGLE = "<";
+        String SYMBOL_RIGHT_BRACKET_ANGLE = ">";
+        String SYMBOL_EXPRESSION = "#";
+    }
 }
