@@ -25,6 +25,4 @@ package io.github.fishlikewater.raiden.config.constants;
 public interface ConfigConstants {
 
     String DEFAULT_CONFIG_NAME = "default";
-
-
 }

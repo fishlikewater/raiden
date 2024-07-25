@@ -19,8 +19,8 @@ import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 
 /**
  * {@code Composite}
@@ -39,20 +39,71 @@ public interface Composite {
      * @param executor 执行器
      */
     default void parallel(List<Runnable> tasks, Executor executor) {
-        if (tasks == null || tasks.isEmpty()) {
-            return;
+        List<CompletableFuture<?>> futures = this.getCompletableFutures(tasks, executor);
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+    }
+
+    /**
+     * 并行执行任务(任意一个执行成功)
+     *
+     * @param tasks    任务列表
+     * @param executor 执行器
+     */
+    default void parallelAny(List<Runnable> tasks, Executor executor) {
+        List<CompletableFuture<?>> futures = this.getCompletableFutures(tasks, executor);
+        CompletableFuture.anyOf(futures.toArray(new CompletableFuture[0])).join();
+    }
+
+    /**
+     * 并行执行任务(任意一个执行成功)
+     *
+     * @param tasks    任务列表
+     * @param executor 执行器
+     * @return 任务结果列表
+     */
+    @SuppressWarnings("unchecked")
+    default <T> T parallelAnyCallable(List<Supplier<T>> tasks, Executor executor) {
+        List<CompletableFuture<T>> futures = this.getCompletableFuturesCallable(tasks, executor);
+        return (T) CompletableFuture.anyOf(futures.toArray(new CompletableFuture[0])).join();
+    }
+
+    /**
+     * 并行执行任务
+     *
+     * @param tasks    任务列表
+     * @param executor 执行器\
+     * @return 任务结果列表
+     */
+    default List<CompletableFuture<?>> getCompletableFutures(List<Runnable> tasks, Executor executor) {
+        if (ObjectUtils.isNullOrEmpty(tasks)) {
+            return null;
         }
 
         if (executor == null) {
-            RaidenExceptionCheck.INSTANCE.throwUnchecked("Executor is not properly initialized.");
+            RaidenExceptionCheck.INSTANCE.throwUnchecked("Executor.is.not.properly.initialized.");
         }
-        List<CompletableFuture<?>> futures = LambdaUtils.toList(
+        return LambdaUtils.toList(
                 tasks,
                 task -> CompletableFuture.runAsync(task, executor));
-        try {
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-        } catch (CompletionException e) {
-            RaidenExceptionCheck.INSTANCE.throwUnchecked("One of the parallel tasks failed", e);
+    }
+
+    /**
+     * 并行执行任务
+     *
+     * @param tasks    任务列表
+     * @param executor 执行器\
+     * @return 任务结果列表
+     */
+    default <T> List<CompletableFuture<T>> getCompletableFuturesCallable(List<Supplier<T>> tasks, Executor executor) {
+        if (ObjectUtils.isNullOrEmpty(tasks)) {
+            return null;
         }
+
+        if (executor == null) {
+            RaidenExceptionCheck.INSTANCE.throwUnchecked("Executor.is.not.properly.initialized.");
+        }
+        return LambdaUtils.toList(
+                tasks,
+                task -> CompletableFuture.supplyAsync(task, executor));
     }
 }
