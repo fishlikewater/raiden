@@ -28,6 +28,7 @@ module raiden.http.core {
     requires io.github.classgraph;
 
     exports io.github.fishlikewater.raiden.http.core;
+    exports io.github.fishlikewater.raiden.http.core.enums;
     exports io.github.fishlikewater.raiden.http.core.source;
     exports io.github.fishlikewater.raiden.http.core.annotation;
     exports io.github.fishlikewater.raiden.http.core.interceptor;
