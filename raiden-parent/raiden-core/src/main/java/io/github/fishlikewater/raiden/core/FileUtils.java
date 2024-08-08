@@ -156,5 +156,4 @@ public class FileUtils {
             return RaidenExceptionCheck.INSTANCE.throwUnchecked(e);
         }
     }
-
 }

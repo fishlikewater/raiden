@@ -147,7 +147,6 @@ public class Hex {
         return new String(encodeHex(data, toLowerCase));
     }
 
-
     private static char[] encodeHex(char[] alphabets, byte[] data) {
         final int len = data.length;
         final char[] out = new char[len << 1];
@@ -196,7 +195,6 @@ public class Hex {
         return decodeHex(String.valueOf(hexData));
     }
 
-
     public static byte[] decodeHex(CharSequence hex) {
         isHexNumber(hex.toString());
 
@@ -221,5 +219,4 @@ public class Hex {
         }
         return out;
     }
-
 }
