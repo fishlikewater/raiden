@@ -64,7 +64,7 @@ public final class StringUtils extends StrUtil {
      * @return 字符串
      */
     public static <T> String toStr(Map<String, T> map) {
-        return toStr(map, CommonConstants.SYMBOL_AND);
+        return toStr(map, CommonConstants.Symbol.SYMBOL_AND);
     }
 
     /**

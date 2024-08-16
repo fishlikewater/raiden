@@ -53,7 +53,7 @@ public class Hex {
         int index = 0;
         if (value.startsWith(CommonConstants.HEX_PREFIX, index) || value.startsWith(CommonConstants.HEX_PREFIX_UPPERCASE, index)) {
             index += 2;
-        } else if (value.startsWith(CommonConstants.SYMBOL_EXPRESSION, index)) {
+        } else if (value.startsWith(CommonConstants.Symbol.SYMBOL_EXPRESSION, index)) {
             index++;
         }
         final Matcher matcher = PATTERN.matcher(value);
@@ -147,7 +147,6 @@ public class Hex {
         return new String(encodeHex(data, toLowerCase));
     }
 
-
     private static char[] encodeHex(char[] alphabets, byte[] data) {
         final int len = data.length;
         final char[] out = new char[len << 1];
@@ -196,7 +195,6 @@ public class Hex {
         return decodeHex(String.valueOf(hexData));
     }
 
-
     public static byte[] decodeHex(CharSequence hex) {
         isHexNumber(hex.toString());
 
@@ -221,5 +219,4 @@ public class Hex {
         }
         return out;
     }
-
 }

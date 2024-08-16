@@ -38,7 +38,6 @@ public class GeoHash {
     private static double minLat;
     private static double minLng;
 
-
     private final static char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
             '9', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n', 'p',
             'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
@@ -76,7 +75,6 @@ public class GeoHash {
         }
         return base32(Long.parseLong(buffer.toString(), 2));
     }
-
 
     /**
      * 根据经纬度和范围，获取对应的二进制

@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.fishlikewater.raiden.config.constants;
+
 /**
- * {@code module-info}
+ * {@code ConfigConstants}
  *
  * @author zhangxiang
- * @since 2024/07/03
+ * @version 1.0.5
+ * @since 2024/07/23
  */
-module raiden.redis.core.test {
-    requires redisson;
-    requires raiden.redis.core;
-    requires junit;
-    requires raiden.core;
-    requires static lombok;
+public interface ConfigConstants {
 
-    exports io.github.fishlikewater.raiden.redis.test;
+    String DEFAULT_CONFIG_NAME = "default";
 }

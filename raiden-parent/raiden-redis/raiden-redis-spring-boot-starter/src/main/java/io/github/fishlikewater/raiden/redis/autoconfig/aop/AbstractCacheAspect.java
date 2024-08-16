@@ -56,7 +56,7 @@ public abstract class AbstractCacheAspect implements CacheComposite {
     protected String populateCacheKey(String key, String prefix, ProceedingJoinPoint pjp) {
         RaidenExceptionCheck.INSTANCE.isNotNull(key, "key.is.not.found");
         // 判断key 是否为el表达式
-        if (key.startsWith(CommonConstants.SYMBOL_EXPRESSION)) {
+        if (key.startsWith(CommonConstants.Symbol.SYMBOL_EXPRESSION)) {
             EvaluationContext context = this.getContext(pjp);
             key = ExpressionUtils.getExpressionValue(context, key, String.class);
         }
@@ -74,7 +74,7 @@ public abstract class AbstractCacheAspect implements CacheComposite {
     protected String populateCacheKey(String key, String prefix, EvaluationContext context) {
         RaidenExceptionCheck.INSTANCE.isNotNull(key, "key.is.not.found");
         // 判断key 是否为el表达式
-        if (key.startsWith(CommonConstants.SYMBOL_EXPRESSION)) {
+        if (key.startsWith(CommonConstants.Symbol.SYMBOL_EXPRESSION)) {
             key = ExpressionUtils.getExpressionValue(context, key, String.class);
         }
 
@@ -91,7 +91,7 @@ public abstract class AbstractCacheAspect implements CacheComposite {
     protected String populateHashKey(String hashKey, EvaluationContext context) {
         RaidenExceptionCheck.INSTANCE.isNotNull(hashKey, "hashKey.is.not.found");
         // 判断key 是否为el表达式
-        if (hashKey.startsWith(CommonConstants.SYMBOL_EXPRESSION)) {
+        if (hashKey.startsWith(CommonConstants.Symbol.SYMBOL_EXPRESSION)) {
             hashKey = ExpressionUtils.getExpressionValue(context, hashKey, String.class);
         }
         return hashKey;

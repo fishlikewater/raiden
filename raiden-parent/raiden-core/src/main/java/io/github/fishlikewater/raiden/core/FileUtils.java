@@ -15,11 +15,13 @@
  */
 package io.github.fishlikewater.raiden.core;
 
+import cn.hutool.core.io.resource.ResourceUtil;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import io.github.fishlikewater.raiden.core.enums.FileMagicNumberEnum;
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 
 import java.io.*;
+import java.nio.charset.Charset;
 
 /**
  * {@code FileUtils}
@@ -62,6 +64,16 @@ public class FileUtils {
     /**
      * 获取文件输入流
      *
+     * @param path 文件路径
+     * @return 文件输入流
+     */
+    public static InputStream getInputStream(String path) {
+        return ResourceUtil.getStream(path);
+    }
+
+    /**
+     * 获取文件输入流
+     *
      * @param file 文件
      * @return 文件输入流
      */
@@ -71,6 +83,48 @@ public class FileUtils {
         } catch (FileNotFoundException e) {
             return RaidenExceptionCheck.INSTANCE.throwUnchecked("not.found.file", e);
         }
+    }
+
+    /**
+     * 获取文件缓冲输入流
+     *
+     * @param path    文件路径
+     * @param charset 字符集
+     * @return 文件缓冲输入流
+     */
+    public static BufferedReader getReader(String path, Charset charset) {
+        return ResourceUtil.getReader(path, charset);
+    }
+
+    /**
+     * 获取文件字节数组
+     *
+     * @param path 文件路径
+     * @return 文件字节数组
+     */
+    public static byte[] getBytes(String path) {
+        return ResourceUtil.readBytes(path);
+    }
+
+    /**
+     * 获取文件字符串
+     *
+     * @param path 文件路径
+     * @return 文件字符串
+     */
+    public static String readString(String path) {
+        return ResourceUtil.readUtf8Str(path);
+    }
+
+    /**
+     * 获取文件字符串
+     *
+     * @param path    文件路径
+     * @param charset 字符集
+     * @return 文件字符串
+     */
+    public static String readString(String path, Charset charset) {
+        return ResourceUtil.readStr(path, charset);
     }
 
     /**
@@ -102,5 +156,4 @@ public class FileUtils {
             return RaidenExceptionCheck.INSTANCE.throwUnchecked(e);
         }
     }
-
 }

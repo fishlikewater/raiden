@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.core.exception;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
+import io.github.fishlikewater.raiden.core.enums.StatusEnum;
 
 import java.io.Serial;
 
@@ -43,26 +44,26 @@ public abstract class AbstractException extends RuntimeException {
 
     public AbstractException() {
         super(DEFAULT_MESSAGE);
-        this.status = ExceptionStatusEnum.BAD_REQUEST.status();
-        this.code = ExceptionStatusEnum.BAD_REQUEST.code();
+        this.status = StatusEnum.BAD_REQUEST.status();
+        this.code = StatusEnum.BAD_REQUEST.code();
         this.message = DEFAULT_MESSAGE;
     }
 
     public AbstractException(Throwable e) {
         super(DEFAULT_MESSAGE, e);
-        this.status = ExceptionStatusEnum.BAD_REQUEST.status();
-        this.code = ExceptionStatusEnum.BAD_REQUEST.code();
+        this.status = StatusEnum.BAD_REQUEST.status();
+        this.code = StatusEnum.BAD_REQUEST.code();
         this.message = DEFAULT_MESSAGE;
     }
 
-    public AbstractException(ExceptionStatusEnum status) {
+    public AbstractException(StatusEnum status) {
         super(status.message());
         this.status = status.status();
         this.code = status.code();
         this.message = status.message();
     }
 
-    public AbstractException(ExceptionStatusEnum status, String message, Object... args) {
+    public AbstractException(StatusEnum status, String message, Object... args) {
         super(StringUtils.format(ObjectUtils.isNotNullOrEmpty(message) ? message : DEFAULT_MESSAGE, args));
         this.message = StringUtils.format(ObjectUtils.isNotNullOrEmpty(message) ? message : DEFAULT_MESSAGE, args);
         this.status = status.status();
@@ -72,14 +73,14 @@ public abstract class AbstractException extends RuntimeException {
     public AbstractException(String message, Object... args) {
         super(StringUtils.format(ObjectUtils.isNotNullOrEmpty(message) ? message : DEFAULT_MESSAGE, args));
         this.message = StringUtils.format(ObjectUtils.isNotNullOrEmpty(message) ? message : DEFAULT_MESSAGE, args);
-        this.status = ExceptionStatusEnum.BAD_REQUEST.status();
-        this.code = ExceptionStatusEnum.BAD_REQUEST.code();
+        this.status = StatusEnum.BAD_REQUEST.status();
+        this.code = StatusEnum.BAD_REQUEST.code();
     }
 
     public AbstractException(Throwable e, String message, Object... args) {
         super(StringUtils.format(ObjectUtils.isNotNullOrEmpty(message) ? message : DEFAULT_MESSAGE, args), e);
         this.message = StringUtils.format(ObjectUtils.isNotNullOrEmpty(message) ? message : DEFAULT_MESSAGE, args);
-        this.status = ExceptionStatusEnum.BAD_REQUEST.status();
-        this.code = ExceptionStatusEnum.BAD_REQUEST.code();
+        this.status = StatusEnum.BAD_REQUEST.status();
+        this.code = StatusEnum.BAD_REQUEST.code();
     }
 }

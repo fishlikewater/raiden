@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.config.ini;
 
+import io.github.fishlikewater.raiden.config.constants.ConfigConstants;
 import io.github.fishlikewater.raiden.core.LambdaUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import lombok.NonNull;
@@ -50,7 +51,7 @@ public class Ini implements Serializable {
     }
 
     public <T> T get(@NonNull String key) {
-        return (T) this.getSection("default").get(key);
+        return (T) this.getSection(ConfigConstants.DEFAULT_CONFIG_NAME).get(key);
     }
 
     public <T> T get(@NonNull String section, @NonNull String key) {
@@ -62,9 +63,9 @@ public class Ini implements Serializable {
     }
 
     public <T> void add(@NonNull String key, @NonNull T value) {
-        Section section = this.getSection("default");
+        Section section = this.getSection(ConfigConstants.DEFAULT_CONFIG_NAME);
         if (ObjectUtils.isNullOrEmpty(section)) {
-            section = new Section("default", new HashMap<>());
+            section = new Section(ConfigConstants.DEFAULT_CONFIG_NAME, new HashMap<>());
             this.add(section);
         }
         section.set(key, value);

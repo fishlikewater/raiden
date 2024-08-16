@@ -77,7 +77,7 @@ public class DelayQueue implements Serializable {
     private void init() {
         DelayQueueUtils.getRegisters().put(topic, this);
         this.blockingQueue = redissonClient.getBlockingQueue(topic, StringCodec.INSTANCE);
-        delayedQueue = redissonClient.getDelayedQueue(this.blockingQueue);
+        this.delayedQueue = redissonClient.getDelayedQueue(this.blockingQueue);
         this.subscribeId = this.blockingQueue.subscribeOnElements(element -> {
             try {
                 DelayTask<? extends Serializable> delayTask = JSONUtils.JACKSON.readValue(element, new TypeReference<>() {});

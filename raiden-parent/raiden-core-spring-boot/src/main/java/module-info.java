@@ -29,6 +29,9 @@ module raiden.core.spring.boot {
     requires spring.expression;
     requires cn.hutool.core;
     requires spring.boot.autoconfigure;
+    requires java.net.http;
+    requires spring.web;
+    requires org.apache.tomcat.embed.core;
 
     exports io.github.fishlikewater.spring.boot.raiden.core;
     exports io.github.fishlikewater.spring.boot.raiden.core.engine;
@@ -36,4 +39,5 @@ module raiden.core.spring.boot {
     exports io.github.fishlikewater.spring.boot.raiden.core.i18n;
     exports io.github.fishlikewater.spring.boot.raiden.core.property;
     exports io.github.fishlikewater.spring.boot.raiden.core.processor;
+    exports io.github.fishlikewater.spring.boot.raiden.core.web;
 }
