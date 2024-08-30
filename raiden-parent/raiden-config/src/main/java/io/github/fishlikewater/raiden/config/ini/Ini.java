@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * {@code Ini}
@@ -50,12 +51,12 @@ public class Ini implements Serializable {
         return this.sectionMap.get(sectionName);
     }
 
-    public <T> T get(@NonNull String key) {
-        return (T) this.getSection(ConfigConstants.DEFAULT_CONFIG_NAME).get(key);
+    public <T> T get(@NonNull String key, Function<String, T> fn) {
+        return (T) this.getSection(ConfigConstants.DEFAULT_CONFIG_NAME).get(key, fn);
     }
 
-    public <T> T get(@NonNull String section, @NonNull String key) {
-        return (T) this.sectionMap.get(section).get(key);
+    public <T> T get(@NonNull String section, @NonNull String key, Function<String, T> fn) {
+        return (T) this.sectionMap.get(section).get(key, fn);
     }
 
     public void add(Section section) {

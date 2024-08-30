@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * {@code Section}
@@ -41,18 +42,18 @@ public class Section implements Serializable {
 
     private String sectionName;
 
-    private Map<String, Object> pairs;
+    private Map<String, String> pairs;
 
-    public Section(String sectionName, Map<String, Object> pairs) {
+    public Section(String sectionName, Map<String, String> pairs) {
         this.sectionName = sectionName;
         this.pairs = pairs;
     }
 
-    public <T> T get(String key) {
-        return (T) pairs.get(key);
+    public <T> T get(String key, Function<String, T> fn) {
+        return fn.apply(pairs.get(key));
     }
 
     public <T> void set(String key, T value) {
-        this.pairs.put(key, value);
+        this.pairs.put(key, value.toString());
     }
 }
