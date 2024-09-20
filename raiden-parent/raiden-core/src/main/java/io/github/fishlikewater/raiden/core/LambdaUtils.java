@@ -58,6 +58,20 @@ public class LambdaUtils {
     }
 
     /**
+     * 过滤
+     *
+     * @param collection 待过滤集合
+     * @param predicate  过滤条件
+     * @return 集合
+     */
+    public static <T> List<T> filter(Collection<T> collection, Predicate<T> predicate) {
+        return collection
+                .stream()
+                .filter(predicate)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * 将集合中的元素映射到新的集合中
      *
      * @param collection 集合
