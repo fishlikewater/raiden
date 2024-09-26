@@ -72,14 +72,6 @@ public enum StatusEnum {
      * 请求超时
      */
     TIME_OUT("handle.api.request.timeout.error", 504, "504000", "请求超时"),
-    /**
-     * 600xxx UAA 错误
-     */
-    QRCODE_CONFIG_TENANT_ERROR(".qrcode.config.tenant.error", 600, "600001", "扫码租户配置错误"),
-    /**
-     * 二维码过期
-     */
-    QRCODE_EXPIRED("qrcode.web.expired.error", 600, "600002", "二维码过期"),
 
     ;
 
