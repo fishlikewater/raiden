@@ -43,7 +43,7 @@ public abstract class BaseHandler<T> {
 
     public void stop() {
         if (this.stopped.compareAndSet(0, 1)) {
-            log.warn("membership: handler.active.stop");
+            log.warn("handler.active.stop");
         }
     }
 
