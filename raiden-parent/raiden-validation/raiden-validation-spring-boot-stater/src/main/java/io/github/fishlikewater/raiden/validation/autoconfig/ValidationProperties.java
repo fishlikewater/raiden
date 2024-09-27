@@ -13,37 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater;
+package io.github.fishlikewater.raiden.validation.autoconfig;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest
-        extends TestCase {
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest(String testName) {
-        super(testName);
-    }
+@Data
+@ConfigurationProperties(prefix = "raiden.validation")
+@EqualsAndHashCode(callSuper = false)
+public class ValidationProperties {
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite() {
-        return new TestSuite(AppTest.class);
-    }
+    private boolean enabled;
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp() {
-        assertTrue(true);
-    }
 }

@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * {@code module-info}
- *
- * @author zhangxiang
- * @since 2024/06/24
- */
-module raiden.validation {
-    requires raiden.core;
+module raiden.validation.spring.boot.stater {
+    requires static lombok;
+    requires spring.boot;
+    requires spring.boot.autoconfigure;
     requires jakarta.validation;
+    requires spring.context;
+    requires org.aspectj.weaver;
+    requires spring.core;
+    requires raiden.validation;
 
-    exports io.github.fishlikewater.raiden.validation.core;
-    exports io.github.fishlikewater.raiden.validation.core.annotation;
+    exports io.github.fishlikewater.raiden.validation.autoconfig;
 }

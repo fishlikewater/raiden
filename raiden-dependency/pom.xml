@@ -200,6 +200,12 @@
                 <artifactId>jakarta.annotation-api</artifactId>
                 <version>${jakarta.annotation-api.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>8.0.1.Final</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

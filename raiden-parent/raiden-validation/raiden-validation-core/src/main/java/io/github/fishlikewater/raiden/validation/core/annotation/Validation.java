@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * {@code module-info}
- *
- * @author zhangxiang
- * @since 2024/06/24
- */
-module raiden.validation {
-    requires raiden.core;
-    requires jakarta.validation;
+package io.github.fishlikewater.raiden.validation.core.annotation;
 
-    exports io.github.fishlikewater.raiden.validation.core;
-    exports io.github.fishlikewater.raiden.validation.core.annotation;
+import java.lang.annotation.*;
+
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Validation {
 }
