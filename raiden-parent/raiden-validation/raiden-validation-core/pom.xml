@@ -9,7 +9,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>raiden-validation</artifactId>
+    <artifactId>raiden-validation-core</artifactId>
     <description>参数校验</description>
 
     <properties>
