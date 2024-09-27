@@ -33,6 +33,7 @@
         <javaparser.version>3.26.0</javaparser.version>
         <javassist.version>3.30.2-GA</javassist.version>
         <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
+        <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
     </properties>
 
     <dependencyManagement>
@@ -204,7 +205,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>8.0.1.Final</version>
+                <version>${hibernate-validator.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
