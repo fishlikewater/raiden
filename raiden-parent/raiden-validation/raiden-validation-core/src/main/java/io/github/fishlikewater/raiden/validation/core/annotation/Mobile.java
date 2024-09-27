@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.validation.annotation;
+package io.github.fishlikewater.raiden.validation.core.annotation;
 
-import io.github.fishlikewater.raiden.validation.MobileValidator;
+import io.github.fishlikewater.raiden.validation.core.MobileValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

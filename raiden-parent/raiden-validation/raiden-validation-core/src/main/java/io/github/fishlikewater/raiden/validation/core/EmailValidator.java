@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.validation;
+package io.github.fishlikewater.raiden.validation.core;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
-import io.github.fishlikewater.raiden.validation.annotation.Mobile;
+import io.github.fishlikewater.raiden.validation.core.annotation.Email;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -28,16 +28,16 @@ import jakarta.validation.ConstraintValidatorContext;
  * @version 1.0.3
  * @since 2024/07/15
  */
-public class MobileValidator implements ConstraintValidator<Mobile, String> {
+public class EmailValidator implements ConstraintValidator<Email, String> {
 
     private String regex;
 
     private boolean allowNull;
 
     @Override
-    public void initialize(Mobile mobile) {
-        this.allowNull = mobile.allowNull();
-        this.regex = mobile.regex();
+    public void initialize(Email email) {
+        this.allowNull = email.allowNull();
+        this.regex = email.regex();
     }
 
     @Override

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.validation;
+package io.github.fishlikewater.raiden.validation.core;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
-import io.github.fishlikewater.raiden.validation.annotation.ValueLimit;
+import io.github.fishlikewater.raiden.validation.core.annotation.ValueLimit;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

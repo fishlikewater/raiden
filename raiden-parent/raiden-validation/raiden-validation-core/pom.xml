@@ -5,18 +5,26 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.fishlikewater</groupId>
-        <artifactId>raiden-parent</artifactId>
+        <artifactId>raiden-validation</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <packaging>pom</packaging>
     <artifactId>raiden-validation</artifactId>
     <description>参数校验</description>
 
-    <modules>
-        <module>raiden-validation-core</module>
-        <module>raiden-validation-spring-boot-stater</module>
-    </modules>
+    <properties>
+    </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.github.fishlikewater</groupId>
+            <artifactId>raiden-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

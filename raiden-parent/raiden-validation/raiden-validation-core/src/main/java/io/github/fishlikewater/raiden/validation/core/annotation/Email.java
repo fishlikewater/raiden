@@ -13,47 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.validation.annotation;
+package io.github.fishlikewater.raiden.validation.core.annotation;
 
-import io.github.fishlikewater.raiden.validation.BaseEnum;
-import io.github.fishlikewater.raiden.validation.ValueLimitValidator;
+import io.github.fishlikewater.raiden.validation.core.EmailValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
 /**
- * <p>
- * {@code ValueLimit}
- * 值限定注解
- * </p>
- * <ol>
- * <li>|- 优先使用enumValues 判定</li>
- * <li>|- 如果注解的是数值型 且 enumValues没有设置的情况下，使用intValues</li>
- * <li>|- 如果注解的是字符串 且 enumValues没有设置的情况下，使用stringValues</li>
- * </ol>
+ * {@code Email}
+ * 邮箱校验
  *
- * @author fishlikewater@126.com
- * @version 1.0.2
- * @since 2024年06月06日 22:54
- **/
+ * @author zhangxiang
+ * @version 1.0.3
+ * @since 2024/07/15
+ */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(
-        validatedBy = ValueLimitValidator.class
+        validatedBy = EmailValidator.class
 )
-public @interface ValueLimit {
+public @interface Email {
+
+    String regex() default "\\w+@\\w+\\.[a-z]+(\\.[a-z]+)?";
+
+    boolean allowNull() default true;
 
     String message() default "values that are not allowed to be entered";
-
-    int[] intValues() default {};
-
-    String[] stringValues() default {};
-
-    Class<? extends BaseEnum<?>>[] enumClass() default {};
-
-    boolean allowNull() default false;
 
     Class<?>[] groups() default {};
 
