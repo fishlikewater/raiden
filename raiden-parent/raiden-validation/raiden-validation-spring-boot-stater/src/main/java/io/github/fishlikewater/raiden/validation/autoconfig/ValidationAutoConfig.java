@@ -33,4 +33,10 @@ public class ValidationAutoConfig {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         return factory.getValidator();
     }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "raiden.validation", name = "enabled", havingValue = "true")
+    public ValidationAspect validationAspect() {
+        return new ValidationAspect();
+    }
 }
