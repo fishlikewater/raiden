@@ -17,8 +17,15 @@ package io.github.fishlikewater.raiden.validation.core.annotation;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.METHOD, ElementType.TYPE})
+/**
+ * @author zhangxiang
+ * @version 1.0.6
+ * @since 2023/10/15 15:07
+ **/
+
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Validation {
+    Class<?>[] groups() default {};
 }

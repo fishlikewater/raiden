@@ -37,6 +37,7 @@ public class ValidationAspect {
 
     @Around(value = "anyMethod() && @annotation(validation)")
     public Object aroundAdvice4Method(ProceedingJoinPoint pjp, Validation validation) throws Throwable {
+        Class<?>[] groups = validation.groups();
         return pjp.proceed();
     }
 
