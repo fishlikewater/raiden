@@ -22,6 +22,7 @@
 module raiden.validation {
     requires raiden.core;
     requires jakarta.validation;
+    requires java.compiler;
 
     exports io.github.fishlikewater.raiden.validation.core;
     exports io.github.fishlikewater.raiden.validation.core.annotation;

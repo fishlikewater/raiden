@@ -24,7 +24,7 @@ import java.lang.annotation.*;
  **/
 
 @Target({ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 @Documented
 public @interface Validation {
     Class<?>[] groups() default {};

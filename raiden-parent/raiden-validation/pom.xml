@@ -15,7 +15,7 @@
 
     <modules>
         <module>raiden-validation-core</module>
-        <module>raiden-validation-spring-boot-stater</module>
+        <module>raiden-validation-processor</module>
     </modules>
 
 

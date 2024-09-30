@@ -121,11 +121,6 @@
                 <artifactId>raiden-validation-core</artifactId>
                 <version>${revision}</version>
             </dependency>
-            <dependency>
-                <groupId>io.github.fishlikewater</groupId>
-                <artifactId>raiden-validation-spring-boot-stater</artifactId>
-                <version>${revision}</version>
-            </dependency>
 
             <!--config-->
             <dependency>
