@@ -115,13 +115,6 @@
                 <version>${revision}</version>
             </dependency>
 
-            <!--validation-->
-            <dependency>
-                <groupId>io.github.fishlikewater</groupId>
-                <artifactId>raiden-validation-core</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
             <!--config-->
             <dependency>
                 <groupId>io.github.fishlikewater</groupId>

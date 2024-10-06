@@ -33,7 +33,7 @@
         <javaparser.version>3.26.0</javaparser.version>
         <javassist.version>3.30.2-GA</javassist.version>
         <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
-        <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
+        <raiden-processor.version>2.0.0</raiden-processor.version>
     </properties>
 
     <dependencyManagement>
@@ -203,9 +203,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>${hibernate-validator.version}</version>
+                <groupId>io.github.fishlikewater</groupId>
+                <artifactId>raiden-processor</artifactId>
+                <version>${raiden-processor.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

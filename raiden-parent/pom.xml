@@ -25,7 +25,6 @@
         <module>raiden-lock</module>
         <module>raiden-crypto</module>
         <module>raiden-generate</module>
-        <module>raiden-validation</module>
         <module>raiden-config</module>
     </modules>
 
