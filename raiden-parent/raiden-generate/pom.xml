@@ -11,9 +11,7 @@
     <description>生成器</description>
 
     <properties>
-        <pinyin.version>2.5.0</pinyin.version>
     </properties>
-
 
     <dependencies>
         <dependency>
@@ -29,7 +27,6 @@
         <dependency>
             <groupId>com.belerweb</groupId>
             <artifactId>pinyin4j</artifactId>
-            <version>${pinyin.version}</version>
         </dependency>
 
         <dependency>

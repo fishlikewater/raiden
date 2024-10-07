@@ -14,6 +14,7 @@
     <description>raiden-dependency</description>
 
     <properties>
+        <pinyin.version>2.5.1</pinyin.version>
         <spring.boot.version>3.3.0</spring.boot.version>
         <hutool.version>5.8.25</hutool.version>
         <slf4j-api.veresion>2.0.9</slf4j-api.veresion>
@@ -206,6 +207,12 @@
                 <groupId>io.github.fishlikewater</groupId>
                 <artifactId>raiden-processor</artifactId>
                 <version>${raiden-processor.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.belerweb</groupId>
+                <artifactId>pinyin4j</artifactId>
+                <version>${pinyin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
