@@ -209,6 +209,28 @@ public class LambdaUtils {
     }
 
     /**
+     * @param collection 集合
+     * @param predicate  条件
+     * @return 是否匹配到
+     */
+    public static <T> boolean anyMatch(Collection<T> collection, Predicate<T> predicate) {
+        return collection
+                .stream()
+                .anyMatch(predicate);
+    }
+
+    /**
+     * @param collection 集合
+     * @param predicate  条件
+     * @return 是否匹配到
+     */
+    public static <T> boolean allMatch(Collection<T> collection, Predicate<T> predicate) {
+        return collection
+                .stream()
+                .allMatch(predicate);
+    }
+
+    /**
      * 对集合进行排序
      *
      * @param collection 集合

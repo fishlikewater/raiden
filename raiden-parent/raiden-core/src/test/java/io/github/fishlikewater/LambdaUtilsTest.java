@@ -128,4 +128,18 @@ public class LambdaUtilsTest {
         Assert.assertEquals(min, BigDecimal.valueOf(1.50));
     }
 
+    @Test
+    public void testLambdaAnyMatch() {
+        List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
+        boolean b = LambdaUtils.anyMatch(integerList, t -> t == 1);
+        Assert.assertEquals(b, Boolean.TRUE);
+    }
+
+    @Test
+    public void testLambdaAllMatch() {
+        List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
+        boolean b = LambdaUtils.allMatch(integerList, t -> t <= 456);
+        Assert.assertEquals(b, Boolean.TRUE);
+    }
+
 }
