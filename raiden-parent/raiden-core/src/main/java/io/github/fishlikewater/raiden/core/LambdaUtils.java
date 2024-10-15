@@ -89,6 +89,25 @@ public class LambdaUtils {
     }
 
     /**
+     * 将集合中的元素映射到新的集合中
+     *
+     * @param collection 集合
+     * @param predicate  过滤条件
+     * @param mapper     映射函数
+     * @param <T>        新集合元素类型
+     * @param <E>        旧集合元素类型
+     * @return 新集合
+     */
+    public static <T, E> List<T> toList(Collection<E> collection, Predicate<E> predicate, Function<E, T> mapper) {
+        return collection
+                .stream()
+                .filter(predicate)
+                .map(mapper)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * 将集合中的元素映射到新的集合中，并去重
      *
      * @param collection 集合
@@ -394,6 +413,35 @@ public class LambdaUtils {
             case BigDecimal ignored -> (T) collection.stream()
                     .map(BigDecimal.class::cast)
                     .reduce((BigDecimal) firstElement, BigDecimal::min);
+            default -> throw new UnsupportedOperationException("Type not supported");
+        };
+    }
+
+    /**
+     * 求最大值
+     *
+     * @param collection 集合
+     * @return 最大值
+     */
+    @SuppressWarnings("all")
+    public static <T extends Number> T max(Collection<T> collection) {
+        if (collection == null || collection.isEmpty()) {
+            throw new IllegalArgumentException("Collection must not be null or empty");
+        }
+        T firstElement = collection.iterator().next();
+        return switch (firstElement) {
+            case Integer ignored -> (T) (Integer) collection.stream()
+                    .mapToInt(Number::intValue)
+                    .reduce((int) firstElement, Math::max);
+            case Long ignored -> (T) (Long) collection.stream()
+                    .mapToLong(Number::longValue)
+                    .reduce((long) firstElement, Math::max);
+            case Double ignored -> (T) (Double) collection.stream()
+                    .mapToDouble(Number::doubleValue)
+                    .reduce((double) firstElement, Math::max);
+            case BigDecimal ignored -> (T) collection.stream()
+                    .map(BigDecimal.class::cast)
+                    .reduce((BigDecimal) firstElement, BigDecimal::max);
             default -> throw new UnsupportedOperationException("Type not supported");
         };
     }

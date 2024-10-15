@@ -42,6 +42,13 @@ public class LambdaUtilsTest {
     }
 
     @Test
+    public void testLambda2() {
+        List<Integer> integerList = List.of(1, 2, 4, 8);
+        List<Integer> list = LambdaUtils.toList(integerList, it -> it > 2, integer -> integer * 2);
+        Assert.assertEquals((int) list.getFirst(), 8);
+    }
+
+    @Test
     public void testLambdaFilter() {
         List<Integer> integerList = List.of(1, 2, 4, 8);
         List<Integer> list = LambdaUtils.filter(integerList, integer -> integer > 2);
@@ -131,6 +138,13 @@ public class LambdaUtilsTest {
         List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
         Integer min = LambdaUtils.min(integerList);
         Assert.assertEquals((int) min, 1);
+    }
+
+    @Test
+    public void testLambdaReduceMax() {
+        List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
+        Integer max = LambdaUtils.max(integerList);
+        Assert.assertEquals((int) max, 456);
     }
 
     @Test
