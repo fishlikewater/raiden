@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 /**
@@ -88,6 +89,17 @@ public class LambdaUtilsTest {
         List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
         var groupBy = LambdaUtils.groupBy(integerList, integer -> integer % 2);
         Assert.assertEquals(groupBy.get(0).size(), 7);
+    }
+
+    @Test
+    public void testLambdaGroupBy2() {
+        TestBean zs = new TestBean("zs", "1111");
+        TestBean zs1 = new TestBean("zs", "2222");
+        TestBean ls = new TestBean("ls", "1111");
+        TestBean ls1 = new TestBean("ls", "2222");
+        List<TestBean> integerList = CollectionUtils.ofList(zs, zs1, ls, ls1);
+        Map<String, List<String>> groupBy = LambdaUtils.groupBy(integerList, TestBean::getName, TestBean::getAddress);
+        Assert.assertEquals(groupBy.size(), 2);
     }
 
     @Test

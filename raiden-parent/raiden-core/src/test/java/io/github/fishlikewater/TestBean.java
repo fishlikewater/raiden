@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -25,6 +26,7 @@ import lombok.Data;
  * @since 2024/04/30
  */
 @Data
+@AllArgsConstructor
 public class TestBean {
 
     private String name;

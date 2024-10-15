@@ -258,6 +258,23 @@ public class LambdaUtils {
     }
 
     /**
+     * 对集合进行分组
+     *
+     * @param collection 集合
+     * @param groupFunc  分组函数
+     * @param mapper     后续处理
+     * @param <T>        集合元素类型
+     * @param <K>        分组键类型
+     * @param <E>        分组值类型
+     * @return 分组后的Map
+     */
+    public static <T, K, E> Map<K, List<E>> groupBy(Collection<T> collection, Function<T, K> groupFunc, Function<T, E> mapper) {
+        return collection
+                .stream()
+                .collect(Collectors.groupingBy(groupFunc, Collectors.mapping(mapper, Collectors.toList())));
+    }
+
+    /**
      * 合并多个集合
      *
      * @param collections 将要合并的集合
