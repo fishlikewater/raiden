@@ -23,6 +23,7 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -54,6 +55,18 @@ public class LambdaUtils {
             return methodToProperty(methodName);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 集合处理
+     *
+     * @param collection 待过滤集合
+     * @param consumer   处理
+     */
+    public static <T> void handle(Collection<T> collection, Consumer<T> consumer) {
+        for (T t : collection) {
+            consumer.accept(t);
         }
     }
 
