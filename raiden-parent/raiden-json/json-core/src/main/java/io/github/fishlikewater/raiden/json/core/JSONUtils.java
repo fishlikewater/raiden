@@ -17,6 +17,8 @@ package io.github.fishlikewater.raiden.json.core;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationConfig;
@@ -68,6 +70,16 @@ public final class JSONUtils {
         JACKSON.setConfig(JACKSON.getSerializationConfig().with(Locale.CHINA));
         JACKSON.setConfig(JACKSON.getDeserializationConfig().with(Locale.CHINA));
         JACKSON.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        //支持null和空串
+        JACKSON.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+        //允许出现单引号
+        JACKSON.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+        //允许出现特殊字符和转义符
+        JACKSON.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
+        //支持结尾逗号
+        JACKSON.configure(JsonReadFeature.ALLOW_TRAILING_COMMA.mappedFeature(), true);
+
+
         JACKSON.registerModule(new JavaTimeModule());
     }
 
