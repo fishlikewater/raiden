@@ -22,6 +22,12 @@ import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
+import java.util.stream.Stream;
 
 /**
  * {@code FileUtils}
@@ -154,6 +160,40 @@ public class FileUtils {
             return FileMagicNumberEnum.codeOf(header, suffix);
         } catch (Exception e) {
             return RaidenExceptionCheck.INSTANCE.throwUnchecked(e);
+        }
+    }
+
+    /**
+     * 替换jar 中的文件 生成新的jar
+     *
+     * @param oldJar        旧的jar
+     * @param dir           修改后的类目录
+     * @param classFullName 替换文件的 类全名
+     */
+    public static void replaceClassWithJar(File oldJar, String dir, String... classFullName) {
+        if (ObjectUtils.isNullOrEmpty(dir)) {
+            dir = oldJar.getAbsolutePath();
+        }
+        File newJar = new File(oldJar.getAbsolutePath().replace(".jar", "-new.jar"));
+        List<String> list = Stream.of(classFullName)
+                .map(item -> item.replace(".", "/") + "class")
+                .toList();
+        try (JarFile jarFile = new JarFile(oldJar);
+             JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(newJar))) {
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry jarEntry = entries.nextElement();
+                try (InputStream inputStream = list.contains(jarEntry.getName())
+                        ? new FileInputStream(new File(dir, jarEntry.getName()))
+                        : jarFile.getInputStream(jarEntry)) {
+                    jarOutputStream.putNextEntry(new JarEntry(jarEntry.getName()));
+                    byte[] bytes = inputStream.readAllBytes();
+                    jarOutputStream.write(bytes);
+                    jarOutputStream.closeEntry();
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
