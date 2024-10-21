@@ -176,7 +176,7 @@ public class FileUtils {
         }
         File newJar = new File(oldJar.getAbsolutePath().replace(".jar", "-new.jar"));
         List<String> list = Stream.of(classFullName)
-                .map(item -> item.replace(".", "/") + "class")
+                .map(item -> item.replace(".", "/") + ".class")
                 .toList();
         try (JarFile jarFile = new JarFile(oldJar);
              JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(newJar))) {
