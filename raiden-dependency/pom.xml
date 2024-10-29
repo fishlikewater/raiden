@@ -35,6 +35,7 @@
         <javassist.version>3.30.2-GA</javassist.version>
         <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
         <raiden-processor.version>2.0.0</raiden-processor.version>
+        <nacos.version>0.3.0-RC</nacos.version>
     </properties>
 
     <dependencyManagement>
@@ -213,6 +214,13 @@
                 <groupId>com.belerweb</groupId>
                 <artifactId>pinyin4j</artifactId>
                 <version>${pinyin.version}</version>
+            </dependency>
+
+            <!--nacos-->
+            <dependency>
+                <groupId>com.alibaba.boot</groupId>
+                <artifactId>nacos-config-spring-boot-starter</artifactId>
+                <version>${nacos.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

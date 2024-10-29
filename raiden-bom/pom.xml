@@ -121,6 +121,13 @@
                 <artifactId>raiden-config</artifactId>
                 <version>${revision}</version>
             </dependency>
+
+            <!--nacos-spring-boot-->
+            <dependency>
+                <groupId>io.github.fishlikewater</groupId>
+                <artifactId>raiden-nacos-spring-boot-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
