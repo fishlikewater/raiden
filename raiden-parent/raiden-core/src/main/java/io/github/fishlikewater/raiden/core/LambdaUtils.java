@@ -377,7 +377,7 @@ public class LambdaUtils {
      * @return 求和结果
      */
     @SuppressWarnings("all")
-    public static <T extends Number> T sum(Collection<T> collection) {
+    public static <T extends Number, E extends Number> E sum(Collection<T> collection) {
         if (collection == null || collection.isEmpty()) {
             throw new IllegalArgumentException("Collection must not be null or empty");
         }
@@ -385,16 +385,25 @@ public class LambdaUtils {
         T firstElement = collection.iterator().next();
 
         return switch (firstElement) {
-            case Integer ignored -> (T) (Integer) collection.stream()
+            case Byte ignored -> (E) (Integer) collection.stream()
                     .mapToInt(Number::intValue)
                     .sum();
-            case Long ignored -> (T) (Long) collection.stream()
+            case Short ignored -> (E) (Integer) collection.stream()
+                    .mapToInt(Number::intValue)
+                    .sum();
+            case Integer ignored -> (E) (Integer) collection.stream()
+                    .mapToInt(Number::intValue)
+                    .sum();
+            case Long ignored -> (E) (Long) collection.stream()
                     .mapToLong(Number::longValue)
                     .sum();
-            case Double ignored -> (T) (Double) collection.stream()
+            case Double ignored -> (E) (Double) collection.stream()
                     .mapToDouble(Number::doubleValue)
                     .sum();
-            case BigDecimal ignored -> (T) collection.stream()
+            case Float ignored -> (E) (Double) collection.stream()
+                    .mapToDouble(Number::doubleValue)
+                    .sum();
+            case BigDecimal ignored -> (E) collection.stream()
                     .map(BigDecimal.class::cast)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             default -> throw new UnsupportedOperationException("Type not supported");
@@ -414,6 +423,16 @@ public class LambdaUtils {
         }
         T firstElement = collection.iterator().next();
         return switch (firstElement) {
+            case Byte ignored -> (T) (Byte) collection.stream()
+                    .map(t -> (byte) t)
+                    .reduce((byte) firstElement, (a, b) -> {
+                        return a < b ? a : b;
+                    });
+            case Short ignored -> (T) (Short) collection.stream()
+                    .map(t -> (short) t)
+                    .reduce((short) firstElement, (a, b) -> {
+                        return a < b ? a : b;
+                    });
             case Integer ignored -> (T) (Integer) collection.stream()
                     .mapToInt(Number::intValue)
                     .reduce((int) firstElement, Math::min);
@@ -423,6 +442,11 @@ public class LambdaUtils {
             case Double ignored -> (T) (Double) collection.stream()
                     .mapToDouble(Number::doubleValue)
                     .reduce((double) firstElement, Math::min);
+            case Float ignored -> (T) (Float) collection.stream()
+                    .map(t -> (float) t)
+                    .reduce((float) firstElement, (a, b) -> {
+                        return a < b ? a : b;
+                    });
             case BigDecimal ignored -> (T) collection.stream()
                     .map(BigDecimal.class::cast)
                     .reduce((BigDecimal) firstElement, BigDecimal::min);
@@ -443,6 +467,16 @@ public class LambdaUtils {
         }
         T firstElement = collection.iterator().next();
         return switch (firstElement) {
+            case Byte ignored -> (T) (Byte) collection.stream()
+                    .map(t -> (byte) t)
+                    .reduce((byte) firstElement, (a, b) -> {
+                        return a < b ? b : a;
+                    });
+            case Short ignored -> (T) (Short) collection.stream()
+                    .map(t -> (short) t)
+                    .reduce((short) firstElement, (a, b) -> {
+                        return a < b ? b : a;
+                    });
             case Integer ignored -> (T) (Integer) collection.stream()
                     .mapToInt(Number::intValue)
                     .reduce((int) firstElement, Math::max);
@@ -452,6 +486,11 @@ public class LambdaUtils {
             case Double ignored -> (T) (Double) collection.stream()
                     .mapToDouble(Number::doubleValue)
                     .reduce((double) firstElement, Math::max);
+            case Float ignored -> (T) (Float) collection.stream()
+                    .map(t -> (float) t)
+                    .reduce((float) firstElement, (a, b) -> {
+                        return a < b ? b : a;
+                    });
             case BigDecimal ignored -> (T) collection.stream()
                     .map(BigDecimal.class::cast)
                     .reduce((BigDecimal) firstElement, BigDecimal::max);
