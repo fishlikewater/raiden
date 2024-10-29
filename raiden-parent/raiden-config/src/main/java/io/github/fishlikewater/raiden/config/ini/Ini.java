@@ -51,11 +51,11 @@ public class Ini implements Serializable {
         return this.sectionMap.get(sectionName);
     }
 
-    public <T> T get(@NonNull String key, Function<String, T> fn) {
+    public <T> T get(@NonNull String key, Function<Object, T> fn) {
         return (T) this.getSection(ConfigConstants.DEFAULT_CONFIG_NAME).get(key, fn);
     }
 
-    public <T> T get(@NonNull String section, @NonNull String key, Function<String, T> fn) {
+    public <T> T get(@NonNull String section, @NonNull String key, Function<Object, T> fn) {
         return (T) this.sectionMap.get(section).get(key, fn);
     }
 

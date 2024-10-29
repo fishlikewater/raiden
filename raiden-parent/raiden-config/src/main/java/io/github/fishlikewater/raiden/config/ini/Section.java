@@ -42,18 +42,38 @@ public class Section implements Serializable {
 
     private String sectionName;
 
-    private Map<String, String> pairs;
+    private Map<String, Object> pairs;
 
-    public Section(String sectionName, Map<String, String> pairs) {
+    public Section(String sectionName, Map<String, Object> pairs) {
         this.sectionName = sectionName;
         this.pairs = pairs;
     }
 
-    public <T> T get(String key, Function<String, T> fn) {
+    public <T> T get(String key, Function<Object, T> fn) {
         return fn.apply(pairs.get(key));
     }
 
+    public String getString(String key) {
+        return this.get(key, o -> o.toString());
+    }
+
+    public int getInteger(String key) {
+        Object o = pairs.get(key);
+        if (o instanceof Number number) {
+            return number.intValue();
+        }
+        return Integer.parseInt(o.toString());
+    }
+
+    public long getLong(String key) {
+        Object o = pairs.get(key);
+        if (o instanceof Number number) {
+            return number.longValue();
+        }
+        return Long.parseLong(o.toString());
+    }
+
     public <T> void set(String key, T value) {
-        this.pairs.put(key, value.toString());
+        this.pairs.put(key, value);
     }
 }
