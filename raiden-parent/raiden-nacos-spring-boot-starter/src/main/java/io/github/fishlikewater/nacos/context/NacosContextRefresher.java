@@ -16,6 +16,7 @@
 package io.github.fishlikewater.nacos.context;
 
 import io.github.fishlikewater.nacos.scope.NacosRefreshScope;
+import lombok.Getter;
 
 /**
  * {@code NacosContextRefresher}
@@ -24,19 +25,10 @@ import io.github.fishlikewater.nacos.scope.NacosRefreshScope;
  * @version 1.0.7
  * @since 2024/10/30
  */
-public class NacosContextRefresher {
-
-    private NacosRefreshScope scope;
-
-    public NacosContextRefresher(NacosRefreshScope scope) {
-        this.scope = scope;
-    }
+@Getter
+public record NacosContextRefresher(NacosRefreshScope scope) {
 
     public synchronized void refresh() {
         this.scope.refreshAll();
-    }
-
-    public NacosRefreshScope getScope() {
-        return scope;
     }
 }
