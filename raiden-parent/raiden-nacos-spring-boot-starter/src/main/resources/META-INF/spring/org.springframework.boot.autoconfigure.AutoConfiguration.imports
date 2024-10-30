@@ -1,1 +1,2 @@
 io.github.fishlikewater.nacos.config.NacosRefreshScopeAutoConfigure
+io.github.fishlikewater.nacos.config.NacosContextRefresherAutoConfigure

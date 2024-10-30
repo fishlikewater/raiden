@@ -21,9 +21,9 @@ import com.alibaba.nacos.client.config.listener.impl.AbstractConfigChangeListene
 import com.alibaba.nacos.spring.context.event.config.NacosConfigReceivedEvent;
 import com.alibaba.nacos.spring.factory.NacosServiceFactory;
 import com.alibaba.nacos.spring.util.NacosBeanUtils;
+import io.github.fishlikewater.nacos.context.NacosContextRefresher;
 import io.github.fishlikewater.nacos.model.ConfigMeta;
 import io.github.fishlikewater.nacos.registry.DynamicNacosConfigListenerRegistry;
-import io.github.fishlikewater.nacos.scope.NacosRefreshScope;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import lombok.NonNull;
 import org.slf4j.Logger;
@@ -99,18 +99,18 @@ public abstract class AbstractDynamicNacosConfigListener extends AbstractConfigC
     // ----------------------------------------------------------------
 
     private void onEvent(NacosConfigReceivedEvent event) {
-        NacosRefreshScope refresher = this.beanFactory.getBean(NacosRefreshScope.class);
+        NacosContextRefresher refresher = this.beanFactory.getBean(NacosContextRefresher.class);
 
         this.preRefresh(event);
-        refresher.refreshAll();
+        refresher.refresh();
         this.posRefresh(event);
     }
 
     private void onEvent(ConfigChangeEvent event) {
-        NacosRefreshScope refresher = this.beanFactory.getBean(NacosRefreshScope.class);
+        NacosContextRefresher refresher = this.beanFactory.getBean(NacosContextRefresher.class);
 
         this.preRefresh(event);
-        refresher.refreshAll();
+        refresher.refresh();
         this.posRefresh(event);
     }
 
