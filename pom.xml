@@ -74,6 +74,9 @@
                     <source>${maven.compiler.source.version}</source>
                     <target>${maven.compiler.target.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                     <annotationProcessorPaths>
                         <!--<path>
                             <groupId>com.github.therapi</groupId>

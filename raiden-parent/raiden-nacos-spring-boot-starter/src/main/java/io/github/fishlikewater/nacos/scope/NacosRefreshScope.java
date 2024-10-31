@@ -92,8 +92,7 @@ public class NacosRefreshScope extends GenericScope
         for (String name : this.context.getBeanDefinitionNames()) {
             BeanDefinition definition = this.registry.getBeanDefinition(name);
             if (this.getName().equals(definition.getScope()) && !definition.isLazyInit()) {
-                Object bean = this.context.getBean(name);
-                Class<?> ignore = bean.getClass();
+                this.context.getBean(name);
             }
         }
     }
