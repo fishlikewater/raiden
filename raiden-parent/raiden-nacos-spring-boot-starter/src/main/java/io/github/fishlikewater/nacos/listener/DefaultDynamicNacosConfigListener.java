@@ -15,9 +15,15 @@
  */
 package io.github.fishlikewater.nacos.listener;
 
-import com.alibaba.nacos.api.config.ConfigService;
-
-import java.util.Collection;
+import com.alibaba.nacos.spring.core.env.NacosPropertySource;
+import io.github.fishlikewater.nacos.model.ConfigMeta;
+import io.github.fishlikewater.raiden.core.StringUtils;
+import lombok.NonNull;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
 
 /**
  * {@code DefaultDynamicNacosConfigListener}
@@ -27,10 +33,58 @@ import java.util.Collection;
  * @version 1.0.7
  * @since 2024/10/31
  */
-public class DefaultDynamicNacosConfigListener extends AbstractDynamicNacosConfigListener {
+public class DefaultDynamicNacosConfigListener extends AbstractDynamicNacosConfigListener implements EnvironmentAware {
+
+    private final ConfigMeta configMeta;
+
+    private ConfigurableEnvironment environment;
+
+    public DefaultDynamicNacosConfigListener(ConfigMeta configMeta) {
+        this.configMeta = configMeta;
+    }
 
     @Override
-    public void registerListener(Collection<ConfigService> configServices) {
+    public void receiveConfigInfo(String config) {
+        for (PropertySource<?> propertySource : environment.getPropertySources()) {
+            if (propertySource instanceof NacosPropertySource nacosPropertySource) {
+                if (StringUtils.equals(nacosPropertySource.getGroupId(), configMeta.getGroupId())
+                        && StringUtils.equals(nacosPropertySource.getDataId(), configMeta.getDataId())) {
+                    String name = nacosPropertySource.getName();
+                    NacosPropertySource newNacosPropertySource = new NacosPropertySource(
+                            this.configMeta.getDataId(),
+                            this.configMeta.getGroupId(),
+                            name,
+                            config,
+                            this.configMeta.getType());
 
+                    this.copy(newNacosPropertySource, nacosPropertySource);
+                    MutablePropertySources propertySources = environment.getPropertySources();
+                    // replace NacosPropertySource
+                    propertySources.replace(name, newNacosPropertySource);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void setEnvironment(@NonNull Environment environment) {
+        this.environment = (ConfigurableEnvironment) environment;
+    }
+
+    // ----------------------------------------------------------------
+
+    protected void copy(NacosPropertySource target, NacosPropertySource original) {
+        target.setGroupId(original.getGroupId());
+        target.setDataId(original.getDataId());
+        target.setType(original.getType());
+        target.setAutoRefreshed(original.isAutoRefreshed());
+        target.setFirst(original.isFirst());
+        target.setBefore(original.getBefore());
+        target.setAfter(original.getAfter());
+        target.setProperties(original.getProperties());
+        target.setAttributesMetadata(original.getAttributesMetadata());
+        target.setOrigin(original.getOrigin());
+        target.setBeanName(original.getBeanName());
+        target.setBeanType(original.getBeanType());
     }
 }
