@@ -13,25 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.nacos.context;
+package io.github.fishlikewater.nacos.bind;
 
-import io.github.fishlikewater.nacos.scope.NacosRefreshScope;
+import io.github.fishlikewater.nacos.model.ConfigBinder;
+import lombok.Getter;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.core.env.Environment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * {@code NacosContextRefresher}
+ * PropertiesBinder
  *
  * @author zhangxiang
  * @version 1.0.7
- * @since 2024/10/30
- */
+ * @since 2024/11/1
+ **/
+@Getter
+public class PropertiesBinder {
 
-public record NacosContextRefresher(NacosRefreshScope scope) {
+    private final List<ConfigBinder> binders = new ArrayList<>();
 
-    public synchronized void refresh() {
-        this.scope.refreshAll();
-    }
-
-    public synchronized void refresh(String name) {
-        this.scope.refresh(name);
+    public <T> T bind(Environment environment, String prefix, Class<T> clazz) {
+        binders.add(new ConfigBinder(prefix, clazz));
+        Binder binder = Binder.get(environment);
+        return binder.bind(prefix, clazz).get();
     }
 }

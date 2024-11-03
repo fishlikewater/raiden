@@ -15,15 +15,22 @@
  */
 package io.github.fishlikewater.nacos.listener;
 
+import com.alibaba.nacos.api.config.ConfigChangeEvent;
+import com.alibaba.nacos.api.config.ConfigChangeItem;
 import com.alibaba.nacos.spring.core.env.NacosPropertySource;
+import io.github.fishlikewater.nacos.bind.PropertiesBinder;
+import io.github.fishlikewater.nacos.context.NacosContextRefresher;
+import io.github.fishlikewater.nacos.model.ConfigBinder;
 import io.github.fishlikewater.nacos.model.ConfigMeta;
 import io.github.fishlikewater.raiden.core.StringUtils;
-import lombok.NonNull;
-import org.springframework.context.EnvironmentAware;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * {@code DefaultDynamicNacosConfigListener}
@@ -33,19 +40,46 @@ import org.springframework.core.env.PropertySource;
  * @version 1.0.7
  * @since 2024/10/31
  */
-public class DefaultDynamicNacosConfigListener extends AbstractDynamicNacosConfigListener implements EnvironmentAware {
+public class DefaultDynamicNacosConfigListener extends AbstractDynamicNacosConfigListener {
 
     private final ConfigMeta configMeta;
 
-    private ConfigurableEnvironment environment;
+    private final ConfigurableEnvironment environment;
 
-    public DefaultDynamicNacosConfigListener(ConfigMeta configMeta) {
+    private final BeanFactory beanFactory;
+
+    public DefaultDynamicNacosConfigListener(ConfigMeta configMeta, ConfigurableEnvironment environment, BeanFactory beanFactory) {
         this.configMeta = configMeta;
+        this.environment = environment;
+        this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public void receiveConfigChange(ConfigChangeEvent event) {
+        log.info("Dynamic.nacos: on.nacos.refresh.listener.received.config.changed.event");
+        NacosContextRefresher refresher = this.beanFactory.getBean(NacosContextRefresher.class);
+        PropertiesBinder binder = this.beanFactory.getBean(PropertiesBinder.class);
+        this.preRefresh(event);
+        Set<String> set = new HashSet<>();
+
+        Collection<ConfigChangeItem> changeItems = event.getChangeItems();
+        for (ConfigChangeItem changeItem : changeItems) {
+            String key = changeItem.getKey();
+            for (ConfigBinder binderBinder : binder.getBinders()) {
+                if (key.contains(binderBinder.getPrefix())) {
+                    set.add(StringUtils.lowerFirst(binderBinder.getClazz().getSimpleName()));
+                }
+            }
+        }
+        for (String name : set) {
+            refresher.refresh(name);
+        }
+        this.posRefresh(event);
     }
 
     @Override
     public void receiveConfigInfo(String config) {
-        for (PropertySource<?> propertySource : environment.getPropertySources()) {
+        for (PropertySource<?> propertySource : this.environment.getPropertySources()) {
             if (propertySource instanceof NacosPropertySource nacosPropertySource) {
                 if (StringUtils.equals(nacosPropertySource.getGroupId(), configMeta.getGroupId())
                         && StringUtils.equals(nacosPropertySource.getDataId(), configMeta.getDataId())) {
@@ -58,17 +92,12 @@ public class DefaultDynamicNacosConfigListener extends AbstractDynamicNacosConfi
                             this.configMeta.getType());
 
                     this.copy(newNacosPropertySource, nacosPropertySource);
-                    MutablePropertySources propertySources = environment.getPropertySources();
+                    MutablePropertySources propertySources = this.environment.getPropertySources();
                     // replace NacosPropertySource
                     propertySources.replace(name, newNacosPropertySource);
                 }
             }
         }
-    }
-
-    @Override
-    public void setEnvironment(@NonNull Environment environment) {
-        this.environment = (ConfigurableEnvironment) environment;
     }
 
     // ----------------------------------------------------------------

@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.nacos.registry;
+package io.github.fishlikewater.nacos.model;
 
-import com.alibaba.nacos.client.config.listener.impl.AbstractConfigChangeListener;
-import io.github.fishlikewater.nacos.model.ConfigMeta;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.io.Serializable;
 
 /**
- * {@code NacosConfigRegister}
- * 注册
+ * ConfigBinder
  *
  * @author zhangxiang
  * @version 1.0.7
- * @since 2024/11/01
- */
-public interface NacosConfigRegister {
+ * @since 2024/11/1
+ **/
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ConfigBinder implements Serializable {
 
-    void register(ConfigMeta configMeta, AbstractConfigChangeListener listener);
+    private String prefix;
 
-    Set<ConfigMeta> tryAcquireConfigMetas();
+    private Class<?> clazz;
 }

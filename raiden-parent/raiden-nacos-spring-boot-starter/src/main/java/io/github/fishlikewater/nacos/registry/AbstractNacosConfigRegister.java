@@ -1,7 +1,24 @@
+/*
+ * Copyright (c) 2024 zhangxiang (fishlikewater@126.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.fishlikewater.nacos.registry;
 
 import com.alibaba.boot.nacos.config.autoconfigure.NacosBootConfigException;
 import com.alibaba.boot.nacos.config.properties.NacosConfigProperties;
+import com.alibaba.boot.nacos.config.util.NacosConfigLoader;
+import com.alibaba.boot.nacos.config.util.NacosConfigLoaderFactory;
 import com.alibaba.boot.nacos.config.util.NacosConfigPropertiesUtils;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.ConfigType;
@@ -16,6 +33,9 @@ import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -32,7 +52,7 @@ import java.util.function.Function;
  * @since 2024/11/01
  */
 @Slf4j
-public abstract class AbstractNacosConfigRegister implements NacosConfigRegister, InitializingBean, EnvironmentAware {
+public abstract class AbstractNacosConfigRegister implements NacosConfigRegister, InitializingBean, EnvironmentAware, BeanFactoryAware {
 
     protected final Set<ConfigMeta> configMetas = new HashSet<>();
 
@@ -40,11 +60,18 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
 
     private ConfigurableEnvironment environment;
 
+    private BeanFactory beanFactory;
+
     private NacosConfigProperties nacosConfigProperties;
 
     private final CacheableEventPublishingNacosServiceFactory singleton = CacheableEventPublishingNacosServiceFactory.getSingleton();
 
     public abstract List<ConfigMeta> getConfigMeta();
+
+    @Override
+    public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+    }
 
     public void register() {
         List<ConfigMeta> configMeta = this.getConfigMeta();
@@ -52,8 +79,9 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
             return;
         }
         for (ConfigMeta meta : configMeta) {
-            DefaultDynamicNacosConfigListener listener = new DefaultDynamicNacosConfigListener(meta);
+            DefaultDynamicNacosConfigListener listener = new DefaultDynamicNacosConfigListener(meta, environment, beanFactory);
             this.register(meta, listener);
+            this.refreshEnvironment(meta);
             this.registerConfigMeta(meta);
         }
     }
@@ -107,11 +135,13 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
 
     private void refreshEnvironment(ConfigMeta meta) {
         if (ObjectUtils.isNullOrEmpty(nacosConfigProperties)) {
-            NacosConfigProperties nacosConfigProperties = NacosConfigPropertiesUtils.buildNacosConfigProperties(environment);
+            nacosConfigProperties = NacosConfigPropertiesUtils.buildNacosConfigProperties(this.environment);
         }
+        NacosConfigLoader configLoader = NacosConfigLoaderFactory.getSingleton(this.builder);
         nacosConfigProperties.setDataIds(meta.getDataId());
         nacosConfigProperties.setGroup(meta.getGroupId());
         nacosConfigProperties.setType(ConfigType.valueOf(meta.getType().toUpperCase()));
+        configLoader.loadConfig(this.environment, this.nacosConfigProperties);
     }
 
 }

@@ -15,8 +15,9 @@
  */
 package io.github.fishlikewater.nacos.config;
 
-import io.github.fishlikewater.nacos.listener.AbstractDynamicNacosConfigListener;
-import io.github.fishlikewater.nacos.listener.DefaultDynamicNacosConfigListener;
+import io.github.fishlikewater.nacos.bind.PropertiesBinder;
+import io.github.fishlikewater.nacos.listener.GlobalNacosConfigListener;
+import io.github.fishlikewater.nacos.registry.NacosConfigRegister;
 import io.github.fishlikewater.nacos.scope.NacosRefreshScope;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,9 +40,14 @@ public class NacosRefreshScopeAutoConfigure {
     }
 
     @Bean
+    public PropertiesBinder propertiesBinder() {
+        return new PropertiesBinder();
+    }
+
+    @Bean
     @Lazy
-    @ConditionalOnMissingBean(AbstractDynamicNacosConfigListener.class)
-    public AbstractDynamicNacosConfigListener abstractDynamicNacosConfigListener() {
-        return new DefaultDynamicNacosConfigListener();
+    @ConditionalOnMissingBean(NacosConfigRegister.class)
+    public GlobalNacosConfigListener globalNacosConfigListener() {
+        return new GlobalNacosConfigListener();
     }
 }
