@@ -56,8 +56,6 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
 
     protected final Set<ConfigMeta> configMetas = new HashSet<>();
 
-    protected final Set<String> configDataIds = new HashSet<>();
-
     private ConfigurableEnvironment environment;
 
     private BeanFactory beanFactory;
@@ -121,7 +119,6 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
 
     public void registerConfigMeta(ConfigMeta meta) {
         this.configMetas.add(meta);
-        this.configDataIds.add(meta.getDataId());
     }
 
     private final Function<Properties, ConfigService> builder = properties -> {
