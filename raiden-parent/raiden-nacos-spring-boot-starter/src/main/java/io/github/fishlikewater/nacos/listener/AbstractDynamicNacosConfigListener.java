@@ -31,7 +31,7 @@ public abstract class AbstractDynamicNacosConfigListener extends AbstractConfigC
         // do nothing
     }
 
-    public void posRefresh(ConfigChangeEvent event) {
+    public void postRefresh(ConfigChangeEvent event) {
         // do nothing
     }
 }

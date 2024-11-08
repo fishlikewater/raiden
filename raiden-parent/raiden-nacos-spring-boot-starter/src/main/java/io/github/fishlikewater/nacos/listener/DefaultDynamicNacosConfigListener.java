@@ -74,7 +74,7 @@ public class DefaultDynamicNacosConfigListener extends AbstractDynamicNacosConfi
         for (String name : set) {
             refresher.refresh(name);
         }
-        this.posRefresh(event);
+        this.postRefresh(event);
     }
 
     @Override
