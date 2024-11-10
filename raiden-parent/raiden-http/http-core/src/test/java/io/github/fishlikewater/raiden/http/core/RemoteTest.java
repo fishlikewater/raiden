@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core;
 
+import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import io.github.fishlikewater.raiden.http.core.remote.DemoRemote;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,8 +28,8 @@ import java.util.concurrent.CompletableFuture;
  * {@code RemoteTest}
  *
  * @author fishlikewater@126.com
- * @since 2024/03/20
  * @version 1.0.0
+ * @since 2024/03/20
  */
 public class RemoteTest {
 
@@ -37,7 +38,7 @@ public class RemoteTest {
         HttpBootStrap.setSelfManager(true);
         HttpBootStrap.init("io.github.fishlikewater.raiden.http.core.remote");
         HttpBootStrap.registerHttpClient("third", HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build());
-        HttpBootStrap.getConfig().setEnableLog(false).setLogLevel(LogConfig.LogLevel.BASIC);
+        HttpBootStrap.getConfig().setEnableLog(false).setLogLevel(LogLevel.BASIC);
     }
 
     @Test

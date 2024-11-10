@@ -1,6 +1,7 @@
 package io.github.fishlikewater.raiden.http.core;
 
 import io.github.fishlikewater.raiden.http.core.client.AbstractHttpRequestClient;
+import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import io.github.fishlikewater.raiden.http.core.factory.HttpClientBeanFactory;
 import io.github.fishlikewater.raiden.http.core.interceptor.LogInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.PredRequestInterceptor;
@@ -64,7 +65,7 @@ public class HttpConfig {
     /**
      * 日志级别
      */
-    private LogConfig.LogLevel logLevel = LogConfig.LogLevel.BASIC;
+    private LogLevel logLevel = LogLevel.BASIC;
 
     /**
      * 全局预请求拦截器

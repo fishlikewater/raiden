@@ -15,7 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.autoconfigure;
 
-import io.github.fishlikewater.raiden.http.core.LogConfig;
+import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -25,8 +25,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月24日 12:35
  * @version 1.0.0
+ * @since 2023年09月24日 12:35
  **/
 
 @Data
@@ -35,5 +35,5 @@ public class HttpConfigProperties {
 
     private boolean enableLog;
 
-    private LogConfig.LogLevel logLevel;
+    private LogLevel logLevel;
 }

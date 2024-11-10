@@ -17,7 +17,7 @@ package io.github.fishlikewater.raiden.http.autoconfigure;
 
 import io.github.fishlikewater.raiden.http.autoconfigure.annotation.HttpScan;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
-import io.github.fishlikewater.raiden.http.core.LogConfig;
+import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -65,7 +65,7 @@ public class HttpServerScannerRegistrar implements ImportBeanDefinitionRegistrar
             return;
         }
         final Boolean enableLog = environment.getProperty("com.raiden.http.enable-log", boolean.class, false);
-        final LogConfig.LogLevel logLevel = environment.getProperty("com.raiden.http.log-level", LogConfig.LogLevel.class, LogConfig.LogLevel.BASIC);
+        final LogLevel logLevel = environment.getProperty("com.raiden.http.log-level", LogLevel.class, LogLevel.BASIC);
         // Specify the base package for scanning
         String[] basePackages = getPackagesToScan(attributes);
         try {

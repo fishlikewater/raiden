@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.http.core;
 
 import io.github.fishlikewater.raiden.http.core.client.AbstractHttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
+import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class OnlyHttpRequestClientTest {
         HttpBootStrap.init();
         HttpBootStrap
                 .getConfig()
-                .setLogLevel(LogConfig.LogLevel.HEADS)
+                .setLogLevel(LogLevel.HEADS)
                 .setEnableLog(true);
     }
 

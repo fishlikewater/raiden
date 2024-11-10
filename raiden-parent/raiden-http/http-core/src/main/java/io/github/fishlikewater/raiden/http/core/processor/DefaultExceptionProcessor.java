@@ -1,10 +1,10 @@
 package io.github.fishlikewater.raiden.http.core.processor;
 
+import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.exception.RaidenHttpException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 /**
@@ -18,19 +18,19 @@ import java.net.http.HttpResponse;
 public class DefaultExceptionProcessor implements ExceptionProcessor {
 
     @Override
-    public <T> void invalidRespHandle(HttpRequest request, HttpResponse<T> response) {
+    public <T> void invalidRespHandle(RequestWrap requestWrap, HttpResponse<T> response) {
         log.error("request failed, response status code: {}", response.statusCode());
     }
 
     @Override
-    public void ioExceptionHandle(HttpRequest request, IOException cause) {
-        log.error("request failed, request address url: {}", request.uri(), cause);
-        throw new RaidenHttpException("request failed, request address url: {}", request.uri(), cause);
+    public void ioExceptionHandle(RequestWrap requestWrap, IOException cause) {
+        log.error("request failed, request address url: {}", requestWrap.getHttpRequest().uri(), cause);
+        throw new RaidenHttpException("request failed, request address url: {}", requestWrap.getHttpRequest().uri(), cause);
     }
 
     @Override
-    public void otherExceptionHandle(HttpRequest request, Throwable cause) {
-        log.error("request failed, request address url: {}", request.uri(), cause);
-        throw new RaidenHttpException("request failed, request address url: {}", request.uri(), cause);
+    public void otherExceptionHandle(RequestWrap requestWrap, Throwable cause) {
+        log.error("request failed, request address url: {}", requestWrap.getHttpRequest().uri(), cause);
+        throw new RaidenHttpException("request failed, request address url: {}", requestWrap.getHttpRequest().uri(), cause);
     }
 }

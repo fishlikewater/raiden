@@ -17,8 +17,8 @@ package io.github.fishlikewater.raiden.http.core.interceptor;
 
 
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
-import io.github.fishlikewater.raiden.http.core.LogConfig;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
+import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import io.github.fishlikewater.raiden.http.core.uttils.ByteBufferUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,12 +48,12 @@ public class LogInterceptor implements HttpClientInterceptor {
     @Override
     public void requestBefore(RequestWrap requestWrap) {
         HttpRequest httpRequest = requestWrap.getHttpRequest();
-        final LogConfig.LogLevel logLevel = HttpBootStrap.getConfig().getLogLevel();
+        final LogLevel logLevel = HttpBootStrap.getConfig().getLogLevel();
         final HttpHeaders headers = httpRequest.headers();
         log.info("请求地址: {}", httpRequest.uri().toString());
         log.info("请求方法: {}", httpRequest.method());
         recordHeads(logLevel, headers);
-        if (logLevel == LogConfig.LogLevel.DETAIL) {
+        if (logLevel == LogLevel.DETAIL) {
             httpRequest.bodyPublisher().ifPresent(bodyPublisher -> {
                 final Optional<String> contentType = headers.firstValue("Content-Type");
                 contentType.ifPresent(s -> {
@@ -69,12 +69,12 @@ public class LogInterceptor implements HttpClientInterceptor {
     public <T> HttpResponse<T> requestAfter(RequestWrap requestWrap, HttpResponse<T> response) {
         log.info("----------------------------------------------------------------");
         log.info("响应信息: ");
-        final LogConfig.LogLevel logLevel = HttpBootStrap.getConfig().getLogLevel();
+        final LogLevel logLevel = HttpBootStrap.getConfig().getLogLevel();
         final int state = response.statusCode();
         log.info("{}<-{}", state, response.uri().toString());
         final HttpHeaders headers = response.headers();
         recordHeads(logLevel, headers);
-        if (logLevel == LogConfig.LogLevel.DETAIL) {
+        if (logLevel == LogLevel.DETAIL) {
             final String responseStr = response.body().toString();
             log.info("响应数据: {}", responseStr);
         }
@@ -82,8 +82,8 @@ public class LogInterceptor implements HttpClientInterceptor {
         return response;
     }
 
-    private void recordHeads(LogConfig.LogLevel logLevel, HttpHeaders headers) {
-        if (logLevel == LogConfig.LogLevel.HEADS || logLevel == LogConfig.LogLevel.DETAIL) {
+    private void recordHeads(LogLevel logLevel, HttpHeaders headers) {
+        if (logLevel == LogLevel.HEADS || logLevel == LogLevel.DETAIL) {
             final Map<String, List<String>> map = headers.map();
             map.forEach((k, v) -> log.info("{}: {}", k, v));
         }

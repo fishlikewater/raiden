@@ -31,9 +31,6 @@ import java.net.http.HttpResponse;
 public interface ExceptionProcessor {
 
     default void exceptionHandle(RequestWrap requestWrap, Throwable cause) {
-        if (requestWrap.getMaxRetryCount() > 0) {
-
-        }
         if (cause instanceof IOException ioException) {
             this.ioExceptionHandle(requestWrap, ioException);
         } else {
@@ -44,8 +41,8 @@ public interface ExceptionProcessor {
     /**
      * 处理无效响应
      *
-     * @param requestWrap  请求
-     * @param response 响应
+     * @param requestWrap 请求
+     * @param response    响应
      */
     <T> void invalidRespHandle(RequestWrap requestWrap, HttpResponse<T> response);
 
@@ -53,7 +50,7 @@ public interface ExceptionProcessor {
      * 处理IO异常
      *
      * @param requestWrap 请求
-     * @param cause   异常
+     * @param cause       异常
      */
     void ioExceptionHandle(RequestWrap requestWrap, IOException cause);
 
@@ -61,7 +58,7 @@ public interface ExceptionProcessor {
      * 处理异常 (除IO异常之外的其他异常)
      *
      * @param requestWrap 请求
-     * @param cause   异常
+     * @param cause       异常
      */
     void otherExceptionHandle(RequestWrap requestWrap, Throwable cause);
 }
