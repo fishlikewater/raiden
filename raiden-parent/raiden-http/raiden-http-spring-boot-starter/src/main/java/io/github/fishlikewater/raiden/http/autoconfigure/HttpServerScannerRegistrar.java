@@ -74,8 +74,8 @@ public class HttpServerScannerRegistrar implements ImportBeanDefinitionRegistrar
             throw new RuntimeException(e);
         }
         if (enableLog) {
-            HttpBootStrap.getLogConfig().setEnableLog(true);
-            HttpBootStrap.getLogConfig().setLogLevel(logLevel);
+            HttpBootStrap.getConfig().setEnableLog(true);
+            HttpBootStrap.getConfig().setLogLevel(logLevel);
         }
         ClassPathRemoteServerScanner scanner = new ClassPathRemoteServerScanner(registry, classLoader);
 

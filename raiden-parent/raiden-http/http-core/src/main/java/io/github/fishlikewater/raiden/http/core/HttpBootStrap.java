@@ -23,15 +23,13 @@ import io.github.classgraph.ScanResult;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.annotation.HttpServer;
 import io.github.fishlikewater.raiden.http.core.annotation.Interceptor;
+import io.github.fishlikewater.raiden.http.core.client.HttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.factory.DefaultHttpClientBeanFactory;
-import io.github.fishlikewater.raiden.http.core.factory.HttpClientBeanFactory;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.PredRequestInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.DefaultHttpClientProcessor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
-import io.github.fishlikewater.raiden.http.core.processor.HttpClientProcessor;
-import io.github.fishlikewater.raiden.http.core.proxy.InterfaceProxy;
 import io.github.fishlikewater.raiden.http.core.proxy.JdkInterfaceProxy;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegistry;
 import lombok.Getter;
@@ -58,62 +56,40 @@ import java.util.Objects;
 @Accessors(chain = true)
 public class HttpBootStrap {
 
-    private static SourceHttpClientRegistry registry;
-
-    private static InterfaceProxy interfaceProxy;
-
     @Getter
-    private static final LogConfig logConfig = new LogConfig();
-
-    @Getter
-    private static PredRequestInterceptor predRequestInterceptor;
-
-    @Getter
-    private static HttpRequestClient httpRequestClient;
-
-    @Getter
-    private static boolean selfManager;
-
-    @Getter
-    private static HttpClientBeanFactory httpClientBeanFactory;
-
-    @Getter
-    private static HttpClientProcessor httpClientProcessor;
+    private static final HttpConfig config = new HttpConfig();
 
     public static void registryPredRequestInterceptor(PredRequestInterceptor predRequestInterceptor) {
-        HttpBootStrap.predRequestInterceptor = predRequestInterceptor;
+        config.setPredRequestInterceptor(predRequestInterceptor);
     }
 
     public static void registryHttpClientInterceptor(HttpClientInterceptor interceptor) {
-        httpClientBeanFactory.registerHttpClientInterceptor(interceptor);
-    }
-
-    public static void setSourceHttpClientRegistry(SourceHttpClientRegistry registry) {
-        HttpBootStrap.registry = registry;
+        config.getHttpClientBeanFactory().registerHttpClientInterceptor(interceptor);
     }
 
     public static HttpClient getHttpClient(String className) {
-        return registry.get(className);
+        return config.getSourceHttpClientRegistry().get(className);
     }
 
     public static void setSelfManager(boolean selfManager) {
-        HttpBootStrap.selfManager = selfManager;
+        config.setSelfManager(selfManager);
     }
 
     public static void registerHttpClient(String name, HttpClient httpClient) {
-        Assert.notNull(registry, "not Initialization...");
-        registry.register(name, httpClient);
+        Assert.notNull(config.getSourceHttpClientRegistry(), "not Initialization...");
+        config.getSourceHttpClientRegistry().register(name, httpClient);
     }
 
     public static <T> T getProxy(Class<T> tClass) {
-        return httpClientBeanFactory.getProxyObject(tClass);
+        return config.getHttpClientBeanFactory().getProxyObject(tClass);
     }
 
     public static void registerDefaultHttpClient() {
-        registry = new SourceHttpClientRegistry(List.of(registry -> {
+        SourceHttpClientRegistry sourceHttpClientRegistry = new SourceHttpClientRegistry(List.of(registry -> {
             final HttpClient defaultClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(60)).version(HttpClient.Version.HTTP_1_1).build();
             registry.register(HttpConstants.DEFAULT, defaultClient);
         }));
+        config.setSourceHttpClientRegistry(sourceHttpClientRegistry);
     }
 
     /**
@@ -121,9 +97,9 @@ public class HttpBootStrap {
      */
     public static void init() {
         registerDefaultHttpClient();
-        registry.init();
-        if (Objects.isNull(httpRequestClient)) {
-            httpRequestClient = new HttpRequestClient();
+        config.getSourceHttpClientRegistry().init();
+        if (Objects.isNull(config.getHttpClient())) {
+            config.setHttpClient(new HttpRequestClient());
         }
     }
 
@@ -134,21 +110,21 @@ public class HttpBootStrap {
      */
     public static void init(String... packages) throws ClassNotFoundException {
         log.info("httpClient Initialization begin...");
-        if (selfManager) {
+        if (config.isSelfManager()) {
             registerDefaultHttpClient();
-            registry.init();
+            config.getSourceHttpClientRegistry().init();
         }
-        if (Objects.isNull(httpRequestClient)) {
-            httpRequestClient = new HttpRequestClient();
+        if (Objects.isNull(config.getHttpClient())) {
+            config.setHttpClient(new HttpRequestClient());
         }
-        if (Objects.isNull(httpClientBeanFactory)) {
-            httpClientBeanFactory = new DefaultHttpClientBeanFactory();
+        if (Objects.isNull(config.getHttpClientBeanFactory())) {
+            config.setHttpClientBeanFactory(new DefaultHttpClientBeanFactory());
         }
 
-        if (Objects.isNull(httpClientProcessor)) {
-            httpClientProcessor = new DefaultHttpClientProcessor();
+        if (Objects.isNull(config.getHttpClientProcessor())) {
+            config.setHttpClientProcessor(new DefaultHttpClientProcessor());
         }
-        if (Objects.isNull(interfaceProxy)) {
+        if (Objects.isNull(config.getInterfaceProxy())) {
             buildProxy();
         }
         final ClassGraph classGraph = new ClassGraph();
@@ -165,29 +141,29 @@ public class HttpBootStrap {
 
     private static void buildProxy() {
         final JdkInterfaceProxy jdkInterfaceProxy = new JdkInterfaceProxy();
-        jdkInterfaceProxy.setHttpClientBeanFactory(httpClientBeanFactory);
-        jdkInterfaceProxy.setHttpClientProcessor(httpClientProcessor);
-        interfaceProxy = jdkInterfaceProxy;
+        jdkInterfaceProxy.setHttpClientBeanFactory(config.getHttpClientBeanFactory());
+        jdkInterfaceProxy.setHttpClientProcessor(config.getHttpClientProcessor());
+        config.setInterfaceProxy(jdkInterfaceProxy);
     }
 
     private static void cache(Method[] methods, Class<?> clazz) {
         Interceptor interceptorAnnotation = clazz.getAnnotation(Interceptor.class);
         HttpServer httpServer = clazz.getAnnotation(HttpServer.class);
-        if (selfManager) {
+        if (config.isSelfManager()) {
             cacheProxyClass(clazz);
             cacheInterceptor(interceptorAnnotation);
             cacheExceptionProcessor(httpServer);
         }
         for (Method method : methods) {
-            httpClientBeanFactory.cacheMethod(method, httpServer, interceptorAnnotation);
+            config.getHttpClientBeanFactory().cacheMethod(method, httpServer, interceptorAnnotation);
         }
     }
 
     private static void cacheExceptionProcessor(HttpServer httpServer) {
         Class<? extends ExceptionProcessor> processorClass = httpServer.exceptionProcessor();
-        ExceptionProcessor processor = httpClientBeanFactory.getExceptionProcessor(processorClass.getName());
+        ExceptionProcessor processor = config.getHttpClientBeanFactory().getExceptionProcessor(processorClass.getName());
         if (ObjectUtils.isNullOrEmpty(processor)) {
-            httpClientBeanFactory.registerExceptionProcessor(getExceptionProcessor(processorClass));
+            config.getHttpClientBeanFactory().registerExceptionProcessor(getExceptionProcessor(processorClass));
         }
     }
 
@@ -195,17 +171,17 @@ public class HttpBootStrap {
         if (ObjectUtils.isNotNullOrEmpty(interceptorAnnotation)) {
             Class<? extends HttpClientInterceptor>[] classes = interceptorAnnotation.value();
             for (Class<? extends HttpClientInterceptor> aClass : classes) {
-                HttpClientInterceptor interceptor = httpClientBeanFactory.getInterceptor(aClass.getName());
+                HttpClientInterceptor interceptor = config.getHttpClientBeanFactory().getInterceptor(aClass.getName());
                 if (ObjectUtils.isNotNullOrEmpty(interceptor)) {
-                    httpClientBeanFactory.registerHttpClientInterceptor(getInterceptor(aClass));
+                    config.getHttpClientBeanFactory().registerHttpClientInterceptor(getInterceptor(aClass));
                 }
             }
         }
     }
 
     private static void cacheProxyClass(Class<?> clazz) {
-        final Object instance = interfaceProxy.getInstance(clazz);
-        httpClientBeanFactory.cacheProxyObject(clazz.getName(), instance);
+        final Object instance = config.getInterfaceProxy().getInstance(clazz);
+        config.getHttpClientBeanFactory().cacheProxyObject(clazz.getName(), instance);
     }
 
     @SneakyThrows

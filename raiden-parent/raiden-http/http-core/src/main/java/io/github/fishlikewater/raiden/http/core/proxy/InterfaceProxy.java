@@ -62,8 +62,8 @@ public interface InterfaceProxy {
     default Object handler(Method method, Object[] args, HttpClientProcessor httpClientProcessor, HttpClientBeanFactory httpClientBeanFactory) {
         String name = method.toGenericString();
         MethodArgsBean methodArgsBean = httpClientBeanFactory.getMethodArgsBean(name);
-        if (Objects.nonNull(HttpBootStrap.getPredRequestInterceptor())) {
-            HttpBootStrap.getPredRequestInterceptor().handler(methodArgsBean);
+        if (Objects.nonNull(HttpBootStrap.getConfig().getPredRequestInterceptor())) {
+            HttpBootStrap.getConfig().getPredRequestInterceptor().handler(methodArgsBean);
         }
         HttpMethod httpMethod = methodArgsBean.getRequestMethod();
         boolean form = methodArgsBean.isForm();
@@ -100,6 +100,9 @@ public interface InterfaceProxy {
         if (ObjectUtils.isNotNullOrEmpty(parameters)) {
             this.buildParams(requestWrap, parameters, args);
         }
+        /* 设置重试次数*/
+        requestWrap.setMaxRetryCount(HttpBootStrap.getConfig().getMaxRetryCount());
+
         return httpClientProcessor.handler(requestWrap);
     }
 

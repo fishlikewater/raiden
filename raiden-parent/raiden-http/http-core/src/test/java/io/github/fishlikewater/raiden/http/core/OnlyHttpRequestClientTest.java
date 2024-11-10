@@ -15,12 +15,12 @@
  */
 package io.github.fishlikewater.raiden.http.core;
 
+import io.github.fishlikewater.raiden.http.core.client.AbstractHttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -36,14 +36,14 @@ public class OnlyHttpRequestClientTest {
     public void before() {
         HttpBootStrap.init();
         HttpBootStrap
-                .getLogConfig()
+                .getConfig()
                 .setLogLevel(LogConfig.LogLevel.HEADS)
                 .setEnableLog(true);
     }
 
     @Test
-    public void testClient() throws InterruptedException, IOException {
-        HttpRequestClient httpRequestClient = HttpBootStrap.getHttpRequestClient();
+    public void testClient() {
+        AbstractHttpRequestClient httpRequestClient = HttpBootStrap.getConfig().getHttpClient();
         RequestWrap requestWrap = RequestWrap.builder()
                 .httpMethod(HttpMethod.GET)
                 .returnType(String.class)

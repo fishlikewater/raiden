@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core.annotation;
 
+import io.github.fishlikewater.raiden.http.core.processor.DefaultExceptionProcessor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 
 import java.lang.annotation.*;
@@ -43,5 +44,5 @@ public @interface HttpServer {
 
     String sourceHttpClient() default "default";
 
-    Class<? extends ExceptionProcessor> exceptionProcessor() default ExceptionProcessor.DefaultExceptionProcessor.class;
+    Class<? extends ExceptionProcessor> exceptionProcessor() default DefaultExceptionProcessor.class;
 }

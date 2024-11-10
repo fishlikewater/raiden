@@ -89,8 +89,8 @@ public class ClassPathRemoteServerScanner extends ClassPathBeanDefinitionScanner
                 log.debug("Creating RemoteServerBean with name {} and {} Interface", holder.getBeanName(), definition.getBeanClassName());
             }
             definition.getPropertyValues().add("interfaceClass", definition.getBeanClassName());
-            definition.getPropertyValues().add("httpClientProcessor", HttpBootStrap.getHttpClientProcessor());
-            definition.getPropertyValues().add("httpClientBeanFactory", HttpBootStrap.getHttpClientBeanFactory());
+            definition.getPropertyValues().add("httpClientProcessor", HttpBootStrap.getConfig().getHttpClientProcessor());
+            definition.getPropertyValues().add("httpClientBeanFactory", HttpBootStrap.getConfig().getHttpClientBeanFactory());
             definition.setBeanClass(SpringJdkInterfaceProxy.class);
             definition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
             definition.setAutowireMode(GenericBeanDefinition.AUTOWIRE_BY_TYPE);

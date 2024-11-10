@@ -15,11 +15,9 @@
  */
 package io.github.fishlikewater.raiden.http.core.processor;
 
-import io.github.fishlikewater.raiden.http.core.exception.RaidenHttpException;
-import lombok.extern.slf4j.Slf4j;
+import io.github.fishlikewater.raiden.http.core.RequestWrap;
 
 import java.io.IOException;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 /**
@@ -32,52 +30,38 @@ import java.net.http.HttpResponse;
  */
 public interface ExceptionProcessor {
 
+    default void exceptionHandle(RequestWrap requestWrap, Throwable cause) {
+        if (requestWrap.getMaxRetryCount() > 0) {
+
+        }
+        if (cause instanceof IOException ioException) {
+            this.ioExceptionHandle(requestWrap, ioException);
+        } else {
+            this.otherExceptionHandle(requestWrap, cause);
+        }
+    }
+
     /**
      * 处理无效响应
      *
-     * @param request  请求
+     * @param requestWrap  请求
      * @param response 响应
-     * @return 异常
      */
-    <T> HttpResponse<T> invalidRespHandle(HttpRequest request, HttpResponse<T> response);
+    <T> void invalidRespHandle(RequestWrap requestWrap, HttpResponse<T> response);
 
     /**
      * 处理IO异常
      *
-     * @param request 请求
+     * @param requestWrap 请求
      * @param cause   异常
-     * @return 异常
      */
-    void ioExceptionHandle(HttpRequest request, IOException cause);
+    void ioExceptionHandle(RequestWrap requestWrap, IOException cause);
 
     /**
      * 处理异常 (除IO异常之外的其他异常)
      *
-     * @param request 请求
+     * @param requestWrap 请求
      * @param cause   异常
-     * @return 异常
      */
-    void exceptionHandle(HttpRequest request, Throwable cause);
-
-    @Slf4j
-    class DefaultExceptionProcessor implements ExceptionProcessor {
-
-        @Override
-        public <T> HttpResponse<T> invalidRespHandle(HttpRequest request, HttpResponse<T> response) {
-            log.error("request failed, response status code: {}", response.statusCode());
-            return response;
-        }
-
-        @Override
-        public void ioExceptionHandle(HttpRequest request, IOException cause) {
-            log.error("request failed, request address url: {}", request.uri(), cause);
-            throw new RaidenHttpException("request failed, request address url: {}", request.uri(), cause);
-        }
-
-        @Override
-        public void exceptionHandle(HttpRequest request, Throwable cause) {
-            log.error("request failed, request address url: {}", request.uri(), cause);
-            throw new RaidenHttpException("request failed, request address url: {}", request.uri(), cause);
-        }
-    }
+    void otherExceptionHandle(RequestWrap requestWrap, Throwable cause);
 }

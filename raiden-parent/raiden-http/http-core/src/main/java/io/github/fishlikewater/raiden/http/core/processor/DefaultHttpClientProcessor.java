@@ -17,8 +17,8 @@ package io.github.fishlikewater.raiden.http.core.processor;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
-import io.github.fishlikewater.raiden.http.core.HttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
+import io.github.fishlikewater.raiden.http.core.client.AbstractHttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -41,12 +41,12 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
     }
 
     private Object request(RequestWrap requestWrap) {
-        if (HttpBootStrap.getLogConfig().isEnableLog()) {
+        if (HttpBootStrap.getConfig().isEnableLog()) {
             List<HttpClientInterceptor> interceptors = requestWrap.getInterceptors();
             if (ObjectUtils.isNullOrEmpty(interceptors)) {
-                requestWrap.addInterceptor(HttpBootStrap.getLogConfig().getLogInterceptor());
+                requestWrap.addInterceptor(HttpBootStrap.getConfig().getLogInterceptor());
             } else {
-                interceptors.addLast(HttpBootStrap.getLogConfig().getLogInterceptor());
+                interceptors.addLast(HttpBootStrap.getConfig().getLogInterceptor());
             }
         }
 
@@ -60,12 +60,12 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
     }
 
     private static Object sync(RequestWrap requestWrap) {
-        HttpRequestClient httpRequestClient = HttpBootStrap.getHttpRequestClient();
+        AbstractHttpRequestClient httpRequestClient = HttpBootStrap.getConfig().getHttpClient();
         return httpRequestClient.requestSync(requestWrap);
     }
 
     private static Object async(RequestWrap requestWrap) {
-        HttpRequestClient httpRequestClient = HttpBootStrap.getHttpRequestClient();
+        AbstractHttpRequestClient httpRequestClient = HttpBootStrap.getConfig().getHttpClient();
         return httpRequestClient.requestAsync(requestWrap);
     }
 }

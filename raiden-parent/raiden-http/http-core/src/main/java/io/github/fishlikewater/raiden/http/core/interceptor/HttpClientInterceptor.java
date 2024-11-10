@@ -15,33 +15,34 @@
  */
 package io.github.fishlikewater.raiden.http.core.interceptor;
 
-import java.net.http.HttpRequest;
+import io.github.fishlikewater.raiden.http.core.RequestWrap;
+
 import java.net.http.HttpResponse;
 
 /**
  * <p>
- *  请求拦截器
+ * 请求拦截器
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月22日 19:07
  * @version 1.0.0
+ * @since 2023年09月22日 19:07
  **/
 public interface HttpClientInterceptor {
 
     /**
      * 发送请求之前
      *
-     * @param httpRequest 请求数据
-     * @return {@code HttpRequest}
+     * @param requestWrap 请求数据
      */
-    HttpRequest requestBefore(HttpRequest httpRequest);
+    void requestBefore(RequestWrap requestWrap);
 
     /**
      * 发送请求之后
      *
-     * @param response 响应
+     * @param requestWrap 请求数据
+     * @param response    响应
      * @return {@code HttpResponse}
      */
-    <T> HttpResponse<T> requestAfter(HttpResponse<T> response);
+    <T> HttpResponse<T> requestAfter(RequestWrap requestWrap, HttpResponse<T> response);
 }

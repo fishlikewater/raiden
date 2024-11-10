@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.http.core;
+package io.github.fishlikewater.raiden.http.core.client;
 
-import java.io.IOException;
+import io.github.fishlikewater.raiden.http.core.RequestWrap;
+
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -35,17 +36,15 @@ public abstract class AbstractHttpRequestClient {
      * @param <T>         返回类型
      * @return CompletableFuture
      */
-    abstract <T> CompletableFuture<T> requestAsync(RequestWrap requestWrap);
+    public abstract <T> CompletableFuture<T> requestAsync(RequestWrap requestWrap);
 
     /**
      * 同步请求
      *
      * @param requestWrap 请求封装
      * @return <T> 返回类型
-     * @throws IOException          异常
-     * @throws InterruptedException 异常
      */
-    abstract <T> T requestSync(RequestWrap requestWrap) throws IOException, InterruptedException;
+    public abstract <T> T requestSync(RequestWrap requestWrap);
 
     //--------------------get------------------------
 
@@ -56,7 +55,7 @@ public abstract class AbstractHttpRequestClient {
      * @param <T>         返回类型
      * @return CompletableFuture
      */
-    abstract <T> CompletableFuture<T> getAsync(RequestWrap requestWrap);
+    public abstract <T> CompletableFuture<T> getAsync(RequestWrap requestWrap);
 
 
     /**
@@ -64,10 +63,8 @@ public abstract class AbstractHttpRequestClient {
      *
      * @param requestWrap 请求封装
      * @return <T> 返回类型
-     * @throws IOException          异常
-     * @throws InterruptedException 异常
      */
-    abstract <T> T getSync(RequestWrap requestWrap) throws IOException, InterruptedException;
+    public abstract <T> T getSync(RequestWrap requestWrap);
 
     //--------------------delete------------------------
 
@@ -77,17 +74,15 @@ public abstract class AbstractHttpRequestClient {
      * @param requestWrap 请求封装
      * @return CompletableFuture
      */
-    abstract <T> CompletableFuture<T> deleteAsync(RequestWrap requestWrap);
+    public abstract <T> CompletableFuture<T> deleteAsync(RequestWrap requestWrap);
 
     /**
      * delete请求
      *
      * @param requestWrap 请求封装
      * @return <T> 返回类型
-     * @throws IOException          异常
-     * @throws InterruptedException 异常
      */
-    abstract <T> T deleteSync(RequestWrap requestWrap) throws IOException, InterruptedException;
+    public abstract <T> T deleteSync(RequestWrap requestWrap);
 
     //--------------------post------------------------
 
@@ -97,7 +92,7 @@ public abstract class AbstractHttpRequestClient {
      * @param requestWrap 请求封装
      * @return CompletableFuture
      */
-    abstract <T> CompletableFuture<T> postAsync(RequestWrap requestWrap);
+    public abstract <T> CompletableFuture<T> postAsync(RequestWrap requestWrap);
 
     /**
      * post请求
@@ -105,10 +100,8 @@ public abstract class AbstractHttpRequestClient {
      * @param requestWrap 请求封装
      * @param <T>         返回类型
      * @return <T> 返回类型
-     * @throws IOException          异常
-     * @throws InterruptedException 异常
      */
-    abstract <T> T postSync(RequestWrap requestWrap) throws IOException, InterruptedException;
+    public abstract <T> T postSync(RequestWrap requestWrap);
 
     //--------------------put------------------------
 
@@ -118,17 +111,15 @@ public abstract class AbstractHttpRequestClient {
      * @param requestWrap 请求封装
      * @return CompletableFuture
      */
-    abstract <T> CompletableFuture<T> putAsync(RequestWrap requestWrap);
+    public abstract <T> CompletableFuture<T> putAsync(RequestWrap requestWrap);
 
     /**
      * put请求
      *
      * @param requestWrap 请求封装
      * @return <T> 返回类型
-     * @throws IOException          异常
-     * @throws InterruptedException 异常
      */
-    abstract <T> T putSync(RequestWrap requestWrap) throws IOException, InterruptedException;
+    public abstract <T> T putSync(RequestWrap requestWrap);
 
     //--------------------patch------------------------
 
@@ -138,17 +129,15 @@ public abstract class AbstractHttpRequestClient {
      * @param requestWrap 请求封装
      * @return CompletableFuture
      */
-    abstract <T> CompletableFuture<T> patchAsync(RequestWrap requestWrap);
+    public abstract <T> CompletableFuture<T> patchAsync(RequestWrap requestWrap);
 
     /**
      * patch请求
      *
      * @param requestWrap 请求封装
      * @return <T> 返回类型
-     * @throws IOException          异常
-     * @throws InterruptedException 异常
      */
-    abstract <T> T patchSync(RequestWrap requestWrap) throws IOException, InterruptedException;
+    public abstract <T> T patchSync(RequestWrap requestWrap);
 
     //--------------------File------------------------
 
@@ -158,17 +147,15 @@ public abstract class AbstractHttpRequestClient {
      * @param requestWrap 请求封装
      * @return CompletableFuture
      */
-    abstract <T> CompletableFuture<T> fileAsync(RequestWrap requestWrap);
+    public abstract <T> CompletableFuture<T> fileAsync(RequestWrap requestWrap);
 
     /**
      * 文件上传
      *
      * @param requestWrap 请求封装
      * @return <T> 返回类型
-     * @throws IOException          异常
-     * @throws InterruptedException 异常
      */
-    abstract <T> T fileSync(RequestWrap requestWrap) throws IOException, InterruptedException;
+    public abstract <T> T fileSync(RequestWrap requestWrap);
 
     //--------------------form------------------------
 
@@ -178,15 +165,13 @@ public abstract class AbstractHttpRequestClient {
      * @param requestWrap 请求封装
      * @return CompletableFuture
      */
-    abstract <T> CompletableFuture<T> formAsync(RequestWrap requestWrap);
+    public abstract <T> CompletableFuture<T> formAsync(RequestWrap requestWrap);
 
     /**
      * form表单上传
      *
      * @param requestWrap 请求封装
      * @return <T> 返回类型
-     * @throws IOException          异常
-     * @throws InterruptedException 异常
      */
-    abstract <T> T formSync(RequestWrap requestWrap) throws IOException, InterruptedException;
+    public abstract <T> T formSync(RequestWrap requestWrap);
 }

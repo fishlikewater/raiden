@@ -91,7 +91,7 @@ public class HttpAutoConfig {
             @Autowired(required = false) List<SourceHttpClientRegister> sourceOkHttpClientRegistrars) {
         final SourceHttpClientRegistry sourceHttpClientRegistry = new SourceHttpClientRegistry(sourceOkHttpClientRegistrars);
         sourceHttpClientRegistry.init();
-        HttpBootStrap.setSourceHttpClientRegistry(sourceHttpClientRegistry);
+        HttpBootStrap.getConfig().setSourceHttpClientRegistry(sourceHttpClientRegistry);
         return sourceHttpClientRegistry;
     }
 }

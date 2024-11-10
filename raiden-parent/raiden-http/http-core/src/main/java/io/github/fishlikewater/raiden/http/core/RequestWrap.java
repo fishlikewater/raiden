@@ -25,6 +25,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +103,16 @@ public class RequestWrap {
      * httpClient
      */
     private HttpClient httpClient;
+
+    /**
+     * 重试次数
+     */
+    private int maxRetryCount;
+
+    /**
+     * 实际请求对象
+     */
+    private HttpRequest httpRequest;
 
     public synchronized void addInterceptor(HttpClientInterceptor interceptor) {
         if (ObjectUtils.isNullOrEmpty(this.interceptors)) {

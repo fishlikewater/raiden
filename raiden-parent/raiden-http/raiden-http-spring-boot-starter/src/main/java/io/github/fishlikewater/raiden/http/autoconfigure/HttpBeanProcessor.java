@@ -46,10 +46,10 @@ public class HttpBeanProcessor implements BeanPostProcessor, BeanFactoryPostProc
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
         if (bean instanceof HttpClientInterceptor interceptor) {
-            HttpBootStrap.getHttpClientBeanFactory().registerHttpClientInterceptor(interceptor);
+            HttpBootStrap.getConfig().getHttpClientBeanFactory().registerHttpClientInterceptor(interceptor);
         }
         if (bean instanceof ExceptionProcessor exceptionProcessor) {
-            HttpBootStrap.getHttpClientBeanFactory().registerExceptionProcessor(exceptionProcessor);
+            HttpBootStrap.getConfig().getHttpClientBeanFactory().registerExceptionProcessor(exceptionProcessor);
         }
         return bean;
     }

@@ -18,6 +18,7 @@ package io.github.fishlikewater.raiden.http.core.interceptor;
 
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.LogConfig;
+import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.uttils.ByteBufferUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,9 +46,9 @@ public class LogInterceptor implements HttpClientInterceptor {
     private static final String MULTIPART_CONTENT_TYPE = "multipart/form-data";
 
     @Override
-    public HttpRequest requestBefore(HttpRequest httpRequest) {
-        log.info("----------------------------------------------------------------");
-        final LogConfig.LogLevel logLevel = HttpBootStrap.getLogConfig().getLogLevel();
+    public void requestBefore(RequestWrap requestWrap) {
+        HttpRequest httpRequest = requestWrap.getHttpRequest();
+        final LogConfig.LogLevel logLevel = HttpBootStrap.getConfig().getLogLevel();
         final HttpHeaders headers = httpRequest.headers();
         log.info("请求地址: {}", httpRequest.uri().toString());
         log.info("请求方法: {}", httpRequest.method());
@@ -62,15 +63,13 @@ public class LogInterceptor implements HttpClientInterceptor {
                 });
             });
         }
-        log.info("----------------------------------------------------------------");
-        return httpRequest;
     }
 
     @Override
-    public <T> HttpResponse<T> requestAfter(HttpResponse<T> response) {
+    public <T> HttpResponse<T> requestAfter(RequestWrap requestWrap, HttpResponse<T> response) {
         log.info("----------------------------------------------------------------");
         log.info("响应信息: ");
-        final LogConfig.LogLevel logLevel = HttpBootStrap.getLogConfig().getLogLevel();
+        final LogConfig.LogLevel logLevel = HttpBootStrap.getConfig().getLogLevel();
         final int state = response.statusCode();
         log.info("{}<-{}", state, response.uri().toString());
         final HttpHeaders headers = response.headers();
