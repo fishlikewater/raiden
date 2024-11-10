@@ -36,8 +36,8 @@ import java.util.concurrent.Flow;
  * 日志拦截器配置
  *
  * @author fishlikewater@126.com
- * @since 2023年09月25日 15:00
  * @version 1.0.0
+ * @since 2023年09月25日 15:00
  **/
 @Slf4j
 public class LogInterceptor implements HttpClientInterceptor {
@@ -46,7 +46,7 @@ public class LogInterceptor implements HttpClientInterceptor {
 
     @Override
     public HttpRequest requestBefore(HttpRequest httpRequest) {
-        log.info("=====================================REQUEST==========================================");
+        log.info("----------------------------------------------------------------");
         final LogConfig.LogLevel logLevel = HttpBootStrap.getLogConfig().getLogLevel();
         final HttpHeaders headers = httpRequest.headers();
         log.info("请求地址: {}", httpRequest.uri().toString());
@@ -62,13 +62,13 @@ public class LogInterceptor implements HttpClientInterceptor {
                 });
             });
         }
-        log.info("======================================================================================");
+        log.info("----------------------------------------------------------------");
         return httpRequest;
     }
 
     @Override
     public <T> HttpResponse<T> requestAfter(HttpResponse<T> response) {
-        log.info("=======================================RESPONSE=======================================");
+        log.info("----------------------------------------------------------------");
         log.info("响应信息: ");
         final LogConfig.LogLevel logLevel = HttpBootStrap.getLogConfig().getLogLevel();
         final int state = response.statusCode();
@@ -79,7 +79,7 @@ public class LogInterceptor implements HttpClientInterceptor {
             final String responseStr = response.body().toString();
             log.info("响应数据: {}", responseStr);
         }
-        log.info("======================================================================================");
+        log.info("----------------------------------------------------------------");
         return response;
     }
 

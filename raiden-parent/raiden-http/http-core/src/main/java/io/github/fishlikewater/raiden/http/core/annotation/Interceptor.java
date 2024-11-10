@@ -34,5 +34,5 @@ import java.lang.annotation.*;
 public @interface Interceptor {
 
     /** 拦截器类*/
-    Class<? extends HttpClientInterceptor> value();
+    Class<? extends HttpClientInterceptor>[] value();
 }

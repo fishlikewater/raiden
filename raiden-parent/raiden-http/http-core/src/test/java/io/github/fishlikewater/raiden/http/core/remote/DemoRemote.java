@@ -39,7 +39,7 @@ public interface DemoRemote {
      *
      * @return {@code String}
      */
-    @GET("www.baidu.com")
+    @GET("www.baiduss.com")
     String baidu();
 
     /**
@@ -73,6 +73,6 @@ public interface DemoRemote {
      *
      * @return {@code String}
      */
-    @GET("https://www.baiduss.com")
+    @GET("https://www.baidusss.com")
     CompletableFuture<String> baidu5();
 }

@@ -35,4 +35,6 @@ module raiden.http.core {
     exports io.github.fishlikewater.raiden.http.core.processor;
     exports io.github.fishlikewater.raiden.http.core.constant;
     exports io.github.fishlikewater.raiden.http.core.proxy;
+    exports io.github.fishlikewater.raiden.http.core.convert;
+    exports io.github.fishlikewater.raiden.http.core.factory;
 }

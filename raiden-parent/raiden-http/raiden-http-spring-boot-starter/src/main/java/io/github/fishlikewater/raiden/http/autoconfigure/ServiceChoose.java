@@ -17,7 +17,7 @@ package io.github.fishlikewater.raiden.http.autoconfigure;
 
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
-import io.github.fishlikewater.raiden.http.core.interceptor.PredRequest;
+import io.github.fishlikewater.raiden.http.core.interceptor.PredRequestInterceptor;
 import lombok.RequiredArgsConstructor;
 
 import java.net.URI;
@@ -30,7 +30,7 @@ import java.net.URI;
  * @since 2023年09月26日 14:44
  **/
 @RequiredArgsConstructor
-public class ServiceChoose implements PredRequest {
+public class ServiceChoose implements PredRequestInterceptor {
 
     private final ServiceInstanceChooser serviceInstanceChooser;
 

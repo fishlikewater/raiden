@@ -18,21 +18,24 @@ package io.github.fishlikewater.raiden.http.core.proxy;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.StrFormatter;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.TypeUtil;
+import io.github.fishlikewater.raiden.core.LambdaUtils;
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.*;
 import io.github.fishlikewater.raiden.http.core.annotation.Body;
 import io.github.fishlikewater.raiden.http.core.annotation.Heads;
 import io.github.fishlikewater.raiden.http.core.annotation.Param;
 import io.github.fishlikewater.raiden.http.core.annotation.PathParam;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
-import io.github.fishlikewater.raiden.http.core.processor.HttpClientBeanFactory;
+import io.github.fishlikewater.raiden.http.core.factory.HttpClientBeanFactory;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.HttpClientProcessor;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.net.http.HttpClient;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -58,19 +61,19 @@ public interface InterfaceProxy {
      */
     default Object handler(Method method, Object[] args, HttpClientProcessor httpClientProcessor, HttpClientBeanFactory httpClientBeanFactory) {
         String name = method.toGenericString();
-        final MethodArgsBean methodArgsBean = httpClientBeanFactory.getMethodArgsBean(name);
-        if (Objects.nonNull(HttpBootStrap.getPredRequest())) {
-            HttpBootStrap.getPredRequest().handler(methodArgsBean);
+        MethodArgsBean methodArgsBean = httpClientBeanFactory.getMethodArgsBean(name);
+        if (Objects.nonNull(HttpBootStrap.getPredRequestInterceptor())) {
+            HttpBootStrap.getPredRequestInterceptor().handler(methodArgsBean);
         }
         HttpMethod httpMethod = methodArgsBean.getRequestMethod();
-        final boolean form = methodArgsBean.isForm();
-        final Parameter[] parameters = methodArgsBean.getUrlParameters();
+        boolean form = methodArgsBean.isForm();
+        Parameter[] parameters = methodArgsBean.getUrlParameters();
         String url = methodArgsBean.getUrl();
-        final Class<?> returnType = methodArgsBean.getReturnType();
-        final Type typeArgument = methodArgsBean.getTypeArgument();
+        Class<?> returnType = methodArgsBean.getReturnType();
+        Type typeArgument = methodArgsBean.getTypeArgument();
         Map<String, String> headMap = methodArgsBean.getHeadMap();
 
-        final HttpClient httpClient = HttpBootStrap.getHttpClient(methodArgsBean.getSourceHttpClientName());
+        HttpClient httpClient = HttpBootStrap.getHttpClient(methodArgsBean.getSourceHttpClientName());
         RequestWrap requestWrap = RequestWrap.builder()
                 .httpMethod(httpMethod)
                 .returnType(returnType)
@@ -80,16 +83,21 @@ public interface InterfaceProxy {
                 .httpClient(httpClient)
                 .headMap(headMap)
                 .build();
-        final String interceptorName = methodArgsBean.getInterceptorName();
-        final String exceptionProcessorName = methodArgsBean.getExceptionProcessorName();
-        if (ObjectUtil.isNotNull(interceptorName)) {
-            requestWrap.setInterceptor(httpClientBeanFactory.getInterceptor(interceptorName));
+        List<String> interceptorNames = methodArgsBean.getInterceptorNames();
+        String exceptionProcessorName = methodArgsBean.getExceptionProcessorName();
+        if (ObjectUtils.isNotNullOrEmpty(interceptorNames)) {
+            LambdaUtils.handle(interceptorNames, interceptorName -> {
+                HttpClientInterceptor interceptor = httpClientBeanFactory.getInterceptor(interceptorName);
+                if (ObjectUtils.isNotNullOrEmpty(interceptor)) {
+                    requestWrap.addInterceptor(interceptor);
+                }
+            });
         }
-        if (ObjectUtil.isNotNull(exceptionProcessorName)) {
+        if (ObjectUtils.isNotNullOrEmpty(exceptionProcessorName)) {
             requestWrap.setExceptionProcessor(httpClientBeanFactory.getExceptionProcessor(exceptionProcessorName));
         }
         /* 构建请求参数*/
-        if (ObjectUtil.isNotNull(parameters)) {
+        if (ObjectUtils.isNotNullOrEmpty(parameters)) {
             this.buildParams(requestWrap, parameters, args);
         }
         return httpClientProcessor.handler(requestWrap);
@@ -109,22 +117,22 @@ public interface InterfaceProxy {
         MultipartData multipartData = null;
         for (int i = 0; i < parameters.length; i++) {
             Param param = parameters[i].getAnnotation(Param.class);
-            if (ObjectUtil.isNotNull(param)) {
+            if (ObjectUtils.isNotNullOrEmpty(param)) {
                 this.handleParam(paramMap, param, args[i]);
                 continue;
             }
             PathParam pathParam = parameters[i].getAnnotation(PathParam.class);
-            if (ObjectUtil.isNotNull(pathParam)) {
+            if (ObjectUtils.isNotNullOrEmpty(pathParam)) {
                 paramPath.put(pathParam.value(), (String) args[i]);
                 continue;
             }
             Body body = parameters[i].getAnnotation(Body.class);
-            if (ObjectUtil.isNotNull(body)) {
+            if (ObjectUtils.isNotNullOrEmpty(body)) {
                 bodyObject = args[i];
                 continue;
             }
             Heads heads = parameters[i].getAnnotation(Heads.class);
-            if (ObjectUtil.isNotNull(heads) && args[i] instanceof HeadWrap headWrap) {
+            if (ObjectUtils.isNotNullOrEmpty(heads) && args[i] instanceof HeadWrap headWrap) {
                 Map<String, String> headMap = requestWrap.getHeadMap();
                 headWrap.getHeads().forEach(head -> headMap.put(head.getKey(), head.getValue()));
             }

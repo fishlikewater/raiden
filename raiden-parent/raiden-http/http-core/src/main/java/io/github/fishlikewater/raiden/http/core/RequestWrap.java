@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core;
 
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
@@ -24,6 +25,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.net.http.HttpClient;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,8 +43,14 @@ import java.util.Map;
 @NoArgsConstructor
 public class RequestWrap {
 
+    /**
+     * 请求方式
+     */
     private HttpMethod httpMethod;
 
+    /**
+     * 请求头
+     */
     private Map<String, String> headMap;
 
     /**
@@ -59,14 +68,29 @@ public class RequestWrap {
      */
     private boolean form;
 
+    /**
+     * 请求url
+     */
     private String url;
 
+    /**
+     * 请求参数
+     */
     private Map<String, String> paramMap;
 
+    /**
+     * 请求体
+     */
     private Object bodyObject;
 
-    private HttpClientInterceptor interceptor;
+    /**
+     * 请求拦截器
+     */
+    private List<HttpClientInterceptor> interceptors;
 
+    /**
+     * 异常处理器
+     */
     private ExceptionProcessor exceptionProcessor;
 
     /**
@@ -74,5 +98,15 @@ public class RequestWrap {
      */
     private MultipartData multipartData;
 
+    /**
+     * httpClient
+     */
     private HttpClient httpClient;
+
+    public synchronized void addInterceptor(HttpClientInterceptor interceptor) {
+        if (ObjectUtils.isNullOrEmpty(this.interceptors)) {
+            this.interceptors = new ArrayList<>();
+        }
+        this.interceptors.add(interceptor);
+    }
 }

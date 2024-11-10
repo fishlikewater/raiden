@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.http.core.processor;
+package io.github.fishlikewater.raiden.http.core.factory;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.TypeUtil;
@@ -24,6 +24,7 @@ import io.github.fishlikewater.raiden.http.core.annotation.*;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
@@ -84,11 +85,15 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         }
         final String className = method.getDeclaringClass().getName();
         final String requestUrl = path.startsWith(HttpConstants.HTTP) ? path : getUrl(httpServer.protocol(), httpServer.url(), path);
-        String interceptorClassName = ObjectUtils.isNotNullOrEmpty(interceptor) ? interceptor.value().getName() : null;
+        Class<? extends HttpClientInterceptor>[] interceptors = ObjectUtils.isNotNullOrEmpty(interceptor) ? interceptor.value() : null;
+        if (ObjectUtils.isNotNullOrEmpty(interceptors)) {
+            for (Class<? extends HttpClientInterceptor> aClass : interceptors) {
+                argsBean.addInterceptorName(aClass.getName());
+            }
+        }
         String exceptionProcessorClassName = ObjectUtils.isNotNullOrEmpty(httpServer.exceptionProcessor()) ? httpServer.exceptionProcessor().getName() : null;
         argsBean.setClassName(className)
                 .setServerName(serverName)
-                .setInterceptorName(interceptorClassName)
                 .setExceptionProcessorName(exceptionProcessorClassName)
                 .setUrl(requestUrl)
                 .setHeadMap(headMap)

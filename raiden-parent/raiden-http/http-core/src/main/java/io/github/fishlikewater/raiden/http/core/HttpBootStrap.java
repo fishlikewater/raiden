@@ -24,9 +24,13 @@ import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.annotation.HttpServer;
 import io.github.fishlikewater.raiden.http.core.annotation.Interceptor;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
+import io.github.fishlikewater.raiden.http.core.factory.DefaultHttpClientBeanFactory;
+import io.github.fishlikewater.raiden.http.core.factory.HttpClientBeanFactory;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
-import io.github.fishlikewater.raiden.http.core.interceptor.PredRequest;
-import io.github.fishlikewater.raiden.http.core.processor.*;
+import io.github.fishlikewater.raiden.http.core.interceptor.PredRequestInterceptor;
+import io.github.fishlikewater.raiden.http.core.processor.DefaultHttpClientProcessor;
+import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
+import io.github.fishlikewater.raiden.http.core.processor.HttpClientProcessor;
 import io.github.fishlikewater.raiden.http.core.proxy.InterfaceProxy;
 import io.github.fishlikewater.raiden.http.core.proxy.JdkInterfaceProxy;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegistry;
@@ -56,8 +60,13 @@ public class HttpBootStrap {
 
     private static SourceHttpClientRegistry registry;
 
+    private static InterfaceProxy interfaceProxy;
+
     @Getter
-    private static PredRequest predRequest;
+    private static final LogConfig logConfig = new LogConfig();
+
+    @Getter
+    private static PredRequestInterceptor predRequestInterceptor;
 
     @Getter
     private static HttpRequestClient httpRequestClient;
@@ -66,21 +75,16 @@ public class HttpBootStrap {
     private static boolean selfManager;
 
     @Getter
-    private static LogConfig logConfig = new LogConfig();
-
-    private static InterfaceProxy interfaceProxy;
-
-    @Getter
     private static HttpClientBeanFactory httpClientBeanFactory;
 
     @Getter
     private static HttpClientProcessor httpClientProcessor;
 
-    public static void setPredRequest(PredRequest predRequest) {
-        HttpBootStrap.predRequest = predRequest;
+    public static void registryPredRequestInterceptor(PredRequestInterceptor predRequestInterceptor) {
+        HttpBootStrap.predRequestInterceptor = predRequestInterceptor;
     }
 
-    public static void setHttpClientInterceptor(HttpClientInterceptor interceptor) {
+    public static void registryHttpClientInterceptor(HttpClientInterceptor interceptor) {
         httpClientBeanFactory.registerHttpClientInterceptor(interceptor);
     }
 
@@ -189,9 +193,12 @@ public class HttpBootStrap {
 
     private static void cacheInterceptor(Interceptor interceptorAnnotation) {
         if (ObjectUtils.isNotNullOrEmpty(interceptorAnnotation)) {
-            HttpClientInterceptor interceptor = httpClientBeanFactory.getInterceptor(interceptorAnnotation.value().getName());
-            if (ObjectUtils.isNullOrEmpty(interceptor)) {
-                httpClientBeanFactory.registerHttpClientInterceptor(getInterceptor(interceptorAnnotation.value()));
+            Class<? extends HttpClientInterceptor>[] classes = interceptorAnnotation.value();
+            for (Class<? extends HttpClientInterceptor> aClass : classes) {
+                HttpClientInterceptor interceptor = httpClientBeanFactory.getInterceptor(aClass.getName());
+                if (ObjectUtils.isNotNullOrEmpty(interceptor)) {
+                    httpClientBeanFactory.registerHttpClientInterceptor(getInterceptor(aClass));
+                }
             }
         }
     }

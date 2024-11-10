@@ -15,7 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core.proxy;
 
-import io.github.fishlikewater.raiden.http.core.processor.HttpClientBeanFactory;
+import io.github.fishlikewater.raiden.http.core.factory.HttpClientBeanFactory;
 import io.github.fishlikewater.raiden.http.core.processor.HttpClientProcessor;
 import lombok.Setter;
 

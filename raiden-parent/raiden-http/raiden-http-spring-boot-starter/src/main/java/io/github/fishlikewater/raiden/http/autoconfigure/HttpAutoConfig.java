@@ -81,7 +81,7 @@ public class HttpAutoConfig {
     @ConditionalOnMissingBean
     public ServiceChoose serviceChoose(ServiceInstanceChooser serviceInstanceChooser) {
         final ServiceChoose serviceChoose = new ServiceChoose(serviceInstanceChooser);
-        HttpBootStrap.setPredRequest(serviceChoose);
+        HttpBootStrap.registryPredRequestInterceptor(serviceChoose);
         return serviceChoose;
     }
 

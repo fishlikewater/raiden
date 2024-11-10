@@ -43,7 +43,7 @@ public class HttpContextRefreshedEventListener implements ApplicationListener<Co
         final String[] interceptors = event.getApplicationContext().getBeanNamesForType(HttpClientInterceptor.class);
         for (String interceptor : interceptors) {
             final HttpClientInterceptor httpClientInterceptor = (HttpClientInterceptor) event.getApplicationContext().getBean(interceptor);
-            HttpBootStrap.setHttpClientInterceptor(httpClientInterceptor);
+            HttpBootStrap.registryHttpClientInterceptor(httpClientInterceptor);
         }
     }
 }

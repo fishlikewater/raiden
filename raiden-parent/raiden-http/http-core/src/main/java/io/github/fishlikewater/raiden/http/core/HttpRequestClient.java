@@ -20,12 +20,11 @@ import io.github.fishlikewater.raiden.core.Assert;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
+import io.github.fishlikewater.raiden.http.core.convert.MultiFileBodyProvider;
+import io.github.fishlikewater.raiden.http.core.convert.ResponseJsonHandlerSubscriber;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
-import io.github.fishlikewater.raiden.http.core.interceptor.LogInterceptor;
-import io.github.fishlikewater.raiden.http.core.processor.MultiFileBodyProvider;
-import io.github.fishlikewater.raiden.http.core.processor.ResponseJsonHandlerSubscriber;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +36,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -51,8 +51,6 @@ import java.util.function.BiFunction;
  */
 @Slf4j
 public class HttpRequestClient extends AbstractHttpRequestClient {
-
-    private static final LogInterceptor LOG_INTERCEPTOR = new LogInterceptor();
 
     @Override
     public <T> CompletableFuture<T> requestAsync(RequestWrap requestWrap) {
@@ -247,8 +245,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             builder.GET();
         }
         HttpRequest httpRequest = builder.build();
-        httpRequest = requestBefore(requestWrap.getInterceptor(), httpRequest);
-        printLog(httpRequest);
+        httpRequest = requestBefore(requestWrap.getInterceptors(), httpRequest);
         return httpRequest;
     }
 
@@ -267,8 +264,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             builder.header(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
         }
         HttpRequest httpRequest = builder.build();
-        httpRequest = requestBefore(requestWrap.getInterceptor(), httpRequest);
-        printLog(httpRequest);
+        httpRequest = requestBefore(requestWrap.getInterceptors(), httpRequest);
         return httpRequest;
     }
 
@@ -309,8 +305,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             builder.header(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_FORM);
         }
         HttpRequest httpRequest = builder.build();
-        httpRequest = requestBefore(requestWrap.getInterceptor(), httpRequest);
-        printLog(httpRequest);
+        httpRequest = requestBefore(requestWrap.getInterceptors(), httpRequest);
         return httpRequest;
     }
 
@@ -328,8 +323,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         HttpRequest.BodyPublisher requestBody = new MultiFileBodyProvider(requestWrap.getMultipartData(), requestWrap.getBodyObject(), boundaryString);
         builder.method(requestWrap.getHttpMethod().name(), requestBody);
         HttpRequest httpRequest = builder.build();
-        httpRequest = requestBefore(requestWrap.getInterceptor(), httpRequest);
-        printLog(httpRequest);
+        httpRequest = requestBefore(requestWrap.getInterceptors(), httpRequest);
         return httpRequest;
     }
 
@@ -464,9 +458,12 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         return null;
     }
 
-    private HttpRequest requestBefore(HttpClientInterceptor interceptor, HttpRequest httpRequest) {
-        if (Objects.nonNull(interceptor)) {
-            return interceptor.requestBefore(httpRequest);
+    private HttpRequest requestBefore(List<HttpClientInterceptor> interceptors, HttpRequest httpRequest) {
+        if (ObjectUtils.isNullOrEmpty(interceptors)) {
+            return httpRequest;
+        }
+        for (HttpClientInterceptor interceptor : interceptors) {
+            httpRequest = interceptor.requestBefore(httpRequest);
         }
         return httpRequest;
     }
@@ -475,19 +472,12 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         if (ObjectUtils.notEquals(response.statusCode(), HttpConstants.HTTP_OK)) {
             requestWrap.getExceptionProcessor().invalidRespHandle(request, response);
         }
-        if (HttpBootStrap.getLogConfig().isEnableLog()) {
-            response = LOG_INTERCEPTOR.requestAfter(response);
-        }
-        if (Objects.nonNull(requestWrap.getInterceptor())) {
-            response = requestWrap.getInterceptor().requestAfter(response);
+        if (Objects.nonNull(requestWrap.getInterceptors())) {
+            for (HttpClientInterceptor interceptor : requestWrap.getInterceptors()) {
+                response = interceptor.requestAfter(response);
+            }
         }
         return response;
-    }
-
-    private void printLog(HttpRequest httpRequest) {
-        if (HttpBootStrap.getLogConfig().isEnableLog()) {
-            LOG_INTERCEPTOR.requestBefore(httpRequest);
-        }
     }
 
     private String getRequestUrl(String url, Map<String, String> map) {

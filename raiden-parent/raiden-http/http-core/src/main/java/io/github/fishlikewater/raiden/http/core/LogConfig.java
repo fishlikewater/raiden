@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core;
 
+import io.github.fishlikewater.raiden.http.core.interceptor.LogInterceptor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -32,6 +33,8 @@ public class LogConfig {
     private boolean enableLog;
 
     private LogLevel logLevel = LogLevel.BASIC;
+
+    private LogInterceptor logInterceptor = new LogInterceptor();
 
     public enum LogLevel {
 

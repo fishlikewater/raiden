@@ -44,6 +44,7 @@ public class RemoteTest {
     public void test() {
         DemoRemote remote = HttpBootStrap.getProxy(DemoRemote.class);
         String s = remote.baidu();
+        System.out.println(s);
         Assert.assertNotNull(s);
     }
 
@@ -51,8 +52,8 @@ public class RemoteTest {
     public void testAsync() throws InterruptedException {
         DemoRemote remote = HttpBootStrap.getProxy(DemoRemote.class);
         CompletableFuture<String> future = remote.baidu5();
-        future.thenAcceptAsync(System.out::println);
+        future.thenAcceptAsync(System.out::println).join();
         System.out.println("11");
-        Thread.sleep(30_000);
+        Thread.sleep(3_000);
     }
 }

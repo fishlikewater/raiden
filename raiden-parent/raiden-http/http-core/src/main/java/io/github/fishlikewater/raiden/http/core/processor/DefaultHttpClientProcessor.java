@@ -15,13 +15,15 @@
  */
 package io.github.fishlikewater.raiden.http.core.processor;
 
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.HttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -38,7 +40,16 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
         return request(requestWrap);
     }
 
-    private Object request(RequestWrap requestWrap) throws IOException, InterruptedException {
+    private Object request(RequestWrap requestWrap) {
+        if (HttpBootStrap.getLogConfig().isEnableLog()) {
+            List<HttpClientInterceptor> interceptors = requestWrap.getInterceptors();
+            if (ObjectUtils.isNullOrEmpty(interceptors)) {
+                requestWrap.addInterceptor(HttpBootStrap.getLogConfig().getLogInterceptor());
+            } else {
+                interceptors.addLast(HttpBootStrap.getLogConfig().getLogInterceptor());
+            }
+        }
+
         if (requestWrap.getReturnType().isAssignableFrom(CompletableFuture.class)) {
             //异步
             return async(requestWrap);
@@ -48,7 +59,7 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
         }
     }
 
-    private static Object sync(RequestWrap requestWrap) throws IOException, InterruptedException {
+    private static Object sync(RequestWrap requestWrap) {
         HttpRequestClient httpRequestClient = HttpBootStrap.getHttpRequestClient();
         return httpRequestClient.requestSync(requestWrap);
     }

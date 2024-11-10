@@ -24,7 +24,7 @@ import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
  * @since 2023年09月26日 14:07
  * @version 1.0.0
  **/
-public interface PredRequest {
+public interface PredRequestInterceptor {
 
     /**
      * 处理请求

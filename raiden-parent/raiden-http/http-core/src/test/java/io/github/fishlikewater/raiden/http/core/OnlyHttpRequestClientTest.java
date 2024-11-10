@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * {@code OnlyHttpRequestClientTest}
@@ -46,10 +47,13 @@ public class OnlyHttpRequestClientTest {
         RequestWrap requestWrap = RequestWrap.builder()
                 .httpMethod(HttpMethod.GET)
                 .returnType(String.class)
+                .typeArgumentClass(String.class)
                 .url("https://www.baidu.com")
                 .build();
         String sync = httpRequestClient.requestSync(requestWrap);
-        httpRequestClient.getAsync(requestWrap);
-        Assert.assertNotNull(sync);
+        System.out.println(sync);
+        CompletableFuture<String> async = httpRequestClient.getAsync(requestWrap);
+        async.thenAcceptAsync(System.out::println).join();
+        Assert.assertNotNull(async);
     }
 }

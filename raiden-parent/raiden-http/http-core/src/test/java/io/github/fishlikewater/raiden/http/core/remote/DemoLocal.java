@@ -25,8 +25,8 @@ import java.util.Map;
  * 测试接口
  *
  * @author fishlikewater@126.com
- * @since 2024/03/20
  * @version 1.0.0
+ * @since 2024/03/20
  */
 
 @HttpServer(url = "http://127.0.0.1:8080")
@@ -48,7 +48,7 @@ public interface DemoLocal {
     /**
      * 测试本地接口 请求头为变量时 放在参数中时 参数类型只能为 {@code Map<String, String>} 或者 {@link HeadWrap}
      *
-     * @param map {@code Map}
+     * @param map     {@code Map}
      * @param headMap {@code Map}
      * @return {@code String}
      */
@@ -58,7 +58,7 @@ public interface DemoLocal {
     /**
      * 测试本地接口 请求头为变量时 放在参数中时 参数类型只能为 {@code Map<String, String>} 或者 {@link HeadWrap}
      *
-     * @param map {@code Map}
+     * @param map      {@code Map}
      * @param headWrap {@code HeadWrap}
      * @return {@code String}
      */

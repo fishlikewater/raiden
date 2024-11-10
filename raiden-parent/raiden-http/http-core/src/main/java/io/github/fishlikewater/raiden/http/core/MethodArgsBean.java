@@ -24,6 +24,8 @@ import lombok.experimental.Accessors;
 
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,7 +52,7 @@ public class MethodArgsBean {
 
     private String sourceHttpClientName;
 
-    private String interceptorName;
+    private List<String> interceptorNames;
 
     private HttpMethod requestMethod;
 
@@ -72,4 +74,11 @@ public class MethodArgsBean {
      * @since 1.0.2
      */
     private String exceptionProcessorName;
+
+    public void addInterceptorName(String interceptorName) {
+        if (this.interceptorNames == null) {
+            this.interceptorNames = new ArrayList<>();
+        }
+        this.interceptorNames.add(interceptorName);
+    }
 }
