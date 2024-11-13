@@ -101,7 +101,7 @@ public interface InterfaceProxy {
             this.buildParams(requestWrap, parameters, args);
         }
         /* 设置重试次数*/
-        requestWrap.setMaxRetryCount(HttpBootStrap.getConfig().getMaxRetryCount());
+        requestWrap.setRetryCount(HttpBootStrap.getConfig().getMaxRetryCount());
 
         return httpClientProcessor.handler(requestWrap);
     }

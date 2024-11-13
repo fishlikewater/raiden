@@ -107,7 +107,7 @@ public class RequestWrap {
     /**
      * 重试次数
      */
-    private int maxRetryCount;
+    private int retryCount;
 
     /**
      * 实际请求对象
