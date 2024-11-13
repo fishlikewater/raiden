@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.http.autoconfigure;
 
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
+import io.github.fishlikewater.raiden.http.core.processor.DefaultExceptionProcessor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegister;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegistry;
@@ -60,7 +61,7 @@ public class HttpAutoConfig {
 
     @Bean
     public ExceptionProcessor exceptionProcessor() {
-        return new ExceptionProcessor.DefaultExceptionProcessor();
+        return new DefaultExceptionProcessor();
     }
 
     @Bean

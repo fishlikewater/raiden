@@ -36,4 +36,6 @@ public class HttpConfigProperties {
     private boolean enableLog;
 
     private LogLevel logLevel;
+
+    private int maxRetryCount;
 }
