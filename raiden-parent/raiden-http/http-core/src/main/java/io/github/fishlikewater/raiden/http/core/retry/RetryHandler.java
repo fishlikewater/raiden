@@ -71,13 +71,13 @@ public class RetryHandler implements Retry {
     private <T> T toRetrySync(RequestWrap requestWrap) {
         requestWrap.setRetryCount(requestWrap.getRetryCount() - 1);
         log.info("begin sync retry, count:[{}] ", HttpBootStrap.getConfig().getMaxRetryCount() - requestWrap.getRetryCount());
-        return (T) HttpBootStrap.getConfig().getHttpClientProcessor().handler(requestWrap);
+        return (T) HttpBootStrap.getConfig().getHttpClient().requestSync(requestWrap);
     }
 
     @SuppressWarnings("unchecked")
     private <T> CompletableFuture<T> toRetryAsync(RequestWrap requestWrap) {
         requestWrap.setRetryCount(requestWrap.getRetryCount() - 1);
         log.info("begin async retry, count:[{}] ", HttpBootStrap.getConfig().getMaxRetryCount() - requestWrap.getRetryCount());
-        return (CompletableFuture<T>) HttpBootStrap.getConfig().getHttpClientProcessor().handler(requestWrap);
+        return (CompletableFuture<T>) HttpBootStrap.getConfig().getHttpClient().requestAsync(requestWrap);
     }
 }
