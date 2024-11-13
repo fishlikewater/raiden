@@ -64,9 +64,9 @@ public class HttpServerScannerRegistrar implements ImportBeanDefinitionRegistrar
         if (attributes == null) {
             return;
         }
-        final Boolean enableLog = environment.getProperty("com.raiden.http.enable-log", boolean.class, false);
-        final LogLevel logLevel = environment.getProperty("com.raiden.http.log-level", LogLevel.class, LogLevel.BASIC);
-        final Integer maxRetryCount = environment.getProperty("com.raiden.http.max-retry-count", Integer.class, 0);
+        final Boolean enableLog = environment.getProperty("raiden.http.enable-log", boolean.class, false);
+        final LogLevel logLevel = environment.getProperty("raiden.http.log-level", LogLevel.class, LogLevel.BASIC);
+        final Integer maxRetryCount = environment.getProperty("raiden.http.max-retry-count", Integer.class, 0);
         // Specify the base package for scanning
         String[] basePackages = getPackagesToScan(attributes);
         try {
