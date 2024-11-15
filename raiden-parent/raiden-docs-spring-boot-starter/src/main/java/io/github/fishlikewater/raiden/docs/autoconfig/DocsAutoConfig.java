@@ -15,9 +15,9 @@
  */
 package io.github.fishlikewater.raiden.docs.autoconfig;
 
+import io.github.fishlikewater.raiden.docs.autoconfig.handle.DocOpenApiCustomizer;
 import io.github.fishlikewater.raiden.docs.autoconfig.handle.OpenApiHandler;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -110,33 +110,8 @@ public class DocsAutoConfig {
      */
     @Bean
     public OpenApiCustomizer openApiCustomizer() {
-        String contextPath = serverProperties.getServlet().getContextPath();
-        String finalContextPath;
-        if ((contextPath == null || contextPath.trim().length() == 0) || "/".equals(contextPath)) {
-            finalContextPath = "";
-        } else {
-            finalContextPath = contextPath;
-        }
-        // 对所有路径增加前置上下文路径
-        return openApi -> {
-            Paths oldPaths = openApi.getPaths();
-            if (oldPaths instanceof CustomerPaths) {
-                return;
-            }
-            CustomerPaths newPaths = new CustomerPaths();
-            oldPaths.forEach((k, v) -> newPaths.addPathItem(finalContextPath + k, v));
-            openApi.setPaths(newPaths);
-        };
+        return new DocOpenApiCustomizer(serverProperties);
     }
 
-    /**
-     * 单独使用一个类便于判断 解决springdoc路径拼接重复问题
-     *
-     */
-    static class CustomerPaths extends Paths {
 
-        public CustomerPaths() {
-            super();
-        }
-    }
 }
