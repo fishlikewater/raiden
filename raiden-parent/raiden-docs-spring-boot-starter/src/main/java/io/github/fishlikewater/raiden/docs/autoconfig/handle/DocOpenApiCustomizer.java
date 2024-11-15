@@ -18,7 +18,7 @@ package io.github.fishlikewater.raiden.docs.autoconfig.handle;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Paths;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springdoc.core.customizers.GlobalOpenApiCustomizer;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 
 import java.io.Serial;
@@ -31,7 +31,7 @@ import java.io.Serial;
  * @since 2024/11/15
  */
 @RequiredArgsConstructor
-public class DocOpenApiCustomizer implements OpenApiCustomizer {
+public class DocOpenApiCustomizer implements GlobalOpenApiCustomizer {
 
     private final ServerProperties serverProperties;
 
