@@ -15,20 +15,13 @@
  */
 package io.github.fishlikewater.raiden.docs.autoconfig.handle;
 
-import io.github.fishlikewater.raiden.core.LambdaUtils;
-import io.github.fishlikewater.raiden.core.ObjectUtils;
-import io.github.fishlikewater.raiden.core.constant.CommonConstants;
-import io.github.fishlikewater.raiden.docs.autoconfig.DocProperties;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Paths;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.customizers.GlobalOpenApiCustomizer;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.Serial;
-import java.util.Set;
 
 /**
  * {@code DocOpenApiCustomizer}
@@ -41,30 +34,10 @@ import java.util.Set;
 public class DocOpenApiCustomizer implements GlobalOpenApiCustomizer {
 
     private final ServerProperties serverProperties;
-    private final DocProperties docProperties;
 
     @Override
     public void customise(OpenAPI openApi) {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (ObjectUtils.isNotNullOrEmpty(attributes)) {
-            String url = attributes.getRequest().getRequestURI();
-            DocProperties.GroupConfig group = this.tryAcquireGroup(url);
-            if (ObjectUtils.isNotNullOrEmpty(group)) {
-
-            }
-        }
-
         this.toAddContextPath(openApi);
-    }
-
-    private DocProperties.GroupConfig tryAcquireGroup(String url) {
-        String[] split = url.split(CommonConstants.Symbol.SYMBOL_PATH);
-        if (split.length > 0) {
-            String groupName = split[split.length - 1];
-            Set<DocProperties.GroupConfig> groupConfigs = docProperties.getGroupConfigs();
-            return LambdaUtils.findFirst(groupConfigs, groupConfig -> groupConfig.getGroup().equals(groupName));
-        }
-        return null;
     }
 
     private void toAddContextPath(OpenAPI openApi) {

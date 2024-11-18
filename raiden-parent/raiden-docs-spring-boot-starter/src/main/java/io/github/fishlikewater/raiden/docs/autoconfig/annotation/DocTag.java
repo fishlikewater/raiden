@@ -18,7 +18,7 @@ package io.github.fishlikewater.raiden.docs.autoconfig.annotation;
 import java.lang.annotation.*;
 
 /**
- * {@code DocVersion}
+ * {@code DocTag}
  * 文档版本标识
  *
  * @author zhangxiang
@@ -28,5 +28,7 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-public @interface DocVersion {
+public @interface DocTag {
+
+    String value();
 }

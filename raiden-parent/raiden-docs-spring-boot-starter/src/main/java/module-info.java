@@ -32,6 +32,7 @@ module raiden.docs.spring.boot.starter {
     requires spring.context;
     requires spring.boot.autoconfigure;
     requires org.springdoc.openapi.common;
+    requires org.apache.tomcat.embed.core;
 
     exports io.github.fishlikewater.raiden.docs.autoconfig;
     exports io.github.fishlikewater.raiden.docs.autoconfig.handle;

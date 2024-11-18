@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.docs.autoconfig;
 
 import io.github.fishlikewater.raiden.docs.autoconfig.handle.DocOpenApiCustomizer;
+import io.github.fishlikewater.raiden.docs.autoconfig.handle.DocOperationCustomizer;
 import io.github.fishlikewater.raiden.docs.autoconfig.handle.OpenApiHandler;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springdoc.core.customizers.OpenApiBuilderCustomizer;
 import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springdoc.core.customizers.OperationCustomizer;
 import org.springdoc.core.customizers.ServerBaseUrlCustomizer;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.providers.JavadocProvider;
@@ -109,8 +111,13 @@ public class DocsAutoConfig {
      * 对已经生成好的 OpenApi 进行自定义操作
      */
     @Bean
-    public OpenApiCustomizer openApiCustomizer(DocProperties properties) {
-        return new DocOpenApiCustomizer(serverProperties, properties);
+    public OpenApiCustomizer openApiCustomizer() {
+        return new DocOpenApiCustomizer(serverProperties);
+    }
+
+    @Bean
+    public OperationCustomizer operationCustomizer(DocProperties properties) {
+        return new DocOperationCustomizer(properties);
     }
 
 

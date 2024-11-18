@@ -142,7 +142,7 @@ public class DocProperties {
 
         private OpenAPI openApi;
 
-        private String version;
+        private String tag;
 
         public GroupConfig() {
         }
