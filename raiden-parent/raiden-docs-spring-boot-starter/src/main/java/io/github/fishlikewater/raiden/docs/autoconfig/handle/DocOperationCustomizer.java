@@ -29,6 +29,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.util.UriUtils;
 
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -56,19 +57,29 @@ public class DocOperationCustomizer implements GlobalOperationCustomizer {
             return operation;
         }
 
-        String tag = group.getTag();
-        if (ObjectUtils.isNullOrEmpty(tag)) {
+        List<String> tags = group.getTag();
+        if (ObjectUtils.isNullOrEmpty(tags)) {
             return operation;
         }
 
         DocTag classDocTag = handlerMethod.getBeanType().getDeclaredAnnotation(DocTag.class);
-        if (ObjectUtils.isNotNullOrEmpty(classDocTag) && ObjectUtils.equals(classDocTag.value(), tag)) {
-            return operation;
+        if (ObjectUtils.isNotNullOrEmpty(classDocTag)) {
+            String[] classTags = classDocTag.value();
+            for (String classTag : classTags) {
+                if (tags.contains(classTag)) {
+                    return operation;
+                }
+            }
         }
 
         DocTag docTag = handlerMethod.getMethod().getDeclaredAnnotation(DocTag.class);
-        if (ObjectUtils.isNotNullOrEmpty(docTag) && ObjectUtils.equals(docTag.value(), tag)) {
-            return operation;
+        if (ObjectUtils.isNotNullOrEmpty(docTag)) {
+            String[] methodTags = docTag.value();
+            for (String methodTag : methodTags) {
+                if (tags.contains(methodTag)) {
+                    return operation;
+                }
+            }
         }
 
         return null;
