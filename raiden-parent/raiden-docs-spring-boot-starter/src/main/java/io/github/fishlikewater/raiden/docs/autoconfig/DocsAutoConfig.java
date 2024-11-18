@@ -109,8 +109,8 @@ public class DocsAutoConfig {
      * 对已经生成好的 OpenApi 进行自定义操作
      */
     @Bean
-    public OpenApiCustomizer openApiCustomizer() {
-        return new DocOpenApiCustomizer(serverProperties);
+    public OpenApiCustomizer openApiCustomizer(DocProperties properties) {
+        return new DocOpenApiCustomizer(serverProperties, properties);
     }
 
 

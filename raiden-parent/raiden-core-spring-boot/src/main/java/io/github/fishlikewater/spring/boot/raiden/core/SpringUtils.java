@@ -18,6 +18,7 @@ package io.github.fishlikewater.spring.boot.raiden.core;
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ArrayUtil;
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.beans.BeansException;
@@ -31,6 +32,8 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
@@ -294,5 +297,18 @@ public class SpringUtils implements BeanFactoryPostProcessor, ApplicationContext
         if (null != applicationContext) {
             applicationContext.publishEvent(event);
         }
+    }
+
+    /**
+     * 获取当前线程的HttpServletRequest
+     *
+     * @return HttpServletRequest
+     */
+    public HttpServletRequest getCurrentRequest() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            return null;
+        }
+        return attributes.getRequest();
     }
 }

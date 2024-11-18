@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.docs.autoconfig;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.License;
@@ -25,7 +26,9 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * {@code DocProperties}
@@ -67,6 +70,11 @@ public class DocProperties {
     private Components components = null;
 
     /**
+     * 分组配置
+     */
+    private Set<GroupConfig> groupConfigs = new HashSet<>();
+
+    /**
      * <p>
      * 文档的基础属性信息
      * </p>
@@ -105,4 +113,39 @@ public class DocProperties {
          */
         private String version = null;
     }
+
+    /**
+     * <p>
+     * 分组配置
+     * </p>
+     */
+    @Data
+    public static class GroupConfig {
+
+        private List<String> pathsToMatch;
+
+        private List<String> packagesToScan;
+
+        private List<String> packagesToExclude;
+
+        private List<String> pathsToExclude;
+
+        private String group;
+
+        private List<String> producesToMatch;
+
+        private List<String> headersToMatch;
+
+        private List<String> consumesToMatch;
+
+        private String displayName;
+
+        private OpenAPI openApi;
+
+        private String version;
+
+        public GroupConfig() {
+        }
+    }
+
 }
