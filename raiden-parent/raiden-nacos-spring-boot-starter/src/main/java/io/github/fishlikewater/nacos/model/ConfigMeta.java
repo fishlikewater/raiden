@@ -18,7 +18,6 @@ package io.github.fishlikewater.nacos.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -34,7 +33,6 @@ import java.io.Serializable;
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class ConfigMeta implements Serializable {
 
     @Serial
@@ -45,4 +43,13 @@ public class ConfigMeta implements Serializable {
     private String dataId;
 
     private String type;
+
+    private boolean refresh;
+
+    public ConfigMeta(String groupId, String dataId, String type) {
+        this.groupId = groupId;
+        this.dataId = dataId;
+        this.type = type;
+        this.refresh = true;
+    }
 }

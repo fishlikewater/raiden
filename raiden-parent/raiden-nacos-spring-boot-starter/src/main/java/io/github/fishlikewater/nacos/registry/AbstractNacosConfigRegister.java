@@ -27,19 +27,18 @@ import com.alibaba.nacos.client.config.listener.impl.AbstractConfigChangeListene
 import com.alibaba.nacos.spring.factory.CacheableEventPublishingNacosServiceFactory;
 import com.alibaba.nacos.spring.factory.NacosServiceFactory;
 import com.alibaba.nacos.spring.util.NacosBeanUtils;
+import io.github.fishlikewater.nacos.event.NacosRegisterFinishEvent;
 import io.github.fishlikewater.nacos.listener.DefaultDynamicNacosConfigListener;
 import io.github.fishlikewater.nacos.model.ConfigMeta;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.EnvironmentAware;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
 
 import java.util.*;
 import java.util.function.Function;
@@ -52,11 +51,13 @@ import java.util.function.Function;
  * @since 2024/11/01
  */
 @Slf4j
-public abstract class AbstractNacosConfigRegister implements NacosConfigRegister, InitializingBean, EnvironmentAware, BeanFactoryAware {
+public abstract class AbstractNacosConfigRegister implements NacosConfigRegister, InitializingBean, ApplicationContextAware {
 
     protected final Set<ConfigMeta> configMetas = new HashSet<>();
 
     private ConfigurableEnvironment environment;
+
+    private ApplicationContext applicationContext;
 
     private BeanFactory beanFactory;
 
@@ -66,9 +67,12 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
 
     public abstract List<ConfigMeta> getConfigMeta();
 
+
     @Override
-    public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        this.environment = (ConfigurableEnvironment) applicationContext.getEnvironment();
+        this.beanFactory = applicationContext.getParentBeanFactory();
     }
 
     public void register() {
@@ -77,11 +81,14 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
             return;
         }
         for (ConfigMeta meta : configMeta) {
-            DefaultDynamicNacosConfigListener listener = new DefaultDynamicNacosConfigListener(meta, environment, beanFactory);
-            this.register(meta, listener);
+            if (meta.isRefresh()) {
+                DefaultDynamicNacosConfigListener listener = new DefaultDynamicNacosConfigListener(meta, environment, beanFactory);
+                this.register(meta, listener);
+            }
             this.refreshEnvironment(meta);
             this.registerConfigMeta(meta);
         }
+        this.pushEvent();
     }
 
     @Override
@@ -109,13 +116,12 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
         this.register();
     }
 
-    @Override
-    public void setEnvironment(@NonNull Environment environment) {
-        this.environment = (ConfigurableEnvironment) environment;
-    }
-
-
     // ----------------------------------------------------------------
+
+    private void pushEvent() {
+        NacosRegisterFinishEvent finishEvent = new NacosRegisterFinishEvent("Successful");
+        this.applicationContext.publishEvent(finishEvent);
+    }
 
     public void registerConfigMeta(ConfigMeta meta) {
         this.configMetas.add(meta);
