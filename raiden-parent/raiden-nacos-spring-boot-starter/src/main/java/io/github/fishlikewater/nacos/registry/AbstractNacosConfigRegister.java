@@ -54,12 +54,11 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
 
     public abstract List<ConfigMeta> getConfigMeta();
 
-
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         this.environment = (ConfigurableEnvironment) applicationContext.getEnvironment();
-        this.beanFactory = applicationContext.getParentBeanFactory();
+        this.beanFactory = applicationContext.getAutowireCapableBeanFactory();
     }
 
     public void register() {
@@ -98,7 +97,7 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.register();
     }
 
