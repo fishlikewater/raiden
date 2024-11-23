@@ -15,16 +15,8 @@
  */
 package io.github.fishlikewater.nacos.registry;
 
-import com.alibaba.boot.nacos.config.autoconfigure.NacosBootConfigException;
-import com.alibaba.boot.nacos.config.properties.NacosConfigProperties;
-import com.alibaba.boot.nacos.config.util.NacosConfigLoader;
-import com.alibaba.boot.nacos.config.util.NacosConfigLoaderFactory;
-import com.alibaba.boot.nacos.config.util.NacosConfigPropertiesUtils;
 import com.alibaba.nacos.api.config.ConfigService;
-import com.alibaba.nacos.api.config.ConfigType;
-import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.client.config.listener.impl.AbstractConfigChangeListener;
-import com.alibaba.nacos.spring.factory.CacheableEventPublishingNacosServiceFactory;
 import com.alibaba.nacos.spring.factory.NacosServiceFactory;
 import com.alibaba.nacos.spring.util.NacosBeanUtils;
 import io.github.fishlikewater.nacos.event.NacosRegisterFinishEvent;
@@ -41,7 +33,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * {@code AbstractNacosConfigRegister}
@@ -60,10 +51,6 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
     private ApplicationContext applicationContext;
 
     private BeanFactory beanFactory;
-
-    private NacosConfigProperties nacosConfigProperties;
-
-    private final CacheableEventPublishingNacosServiceFactory singleton = CacheableEventPublishingNacosServiceFactory.getSingleton();
 
     public abstract List<ConfigMeta> getConfigMeta();
 
@@ -85,7 +72,6 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
                 DefaultDynamicNacosConfigListener listener = new DefaultDynamicNacosConfigListener(meta, environment, beanFactory);
                 this.register(meta, listener);
             }
-            this.refreshEnvironment(meta);
             this.registerConfigMeta(meta);
         }
         this.pushEvent();
@@ -126,25 +112,4 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
     public void registerConfigMeta(ConfigMeta meta) {
         this.configMetas.add(meta);
     }
-
-    private final Function<Properties, ConfigService> builder = properties -> {
-        try {
-            return singleton.createConfigService(properties);
-        } catch (NacosException e) {
-            throw new NacosBootConfigException(
-                    "ConfigService can't be created with properties : " + properties, e);
-        }
-    };
-
-    private void refreshEnvironment(ConfigMeta meta) {
-        if (ObjectUtils.isNullOrEmpty(nacosConfigProperties)) {
-            nacosConfigProperties = NacosConfigPropertiesUtils.buildNacosConfigProperties(this.environment);
-        }
-        NacosConfigLoader configLoader = NacosConfigLoaderFactory.getSingleton(this.builder);
-        nacosConfigProperties.setDataIds(meta.getDataId());
-        nacosConfigProperties.setGroup(meta.getGroupId());
-        nacosConfigProperties.setType(ConfigType.valueOf(meta.getType().toUpperCase()));
-        configLoader.loadConfig(this.environment, this.nacosConfigProperties);
-    }
-
 }
