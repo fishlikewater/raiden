@@ -26,18 +26,17 @@ import com.alibaba.nacos.api.config.ConfigType;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.spring.factory.CacheableEventPublishingNacosServiceFactory;
 import com.alibaba.nacos.spring.util.NacosUtils;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.ScanResult;
 import io.github.fishlikewater.nacos.model.ConfigMeta;
 import io.github.fishlikewater.nacos.registry.AbstractNacosConfigRegister;
 import io.github.fishlikewater.raiden.core.LambdaUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.type.filter.AssignableTypeFilter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,18 +61,18 @@ public class NacosEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        final ClassGraph classGraph = new ClassGraph();
         String packageName = application.getMainApplicationClass().getPackageName();
-        try (ScanResult scan = classGraph.acceptPackages(packageName).enableClassInfo().scan()) {
-            ClassInfoList classInfos = scan.getSubclasses(AbstractNacosConfigRegister.class);
-            for (ClassInfo classInfo : classInfos) {
-                Class<?> clazz = Class.forName(classInfo.getName());
+        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
+        provider.addIncludeFilter(new AssignableTypeFilter(AbstractNacosConfigRegister.class));
+        for (BeanDefinition beanDefinition : provider.findCandidateComponents(packageName)) {
+            try {
+                Class<?> clazz = Class.forName(beanDefinition.getBeanClassName());
                 AbstractNacosConfigRegister register = (AbstractNacosConfigRegister) clazz.getConstructor().newInstance();
                 List<ConfigMeta> configMeta = register.getConfigMeta();
                 LambdaUtils.handle(configMeta, meta -> this.refreshEnvironment(meta, environment));
+            } catch (Exception e) {
+                log.error("load class exception:", e);
             }
-        } catch (Exception e) {
-            log.error("load class exception:", e);
         }
     }
 
