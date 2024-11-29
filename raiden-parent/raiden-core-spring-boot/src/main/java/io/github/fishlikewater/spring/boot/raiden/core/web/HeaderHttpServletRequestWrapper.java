@@ -72,7 +72,7 @@ public class HeaderHttpServletRequestWrapper extends HttpServletRequestWrapper {
     public Enumeration<String> getHeaderNames() {
         HashMap<String, String> allHeaders = new HashMap<>();
         if (ObjectUtils.isNotNullOrEmpty(this.headers)) {
-            this.headers.forEach((key, value) -> allHeaders.put(key, value.get(0)));
+            this.headers.forEach((key, value) -> allHeaders.put(key, value.getFirst()));
         }
 
         Enumeration<String> originalHeaders = this.tryHttpServletRequest().getHeaderNames();
