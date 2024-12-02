@@ -26,6 +26,7 @@ import com.alibaba.nacos.api.config.ConfigType;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.spring.factory.CacheableEventPublishingNacosServiceFactory;
 import com.alibaba.nacos.spring.util.NacosUtils;
+import io.github.fishlikewater.nacos.annotation.NacosPreScan;
 import io.github.fishlikewater.nacos.model.ConfigMeta;
 import io.github.fishlikewater.nacos.registry.AbstractNacosConfigRegister;
 import io.github.fishlikewater.raiden.core.LambdaUtils;
@@ -61,22 +62,63 @@ public class NacosEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        String packageName = application.getMainApplicationClass().getPackageName();
+        Class<?> mainApplicationClass = application.getMainApplicationClass();
+        if (ObjectUtils.isNullOrEmpty(mainApplicationClass)) {
+            return;
+        }
+        // 没有注解 或者注解没有指定包或类 则扫描主类包
+        NacosPreScan preScan = mainApplicationClass.getAnnotation(NacosPreScan.class);
+        if (ObjectUtils.isNullOrEmpty(preScan) || this.determineNotScan(preScan)) {
+            this.sanPackage(mainApplicationClass.getPackageName(), environment);
+        }
+        // 扫描指定的包
+        String[] basePackages = preScan.basePackages();
+        if (ObjectUtils.isNotNullOrEmpty(basePackages)) {
+            for (String basePackage : basePackages) {
+                this.sanPackage(basePackage, environment);
+            }
+        }
+        // 扫描指定的类
+        Class<? extends AbstractNacosConfigRegister>[] classes = preScan.baseClasses();
+        if (ObjectUtils.isNotNullOrEmpty(classes)) {
+            this.scanClasses(classes, environment);
+        }
+    }
+
+    private void scanClasses(Class<? extends AbstractNacosConfigRegister>[] classes, ConfigurableEnvironment environment) {
+        for (Class<? extends AbstractNacosConfigRegister> clazz : classes) {
+            this.loadClassConfig(environment, clazz);
+        }
+    }
+
+    private boolean determineNotScan(NacosPreScan preScan) {
+        return ObjectUtils.isNullOrEmpty(preScan.baseClasses()) && ObjectUtils.isNullOrEmpty(preScan.basePackages());
+    }
+
+    private void sanPackage(String packageName, ConfigurableEnvironment environment) {
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
         provider.addIncludeFilter(new AssignableTypeFilter(AbstractNacosConfigRegister.class));
         for (BeanDefinition beanDefinition : provider.findCandidateComponents(packageName)) {
             try {
                 Class<?> clazz = Class.forName(beanDefinition.getBeanClassName());
-                AbstractNacosConfigRegister register = (AbstractNacosConfigRegister) clazz.getConstructor().newInstance();
-                List<ConfigMeta> configMeta = register.getConfigMeta();
-                LambdaUtils.handle(configMeta, meta -> this.refreshEnvironment(meta, environment));
+                this.loadClassConfig(environment, clazz);
             } catch (Exception e) {
                 log.error("load class exception:", e);
             }
         }
     }
 
-    public void refreshEnvironment(ConfigMeta meta, ConfigurableEnvironment environment) {
+    private void loadClassConfig(ConfigurableEnvironment environment, Class<?> clazz) {
+        try {
+            AbstractNacosConfigRegister register = (AbstractNacosConfigRegister) clazz.getConstructor().newInstance();
+            List<ConfigMeta> configMeta = register.getConfigMeta();
+            LambdaUtils.handle(configMeta, meta -> this.refreshEnvironment(meta, environment));
+        } catch (Exception e) {
+            log.error("load class exception:", e);
+        }
+    }
+
+    private void refreshEnvironment(ConfigMeta meta, ConfigurableEnvironment environment) {
         if (ObjectUtils.isNullOrEmpty(nacosConfigProperties)) {
             nacosConfigProperties = NacosConfigPropertiesUtils.buildNacosConfigProperties(environment);
         }
