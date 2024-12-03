@@ -15,9 +15,7 @@
  */
 package io.github.fishlikewater.nacos.annotation;
 
-import io.github.fishlikewater.nacos.constant.Constants;
 import io.github.fishlikewater.nacos.registry.AbstractNacosConfigRegister;
-import org.springframework.context.annotation.Scope;
 
 import java.lang.annotation.*;
 
@@ -32,7 +30,6 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-@Scope(value = Constants.NACOS_REFRESH_SCOPE)
 public @interface NacosPreScan {
 
     Class<? extends AbstractNacosConfigRegister>[] baseClasses() default {};

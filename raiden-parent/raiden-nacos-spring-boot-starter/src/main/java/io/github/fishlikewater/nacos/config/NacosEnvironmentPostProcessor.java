@@ -70,6 +70,7 @@ public class NacosEnvironmentPostProcessor implements EnvironmentPostProcessor {
         NacosPreScan preScan = mainApplicationClass.getAnnotation(NacosPreScan.class);
         if (ObjectUtils.isNullOrEmpty(preScan) || this.determineNotScan(preScan)) {
             this.sanPackage(mainApplicationClass.getPackageName(), environment);
+            return;
         }
         // 扫描指定的包
         String[] basePackages = preScan.basePackages();
