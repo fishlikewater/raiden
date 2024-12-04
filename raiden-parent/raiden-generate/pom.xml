@@ -25,7 +25,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.belerweb</groupId>
+            <groupId>com.yookue.forkextension.pinyin4j</groupId>
             <artifactId>pinyin4j</artifactId>
         </dependency>
 

@@ -14,13 +14,13 @@
     <description>raiden-dependency</description>
 
     <properties>
-        <pinyin.version>2.5.1</pinyin.version>
-        <spring.boot.version>3.3.0</spring.boot.version>
+        <pinyin.version>2.5.3</pinyin.version>
+        <spring.boot.version>3.4.0</spring.boot.version>
         <hutool.version>5.8.25</hutool.version>
         <slf4j-api.veresion>2.0.9</slf4j-api.veresion>
         <gson.version>2.11.0</gson.version>
         <fastjson.version>2.0.50</fastjson.version>
-        <openapi.version>2.5.0</openapi.version>
+        <openapi.version>2.7.0</openapi.version>
         <knife4j-openapi3.version>4.5.0</knife4j-openapi3.version>
         <junit.version>4.13.1</junit.version>
         <classgraph.version>4.8.162</classgraph.version>
@@ -36,6 +36,7 @@
         <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
         <raiden-processor.version>2.0.0</raiden-processor.version>
         <nacos.version>0.3.0-RC</nacos.version>
+        <guava.version>33.3.1-jre</guava.version>
     </properties>
 
     <dependencyManagement>
@@ -211,7 +212,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.belerweb</groupId>
+                <groupId>com.yookue.forkextension.pinyin4j</groupId>
                 <artifactId>pinyin4j</artifactId>
                 <version>${pinyin.version}</version>
             </dependency>
@@ -221,6 +222,12 @@
                 <groupId>com.alibaba.boot</groupId>
                 <artifactId>nacos-config-spring-boot-starter</artifactId>
                 <version>${nacos.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
