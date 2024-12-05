@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.http.core.convert;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.http.core.MultipartData;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
@@ -49,7 +50,7 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
     private final List<byte[]> fileParams = new ArrayList<>();
 
     public MultiFileBodyProvider(MultipartData multipartData, Object paramObj, String boundaryString) {
-        if (Objects.nonNull(multipartData.getPaths()) && multipartData.getPaths().length > 0) {
+        if (ObjectUtils.isNotNullOrEmpty(multipartData.getPaths())) {
             paths = Arrays.stream(multipartData.getPaths()).map(Path::of).collect(Collectors.toList());
         } else {
             paths = Arrays.stream(multipartData.getFiles()).map(file -> Path.of(file.getPath())).collect(Collectors.toList());

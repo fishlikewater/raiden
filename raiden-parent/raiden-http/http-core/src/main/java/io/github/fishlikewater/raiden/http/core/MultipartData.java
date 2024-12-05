@@ -16,9 +16,11 @@
 package io.github.fishlikewater.raiden.http.core;
 
 import lombok.Data;
+import lombok.NonNull;
 import lombok.experimental.Accessors;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 
@@ -29,8 +31,8 @@ import static java.nio.file.StandardOpenOption.WRITE;
  * 文件数据
  *
  * @author fishlikewater@126.com
- * @since 2023年09月26日 16:13
  * @version 1.0.0
+ * @since 2023年09月26日 16:13
  **/
 @Data
 @Accessors(chain = true)
@@ -42,9 +44,16 @@ public class MultipartData {
 
     private Path path;
 
+    private InputStream inputStream;
+
+    private String fileName;
+
     private boolean fileDownload;
 
     private OpenOption[] openOptions = new OpenOption[]{CREATE, WRITE};
+
+    private MultipartData() {
+    }
 
     private MultipartData(String[] paths) {
         this.paths = paths;
@@ -65,6 +74,13 @@ public class MultipartData {
 
     public static MultipartData ofFileUpload(File... files) {
         return new MultipartData(files);
+    }
+
+    public static MultipartData ofFileUpload(@NonNull String fileName, InputStream inputStream) {
+        MultipartData multipartData = new MultipartData();
+        multipartData.setFileName(fileName);
+        multipartData.setInputStream(inputStream);
+        return multipartData;
     }
 
     public static MultipartData ofFileDownload(Path path, OpenOption... openOptions) {
