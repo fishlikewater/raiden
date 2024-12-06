@@ -133,10 +133,10 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
         } else {
             paths = Arrays.stream(multipartData.getFiles()).map(file -> Path.of(file.getPath())).collect(Collectors.toList());
         }
-        for (Path path : paths) {
+        for (int i = 0; i < paths.size(); i++) {
             try {
-                final File file = FileUtil.file(path.toFile());
-                String fileData = StringUtils.format("--{}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{}\"\r\nContent-Type: application/octet-stream\r\n\r\n", boundary, file.getName());
+                final File file = FileUtil.file(paths.get(i).toFile());
+                String fileData = StringUtils.format("{}--{}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{}\"\r\nContent-Type: application/octet-stream\r\n\r\n", i > 0 ? "\r\n" : "", boundary, file.getName());
                 final byte[] bytes = fileData.getBytes();
                 fileParams.add(bytes);
                 contentLength += bytes.length;

@@ -84,10 +84,10 @@ public class RemoteTest {
     @Test
     public void testUpload3() throws FileNotFoundException {
         DemoFile remote = HttpBootStrap.getProxy(DemoFile.class);
-        File file1 = new File("C:\\Users\\fishl\\Pictures\\【哲风壁纸】剑客-红装.png");
-        File file2 = new File("C:\\Users\\fishl\\Pictures\\1.png");
+        File file1 = new File("G:\\壁纸\\【哲风壁纸】剑客-红装.png");
+        File file2 = new File("G:\\壁纸\\【哲风壁纸】美女-黑丝.png");
         MultipartData multipartData = MultipartData.ofFileUpload(file1, file2);
-        String s = remote.uploadFile2(multipartData);
+        String s = remote.uploadFile(multipartData);
         System.out.println(s);
     }
 }
