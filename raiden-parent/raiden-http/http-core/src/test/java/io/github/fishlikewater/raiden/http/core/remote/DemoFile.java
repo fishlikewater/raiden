@@ -43,6 +43,9 @@ public interface DemoFile {
     @POST("/upload")
     String uploadFile(MultipartData data);
 
+    @POST("/upload2")
+    String uploadFile2(MultipartData data);
+
     /**
      * 下载文件
      *

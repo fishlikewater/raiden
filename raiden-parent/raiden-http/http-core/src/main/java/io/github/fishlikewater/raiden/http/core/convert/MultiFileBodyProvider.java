@@ -46,17 +46,10 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
     private long contentLength = 0L;
     private List<Path> paths;
     private byte[] paramByte;
-    private byte[] endBytes;
     private MultipartData.FileStream fileStream;
+    private final byte[] endBytes;
     private final List<byte[]> fileParams = new ArrayList<>();
     private final String boundary;
-
-    private final String fileNameTmp = """
-            --{}
-            Content-Disposition: form-data; name="file"; filename="{}"
-            Content-Type: application/octet-stream
-            
-            """;
 
     public MultiFileBodyProvider(MultipartData multipartData, Object paramObj, String boundaryString) {
         this.boundary = boundaryString;
@@ -66,9 +59,11 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
         MultipartData.FileStream fileStream = multipartData.getFileStream();
         if (ObjectUtils.isNotNullOrEmpty(fileStream)) {
             this.handleFileStream(fileStream);
-            return;
+        } else {
+            this.handlePath(multipartData);
         }
-        this.handlePath(multipartData);
+        endBytes = (StringUtils.format("\r\n--{}--", boundary)).getBytes();
+        contentLength += endBytes.length;
     }
 
     @Override
@@ -141,7 +136,7 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
         for (Path path : paths) {
             try {
                 final File file = FileUtil.file(path.toFile());
-                String fileData = StringUtils.format(fileNameTmp, boundary, file.getName());
+                String fileData = StringUtils.format("--{}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{}\"\r\nContent-Type: application/octet-stream\r\n\r\n", boundary, file.getName());
                 final byte[] bytes = fileData.getBytes();
                 fileParams.add(bytes);
                 contentLength += bytes.length;
@@ -150,19 +145,15 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
                 HttpExceptionCheck.INSTANCE.throwUnchecked(e, "build file data error");
             }
         }
-        endBytes = (StringUtils.format("\r\n--{}--", boundary)).getBytes();
-        contentLength += endBytes.length;
     }
 
     private void handleFileStream(MultipartData.FileStream fileStream) {
         this.fileStream = fileStream;
-        String fileData = StringUtils.format(fileNameTmp, boundary, fileStream.getFileName());
+        String fileData = StringUtils.format("--{}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{}\"\r\nContent-Type: application/octet-stream\r\n\r\n", boundary, fileStream.getFileName());
         final byte[] bytes = fileData.getBytes();
         fileParams.add(bytes);
         contentLength += bytes.length;
         contentLength += fileStream.getSize();
-        endBytes = (StringUtils.format("\r\n--{}--", boundary)).getBytes();
-        contentLength += endBytes.length;
     }
 
     private void handleParam(Object paramObj) {
@@ -174,7 +165,7 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
                 paramData.append("Content-Disposition: form-data; name=\"").append(k).append("\"\r\n\r\n").append(v).append("\r\n");
             });
         }
-        paramByte = paramData.toString().getBytes();
-        contentLength += paramByte.length;
+        this.paramByte = paramData.toString().getBytes();
+        this.contentLength += this.paramByte.length;
     }
 }
