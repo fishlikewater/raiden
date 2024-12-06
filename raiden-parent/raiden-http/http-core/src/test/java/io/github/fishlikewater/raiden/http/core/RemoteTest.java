@@ -16,11 +16,15 @@
 package io.github.fishlikewater.raiden.http.core;
 
 import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
+import io.github.fishlikewater.raiden.http.core.remote.DemoFile;
 import io.github.fishlikewater.raiden.http.core.remote.DemoRemote;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.http.HttpClient;
 import java.util.concurrent.CompletableFuture;
 
@@ -57,5 +61,23 @@ public class RemoteTest {
         future.thenAcceptAsync(System.out::println).join();
         System.out.println("11");
         Thread.sleep(3_000);
+    }
+
+    @Test
+    public void testUpload() throws FileNotFoundException {
+        DemoFile remote = HttpBootStrap.getProxy(DemoFile.class);
+        File file = new File("C:\\Users\\fishl\\Pictures\\【哲风壁纸】剑客-红装.png");
+        MultipartData multipartData = MultipartData.ofFileUpload(new FileInputStream(file), "test", file.length());
+        String s = remote.uploadFile(multipartData);
+        System.out.println(s);
+    }
+
+    @Test
+    public void testUpload2() throws FileNotFoundException {
+        DemoFile remote = HttpBootStrap.getProxy(DemoFile.class);
+        //File file = new File("C:\\Users\\fishl\\Pictures\\【哲风壁纸】剑客-红装.png");
+        MultipartData multipartData = MultipartData.ofFileUpload("C:\\Users\\fishl\\Pictures\\【哲风壁纸】剑客-红装.png");
+        String s = remote.uploadFile(multipartData);
+        System.out.println(s);
     }
 }

@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
@@ -44,9 +45,7 @@ public class MultipartData {
 
     private Path path;
 
-    private InputStream inputStream;
-
-    private String fileName;
+    private FileStream fileStream;
 
     private boolean fileDownload;
 
@@ -76,10 +75,11 @@ public class MultipartData {
         return new MultipartData(files);
     }
 
-    public static MultipartData ofFileUpload(@NonNull String fileName, InputStream inputStream) {
+    public static MultipartData ofFileUpload(InputStream inputStream, @NonNull String fileName, long size) {
+
+        FileStream fileStream = new FileStream(inputStream, fileName, size);
         MultipartData multipartData = new MultipartData();
-        multipartData.setFileName(fileName);
-        multipartData.setInputStream(inputStream);
+        multipartData.setFileStream(fileStream);
         return multipartData;
     }
 
@@ -87,5 +87,17 @@ public class MultipartData {
         MultipartData multipartData = new MultipartData(path, openOptions);
         multipartData.setFileDownload(true);
         return multipartData;
+    }
+
+    @Data
+    @Accessors(chain = true)
+    @AllArgsConstructor
+    public static class FileStream {
+
+        private InputStream inputStream;
+
+        private String fileName;
+
+        private long size;
     }
 }

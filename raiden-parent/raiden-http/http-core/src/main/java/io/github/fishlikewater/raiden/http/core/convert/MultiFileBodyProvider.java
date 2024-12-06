@@ -25,6 +25,7 @@ import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.http.HttpRequest;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
@@ -42,44 +43,32 @@ import java.util.stream.Collectors;
  **/
 public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
 
-    private final String boundary;
     private long contentLength = 0L;
-    private final byte[] paramByte;
-    private final byte[] endBytes;
-    private final List<Path> paths;
+    private List<Path> paths;
+    private byte[] paramByte;
+    private byte[] endBytes;
+    private MultipartData.FileStream fileStream;
     private final List<byte[]> fileParams = new ArrayList<>();
+    private final String boundary;
+
+    private final String fileNameTmp = """
+            --{}
+            Content-Disposition: form-data; name="file"; filename="{}"
+            Content-Type: application/octet-stream
+            
+            """;
 
     public MultiFileBodyProvider(MultipartData multipartData, Object paramObj, String boundaryString) {
-        if (ObjectUtils.isNotNullOrEmpty(multipartData.getPaths())) {
-            paths = Arrays.stream(multipartData.getPaths()).map(Path::of).collect(Collectors.toList());
-        } else {
-            paths = Arrays.stream(multipartData.getFiles()).map(file -> Path.of(file.getPath())).collect(Collectors.toList());
-        }
         this.boundary = boundaryString;
-        StringBuilder paramData = new StringBuilder();
-        if (Objects.nonNull(paramObj)) {
-            Map<String, Object> paramMap = BeanUtil.beanToMap(paramObj);
-            paramMap.forEach((k, v) -> {
-                paramData.append("--").append(boundary).append("\r\n");
-                paramData.append("Content-Disposition: form-data; name=\"").append(k).append("\"\r\n\r\n").append(v).append("\r\n");
-            });
+
+        this.handleParam(paramObj);
+
+        MultipartData.FileStream fileStream = multipartData.getFileStream();
+        if (ObjectUtils.isNotNullOrEmpty(fileStream)) {
+            this.handleFileStream(fileStream);
+            return;
         }
-        paramByte = paramData.toString().getBytes();
-        contentLength += paramByte.length;
-        for (Path path : paths) {
-            try {
-                final File file = FileUtil.file(path.toFile());
-                String fileData = StringUtils.format("--{}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{}\"\r\nContent-Type: application/octet-stream\r\n\r\n", boundary, file.getName());
-                final byte[] bytes = fileData.getBytes();
-                fileParams.add(bytes);
-                contentLength += bytes.length;
-                contentLength += file.length();
-            } catch (Exception e) {
-                HttpExceptionCheck.INSTANCE.throwUnchecked(e, "build file data error");
-            }
-        }
-        endBytes = (StringUtils.format("\r\n--{}--", boundary)).getBytes();
-        contentLength += endBytes.length;
+        this.handlePath(multipartData);
     }
 
     @Override
@@ -93,11 +82,37 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
         submissionPublisher.subscribe(subscriber);
         final ByteBuffer paramBuffer = copy2(paramByte, paramByte.length);
         submissionPublisher.submit(paramBuffer);
-        int i = 0;
-        for (Path path : paths) {
+
+        if (ObjectUtils.isNullOrEmpty(this.paths)) {
+            this.subStream(submissionPublisher);
+        } else {
+            this.subPaths(submissionPublisher);
+        }
+
+        final ByteBuffer endBuffer = copy2(endBytes, endBytes.length);
+        submissionPublisher.submit(endBuffer);
+        submissionPublisher.close();
+    }
+
+    private void subStream(SubmissionPublisher<ByteBuffer> submissionPublisher) {
+        final byte[] bytes = fileParams.getFirst();
+        submissionPublisher.submit(copy2(bytes, bytes.length));
+        try (InputStream inputStream = this.fileStream.getInputStream()) {
+            int readCount;
+            byte[] readByte = new byte[HttpConstants.DEFAULT_READ_LIMIT];
+            while ((readCount = inputStream.read(readByte)) != -1) {
+                submissionPublisher.submit(copy2(readByte, readCount));
+            }
+        } catch (Exception e) {
+            HttpExceptionCheck.INSTANCE.throwUnchecked(e);
+        }
+    }
+
+    private void subPaths(SubmissionPublisher<ByteBuffer> submissionPublisher) {
+        for (int i = 0; i < paths.size(); i++) {
             final byte[] bytes = fileParams.get(i);
             submissionPublisher.submit(copy2(bytes, bytes.length));
-            final File file = FileUtil.file(path.toFile());
+            final File file = FileUtil.file(paths.get(i).toFile());
             try (FileInputStream fileInputStream = new FileInputStream(file)) {
                 int readCount;
                 byte[] readByte = new byte[HttpConstants.DEFAULT_READ_LIMIT];
@@ -107,17 +122,59 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
             } catch (Exception e) {
                 HttpExceptionCheck.INSTANCE.throwUnchecked(e);
             }
-            i++;
         }
-        final ByteBuffer endBuffer = copy2(endBytes, endBytes.length);
-        submissionPublisher.submit(endBuffer);
-        submissionPublisher.close();
     }
 
-    ByteBuffer copy2(byte[] content, int length) {
+    private ByteBuffer copy2(byte[] content, int length) {
         ByteBuffer b = ByteBuffer.allocate(length);
         b.put(content, 0, length);
         b.flip();
         return b;
+    }
+
+    private void handlePath(MultipartData multipartData) {
+        if (ObjectUtils.isNotNullOrEmpty(multipartData.getPaths())) {
+            paths = Arrays.stream(multipartData.getPaths()).map(Path::of).collect(Collectors.toList());
+        } else {
+            paths = Arrays.stream(multipartData.getFiles()).map(file -> Path.of(file.getPath())).collect(Collectors.toList());
+        }
+        for (Path path : paths) {
+            try {
+                final File file = FileUtil.file(path.toFile());
+                String fileData = StringUtils.format(fileNameTmp, boundary, file.getName());
+                final byte[] bytes = fileData.getBytes();
+                fileParams.add(bytes);
+                contentLength += bytes.length;
+                contentLength += file.length();
+            } catch (Exception e) {
+                HttpExceptionCheck.INSTANCE.throwUnchecked(e, "build file data error");
+            }
+        }
+        endBytes = (StringUtils.format("\r\n--{}--", boundary)).getBytes();
+        contentLength += endBytes.length;
+    }
+
+    private void handleFileStream(MultipartData.FileStream fileStream) {
+        this.fileStream = fileStream;
+        String fileData = StringUtils.format(fileNameTmp, boundary, fileStream.getFileName());
+        final byte[] bytes = fileData.getBytes();
+        fileParams.add(bytes);
+        contentLength += bytes.length;
+        contentLength += fileStream.getSize();
+        endBytes = (StringUtils.format("\r\n--{}--", boundary)).getBytes();
+        contentLength += endBytes.length;
+    }
+
+    private void handleParam(Object paramObj) {
+        StringBuilder paramData = new StringBuilder();
+        if (Objects.nonNull(paramObj)) {
+            Map<String, Object> paramMap = BeanUtil.beanToMap(paramObj);
+            paramMap.forEach((k, v) -> {
+                paramData.append("--").append(boundary).append("\r\n");
+                paramData.append("Content-Disposition: form-data; name=\"").append(k).append("\"\r\n\r\n").append(v).append("\r\n");
+            });
+        }
+        paramByte = paramData.toString().getBytes();
+        contentLength += paramByte.length;
     }
 }
