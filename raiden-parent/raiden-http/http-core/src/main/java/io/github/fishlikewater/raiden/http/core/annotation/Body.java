@@ -18,10 +18,9 @@ package io.github.fishlikewater.raiden.http.core.annotation;
 import java.lang.annotation.*;
 
 /**
- *
  * @author fishlikewater@126.com
- * @since 2023年09月28日 20:30
  * @version 1.0.0
+ * @since 2023年09月28日 20:30
  **/
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

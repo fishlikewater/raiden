@@ -26,10 +26,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author fishlikewater@126.com
- * @since 2023年09月25日 16:46
  * @version 1.0.0
+ * @since 2023年09月25日 16:46
  **/
 @Slf4j
 public class ByteBufferUtils {

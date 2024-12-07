@@ -23,12 +23,12 @@ import java.util.Objects;
 
 /**
  * <p>
- *     HttpClient 注册容器
+ * HttpClient 注册容器
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月23日 10:14
  * @version 1.0.0
+ * @since 2023年09月23日 10:14
  **/
 public class SourceHttpClientRegistry {
 
@@ -54,7 +54,7 @@ public class SourceHttpClientRegistry {
 
     public HttpClient get(String name) {
         HttpClient httpClient = httpClientMap.get(name);
-        if (Objects.isNull(httpClient)){
+        if (Objects.isNull(httpClient)) {
             return httpClientMap.get("default");
         }
         return httpClient;

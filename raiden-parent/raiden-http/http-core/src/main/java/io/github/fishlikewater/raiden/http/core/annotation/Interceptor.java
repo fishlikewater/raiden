@@ -21,18 +21,20 @@ import java.lang.annotation.*;
 
 /**
  * <p>
- *  拦截器注解
+ * 拦截器注解
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月28日 20:30
  * @version 1.0.0
+ * @since 2023年09月28日 20:30
  **/
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Interceptor {
 
-    /** 拦截器类*/
+    /**
+     * 拦截器类
+     */
     Class<? extends HttpClientInterceptor>[] value();
 }

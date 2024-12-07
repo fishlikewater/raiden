@@ -19,10 +19,16 @@ import java.lang.annotation.*;
 
 /**
  * 适用于url上的拼接参数
+ * <pre>
+ *     {@code
+ *     @GET("https://www.baidu.com")
+ *     String baidu3(@Param("wd") String keyWord);
+ *     }
+ * </pre>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月28日 20:30
  * @version 1.0.0
+ * @since 2023年09月28日 20:30
  **/
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

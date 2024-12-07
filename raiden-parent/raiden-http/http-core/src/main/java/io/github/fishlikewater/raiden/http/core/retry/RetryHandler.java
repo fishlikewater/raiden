@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * {@code RetryHandler}
@@ -67,17 +68,25 @@ public class RetryHandler implements Retry {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     private <T> T toRetrySync(RequestWrap requestWrap) {
+        this.sleep();
         requestWrap.setRetryCount(requestWrap.getRetryCount() - 1);
         log.info("begin sync retry, count:[{}] ", HttpBootStrap.getConfig().getMaxRetryCount() - requestWrap.getRetryCount());
-        return (T) HttpBootStrap.getConfig().getHttpClient().requestSync(requestWrap);
+        return HttpBootStrap.getConfig().getHttpClient().requestSync(requestWrap);
     }
 
-    @SuppressWarnings("unchecked")
     private <T> CompletableFuture<T> toRetryAsync(RequestWrap requestWrap) {
+        this.sleep();
         requestWrap.setRetryCount(requestWrap.getRetryCount() - 1);
         log.info("begin async retry, count:[{}] ", HttpBootStrap.getConfig().getMaxRetryCount() - requestWrap.getRetryCount());
-        return (CompletableFuture<T>) HttpBootStrap.getConfig().getHttpClient().requestAsync(requestWrap);
+        return HttpBootStrap.getConfig().getHttpClient().requestAsync(requestWrap);
+    }
+
+    private void sleep() {
+        try {
+            TimeUnit.MILLISECONDS.sleep(HttpBootStrap.getConfig().getRetryInterval());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

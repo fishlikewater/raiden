@@ -24,13 +24,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- *
  * @author fishlikewater@126.com
- * @since 2021年12月26日 13:10
  * @version 1.0.0
+ * @since 2021年12月26日 13:10
  **/
 @Setter
-public class JdkInterfaceProxy  implements InvocationHandler,InterfaceProxy {
+public class JdkInterfaceProxy implements InvocationHandler, InterfaceProxy {
 
     private HttpClientProcessor httpClientProcessor;
 
@@ -38,7 +37,7 @@ public class JdkInterfaceProxy  implements InvocationHandler,InterfaceProxy {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getInstance(Class<T> interfaceClass){
+    public <T> T getInstance(Class<T> interfaceClass) {
         return (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{interfaceClass}, this);
     }
 

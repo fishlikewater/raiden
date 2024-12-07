@@ -17,12 +17,12 @@ package io.github.fishlikewater.raiden.http.core.source;
 
 /**
  * <p>
- *     HttpClient 注册
+ * HttpClient 注册
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月23日 10:14
  * @version 1.0.0
+ * @since 2023年09月23日 10:14
  **/
 public interface SourceHttpClientRegister {
 

@@ -19,12 +19,12 @@ import java.lang.annotation.*;
 
 /**
  * <p>
- *  GET请求方法
+ * GET请求方法
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月28日 20:30
  * @version 1.0.0
+ * @since 2023年09月28日 20:30
  **/
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

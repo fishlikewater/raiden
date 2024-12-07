@@ -29,13 +29,14 @@ import java.lang.reflect.Method;
  * </p>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月23日 20:25
  * @version 1.0.0
+ * @since 2023年09月23日 20:25
  **/
 public interface HttpClientBeanFactory {
 
     /**
      * 获取方法参数
+     *
      * @param methodName 方法名
      * @return 方法参数
      */
@@ -43,29 +44,33 @@ public interface HttpClientBeanFactory {
 
     /**
      * 缓存方法
-     * @param method 方法
-     * @param httpServer HttpServer注解
+     *
+     * @param method      方法
+     * @param httpServer  HttpServer注解
      * @param interceptor Interceptor注解
      */
     void cacheMethod(Method method, HttpServer httpServer, Interceptor interceptor);
 
     /**
      * 获取代理对象
+     *
      * @param tClass 类
-     * @param <T> 泛型
+     * @param <T>    泛型
      * @return 代理对象
      */
     <T> T getProxyObject(Class<T> tClass);
 
     /**
      * 缓存代理对象
-     * @param className 类名
+     *
+     * @param className   类名
      * @param proxyObject 代理对象
      */
-    void cacheProxyObject(String className,  Object proxyObject);
+    void cacheProxyObject(String className, Object proxyObject);
 
     /**
      * 获取拦截器
+     *
      * @param interceptorName 拦截器名
      * @return 拦截器
      */
@@ -73,6 +78,7 @@ public interface HttpClientBeanFactory {
 
     /**
      * 缓存拦截器
+     *
      * @param httpClientInterceptor 拦截器
      */
     void registerHttpClientInterceptor(HttpClientInterceptor httpClientInterceptor);

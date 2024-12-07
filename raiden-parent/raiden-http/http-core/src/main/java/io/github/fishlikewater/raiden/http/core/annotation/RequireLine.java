@@ -20,19 +20,22 @@ import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import java.lang.annotation.*;
 
 /**
- *
  * @author fishlikewater@126.com
- * @since 2023年09月28日 20:30
  * @version 1.0.0
+ * @since 2023年09月28日 20:30
  **/
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface RequireLine {
 
-    /** 请求方式 默认GET*/
+    /**
+     * 请求方式 默认GET
+     */
     HttpMethod method() default HttpMethod.GET;
 
-    /** 请求路径*/
+    /**
+     * 请求路径
+     */
     String path() default "";
 }

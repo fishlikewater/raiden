@@ -19,8 +19,8 @@ package io.github.fishlikewater.raiden.http.core.enums;
  * http方法枚举
  *
  * @author fishlikewater@126.com
- * @since 2023年09月20日 16:30
  * @version 1.0.0
+ * @since 2023年09月20日 16:30
  **/
 public enum HttpMethod {
 

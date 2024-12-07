@@ -18,10 +18,16 @@ package io.github.fishlikewater.raiden.http.core.annotation;
 import java.lang.annotation.*;
 
 /**
+ * <pre>{@code
+ *     @POST("/form")
+ *     @Form
+ *     String form(@Body Map<String, Object> map);
+ * }
+ * </pre>
  *
  * @author fishlikewater@126.com
- * @since 2023年09月28日 20:30
  * @version 1.0.0
+ * @since 2023年09月28日 20:30
  **/
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

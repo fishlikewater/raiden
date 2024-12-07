@@ -18,6 +18,11 @@ package io.github.fishlikewater.raiden.http.core.annotation;
 import java.lang.annotation.*;
 
 /**
+ * <pre> {@code
+ * @GET("https://www.baidu.com?wd={wd}")
+ * String baidu4(@PathParam("wd") String keyWord);
+ * }</pre>
+ *
  * @author fishlikewater@126.com
  * @version 1.0.0
  * @since 2023年09月28日 20:30

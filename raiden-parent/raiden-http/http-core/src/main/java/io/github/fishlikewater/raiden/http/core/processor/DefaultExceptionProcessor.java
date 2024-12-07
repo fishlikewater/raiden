@@ -38,13 +38,13 @@ public class DefaultExceptionProcessor implements ExceptionProcessor {
     }
 
     @Override
-    public void ioExceptionHandle(RequestWrap requestWrap, IOException cause) {
+    public <T> void ioExceptionHandle(RequestWrap requestWrap, HttpResponse<T> response, IOException cause) {
         log.error("request failed, request address url: {}", requestWrap.getHttpRequest().uri(), cause);
         throw new RaidenHttpException("request failed, request address url: {}", requestWrap.getHttpRequest().uri(), cause);
     }
 
     @Override
-    public void otherExceptionHandle(RequestWrap requestWrap, Throwable cause) {
+    public <T> void otherExceptionHandle(RequestWrap requestWrap, HttpResponse<T> response, Throwable cause) {
         log.error("request failed, request address url: {}", requestWrap.getHttpRequest().uri(), cause);
         throw new RaidenHttpException("request failed, request address url: {}", requestWrap.getHttpRequest().uri(), cause);
     }

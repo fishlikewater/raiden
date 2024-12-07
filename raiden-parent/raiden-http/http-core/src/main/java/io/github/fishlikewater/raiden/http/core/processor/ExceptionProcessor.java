@@ -30,11 +30,11 @@ import java.net.http.HttpResponse;
  */
 public interface ExceptionProcessor {
 
-    default void exceptionHandle(RequestWrap requestWrap, Throwable cause) {
+    default <T> void exceptionHandle(RequestWrap requestWrap, HttpResponse<T> response, Throwable cause) {
         if (cause instanceof IOException ioException) {
-            this.ioExceptionHandle(requestWrap, ioException);
+            this.ioExceptionHandle(requestWrap, response, ioException);
         } else {
-            this.otherExceptionHandle(requestWrap, cause);
+            this.otherExceptionHandle(requestWrap, response, cause);
         }
     }
 
@@ -50,15 +50,17 @@ public interface ExceptionProcessor {
      * 处理IO异常
      *
      * @param requestWrap 请求
+     * @param response    响应
      * @param cause       异常
      */
-    void ioExceptionHandle(RequestWrap requestWrap, IOException cause);
+    <T> void ioExceptionHandle(RequestWrap requestWrap, HttpResponse<T> response, IOException cause);
 
     /**
      * 处理异常 (除IO异常之外的其他异常)
      *
      * @param requestWrap 请求
+     * @param response    响应
      * @param cause       异常
      */
-    void otherExceptionHandle(RequestWrap requestWrap, Throwable cause);
+    <T> void otherExceptionHandle(RequestWrap requestWrap, HttpResponse<T> response, Throwable cause);
 }

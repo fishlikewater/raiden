@@ -50,6 +50,11 @@ public class HttpConfig {
     private int maxRetryCount;
 
     /**
+     * 重试间隔时间
+     */
+    private long retryInterval;
+
+    /**
      * 是否开启日志
      */
     private boolean enableLog;

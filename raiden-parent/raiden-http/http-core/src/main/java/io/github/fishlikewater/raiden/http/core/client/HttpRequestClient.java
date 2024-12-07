@@ -394,8 +394,8 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             if (ObjectUtils.isNotNullOrEmpty(retry)) {
                 return retry;
             }
-            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, ex);
-            return null;
+            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, res, ex);
+            return ObjectUtils.isNotNullOrEmpty(res) ? CompletableFuture.completedFuture(res.body()) : null;
         };
     }
 
@@ -430,8 +430,8 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             if (ObjectUtils.isNotNullOrEmpty(retry)) {
                 return retry;
             }
-            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, e);
-            return null;
+            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, response, e);
+            return ObjectUtils.isNotNullOrEmpty(response) ? response.body() : null;
         }
     }
 
@@ -453,8 +453,8 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             if (ObjectUtils.isNotNullOrEmpty(retry)) {
                 return (T) retry;
             }
-            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, e);
-            return null;
+            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, response, e);
+            return ObjectUtils.isNotNullOrEmpty(response) ? (T) response.body() : null;
         }
     }
 
@@ -469,8 +469,8 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             if (ObjectUtils.isNotNullOrEmpty(retry)) {
                 return (T) retry;
             }
-            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, e);
-            return null;
+            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, response, e);
+            return ObjectUtils.isNotNullOrEmpty(response) ? (T) response.body() : null;
         }
     }
 

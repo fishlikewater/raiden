@@ -28,12 +28,11 @@ import java.util.Map;
  * 自定义头包装
  *
  * @author zhangxiang
- * @since 2024/03/19
  * @version 1.0.0
+ * @since 2024/03/19
  */
 @Data
 public class HeadWrap {
-
 
     private List<Head> heads;
 

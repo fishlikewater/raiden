@@ -41,5 +41,14 @@ public interface Retry {
      */
     <T> T retrySync(HttpResponse<T> response, RequestWrap requestWrap, Throwable ex);
 
+    /**
+     * 异步重试
+     *
+     * @param response    响应
+     * @param requestWrap 请求
+     * @param ex          异常
+     * @param <T>         实际需要的类型
+     * @return 响应
+     */
     <T> CompletableFuture<T> retryAsync(HttpResponse<T> response, RequestWrap requestWrap, Throwable ex);
 }

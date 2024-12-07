@@ -42,8 +42,11 @@ public class RemoteTest {
         HttpBootStrap.setSelfManager(true);
         HttpBootStrap.init("io.github.fishlikewater.raiden.http.core.remote");
         HttpBootStrap.registerHttpClient("third", HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build());
-        HttpBootStrap.getConfig().setEnableLog(false).setLogLevel(LogLevel.BASIC);
-        HttpBootStrap.getConfig().setMaxRetryCount(1);
+        HttpBootStrap.getConfig()
+                .setEnableLog(false)
+                .setLogLevel(LogLevel.BASIC)
+                .setMaxRetryCount(1)
+                .setRetryInterval(2000);
     }
 
     @Test
