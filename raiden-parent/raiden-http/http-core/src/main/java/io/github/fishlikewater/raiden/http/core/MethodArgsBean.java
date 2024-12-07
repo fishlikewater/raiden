@@ -60,6 +60,24 @@ public class MethodArgsBean {
 
     private Map<String, String> headMap;
 
+    /**
+     * 请求协议
+     */
+    private String protocol;
+
+    /**
+     * 类上服务注解 请求前缀
+     */
+    private String urlPrefix;
+
+    /**
+     * 方法上的请求路径
+     */
+    private String path;
+
+    /**
+     * 完整请求路径
+     */
     private String url;
 
     private Parameter[] urlParameters;

@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.http.autoconfigure;
 
 import io.github.fishlikewater.raiden.core.StringUtils;
+import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
 import io.github.fishlikewater.raiden.http.core.interceptor.PredRequestInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -36,13 +37,14 @@ public class ServiceChoose implements PredRequestInterceptor {
 
     @Override
     public void handler(MethodArgsBean methodArgsBean) {
-        if (StringUtils.isBlank(methodArgsBean.getUrl())) {
-            final String serverName = methodArgsBean.getServerName();
-            if (StringUtils.isBlank(serverName)) {
-                throw new RuntimeException("not config request");
-            }
+        final String serverName = methodArgsBean.getServerName();
+        if (StringUtils.isNotBlank(serverName)) {
             final URI uri = serviceInstanceChooser.choose(serverName);
-            methodArgsBean.setUrl(uri.toString());
+            String path = methodArgsBean.getPath();
+            if (path.startsWith(CommonConstants.Symbol.SYMBOL_PATH)) {
+                path = path.substring(1);
+            }
+            methodArgsBean.setUrl(StringUtils.format("{}://{}:{}/{}", uri.getScheme(), uri.getHost(), uri.getPort(), path));
         }
     }
 }

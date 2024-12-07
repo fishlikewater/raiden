@@ -94,6 +94,9 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         String exceptionProcessorClassName = ObjectUtils.isNotNullOrEmpty(httpServer.exceptionProcessor()) ? httpServer.exceptionProcessor().getName() : null;
         argsBean.setClassName(className)
                 .setServerName(serverName)
+                .setProtocol(httpServer.protocol())
+                .setUrlPrefix(httpServer.url())
+                .setPath(path)
                 .setExceptionProcessorName(exceptionProcessorClassName)
                 .setUrl(requestUrl)
                 .setHeadMap(headMap)
