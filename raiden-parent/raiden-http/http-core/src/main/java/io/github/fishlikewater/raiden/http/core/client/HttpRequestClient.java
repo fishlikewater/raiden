@@ -31,6 +31,7 @@ import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientIntercepto
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -334,52 +335,71 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         return requestWrap.getHttpRequest();
     }
 
-    @SuppressWarnings("unchecked")
     private <T> CompletableFuture<T> handlerAsync(RequestWrap requestWrap, HttpRequest httpRequest) {
+        requestWrap.setHttpRequest(httpRequest);
         Class<?> typeArgumentClass = requestWrap.getTypeArgumentClass();
         MultipartData multipartData = requestWrap.getMultipartData();
         HttpClient httpClient = requestWrap.getHttpClient();
         if (ObjectUtils.isNullOrEmpty(httpClient)) {
-            httpClient = HttpBootStrap.getHttpClient(HttpConstants.DEFAULT);
+            requestWrap.setHttpClient(HttpBootStrap.getHttpClient(HttpConstants.DEFAULT));
         }
         if (typeArgumentClass.isAssignableFrom(byte[].class)) {
-            CompletableFuture<byte[]> completableFuture = httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofByteArray())
-                    .thenApply(res -> requestAfter(res, requestWrap).body());
-            return (CompletableFuture<T>) completableFuture;
+            return this.byteAsync(requestWrap);
+        }
+        if (typeArgumentClass.isAssignableFrom(InputStream.class)) {
+            return this.streamAsync(requestWrap);
         }
         if (typeArgumentClass.isAssignableFrom(Path.class) && Objects.nonNull(multipartData)) {
             final Path path = multipartData.getPath();
             Assert.notNull(path, "Please pass in the file save path");
             if (multipartData.isFileDownload()) {
-                return this.downFile(requestWrap, httpRequest, httpClient, path, multipartData);
+                return this.downFile(requestWrap);
             } else {
-                return this.uploadFile(requestWrap, httpRequest, httpClient, path, multipartData);
+                return this.uploadFile(requestWrap);
             }
         }
-        return this.jsonAsync(requestWrap, httpRequest, httpClient, typeArgumentClass);
+        return this.jsonAsync(requestWrap);
     }
 
-    private <T> CompletableFuture<T> jsonAsync(RequestWrap requestWrap, HttpRequest httpRequest, HttpClient httpClient, Class<?> typeArgumentClass) {
-        return httpClient
-                .sendAsync(httpRequest, (responseInfo) -> new ResponseJsonHandlerSubscriber<T>(responseInfo.headers(), typeArgumentClass))
+    @SuppressWarnings("unchecked")
+    private <T> CompletableFuture<T> streamAsync(RequestWrap requestWrap) {
+        return (CompletableFuture<T>) requestWrap.getHttpClient()
+                .sendAsync(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofInputStream())
                 .thenApply(res -> requestAfter(res, requestWrap))
                 .handleAsync(this.throwableFunction(requestWrap))
                 .thenCompose(Function.identity());
     }
 
     @SuppressWarnings("unchecked")
-    private <T> CompletableFuture<T> uploadFile(RequestWrap requestWrap, HttpRequest httpRequest, HttpClient httpClient, Path path, MultipartData multipartData) {
-        return (CompletableFuture<T>) httpClient
-                .sendAsync(httpRequest, HttpResponse.BodyHandlers.ofFile(path, multipartData.getOpenOptions()))
+    private <T> CompletableFuture<T> byteAsync(RequestWrap requestWrap) {
+        return (CompletableFuture<T>) requestWrap.getHttpClient()
+                .sendAsync(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofByteArray())
                 .thenApply(res -> requestAfter(res, requestWrap))
                 .handleAsync(this.throwableFunction(requestWrap))
                 .thenCompose(Function.identity());
     }
 
     @SuppressWarnings("unchecked")
-    private <T> CompletableFuture<T> downFile(RequestWrap requestWrap, HttpRequest httpRequest, HttpClient httpClient, Path path, MultipartData multipartData) {
-        return (CompletableFuture<T>) httpClient
-                .sendAsync(httpRequest, HttpResponse.BodyHandlers.ofFileDownload(path, multipartData.getOpenOptions()))
+    private <T> CompletableFuture<T> downFile(RequestWrap requestWrap) {
+        return (CompletableFuture<T>) requestWrap.getHttpClient()
+                .sendAsync(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofFileDownload(requestWrap.getMultipartData().getPath(), requestWrap.getMultipartData().getOpenOptions()))
+                .thenApply(res -> requestAfter(res, requestWrap))
+                .handleAsync(this.throwableFunction(requestWrap))
+                .thenCompose(Function.identity());
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> CompletableFuture<T> uploadFile(RequestWrap requestWrap) {
+        return (CompletableFuture<T>) requestWrap.getHttpClient()
+                .sendAsync(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofFile(requestWrap.getMultipartData().getPath(), requestWrap.getMultipartData().getOpenOptions()))
+                .thenApply(res -> requestAfter(res, requestWrap))
+                .handleAsync(this.throwableFunction(requestWrap))
+                .thenCompose(Function.identity());
+    }
+
+    private <T> CompletableFuture<T> jsonAsync(RequestWrap requestWrap) {
+        return requestWrap.getHttpClient()
+                .sendAsync(requestWrap.getHttpRequest(), (responseInfo) -> new ResponseJsonHandlerSubscriber<T>(responseInfo.headers(), requestWrap.getTypeArgumentClass()))
                 .thenApply(res -> requestAfter(res, requestWrap))
                 .handleAsync(this.throwableFunction(requestWrap))
                 .thenCompose(Function.identity());
@@ -400,6 +420,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     }
 
     private <T> T handlerSync(RequestWrap requestWrap, HttpRequest httpRequest) {
+        requestWrap.setHttpRequest(httpRequest);
         Class<?> returnType = requestWrap.getReturnType();
         HttpClient httpClient = requestWrap.getHttpClient();
         MultipartData multipartData = requestWrap.getMultipartData();
@@ -409,21 +430,41 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         }
 
         if (returnType.isAssignableFrom(byte[].class)) {
-            return handleReturnBytes(requestWrap, httpRequest);
+            return handleReturnBytes(requestWrap);
         }
         if (returnType.isAssignableFrom(Path.class) && Objects.nonNull(multipartData)) {
-            return handleFile(requestWrap, httpRequest);
+            return handleFile(requestWrap);
         }
-        return this.handleJson(requestWrap, httpRequest);
+
+        if (returnType.isAssignableFrom(InputStream.class)) {
+            return handleStream(requestWrap);
+        }
+        return this.handleJson(requestWrap);
 
     }
 
-    private <T> T handleJson(RequestWrap requestWrap, HttpRequest httpRequest) {
+    @SuppressWarnings("unchecked")
+    private <T> T handleStream(RequestWrap requestWrap) {
+        HttpResponse<InputStream> response = null;
+        try {
+            response = requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofInputStream());
+            return requestAfter((HttpResponse<T>) response, requestWrap).body();
+        } catch (Exception e) {
+            InputStream retry = HttpBootStrap.getConfig().getRetryHandler().retrySync(response, requestWrap, e);
+            if (ObjectUtils.isNotNullOrEmpty(retry)) {
+                return (T) retry;
+            }
+            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, response, e);
+            return ObjectUtils.isNotNullOrEmpty(response) ? (T) response.body() : null;
+        }
+    }
+
+    private <T> T handleJson(RequestWrap requestWrap) {
         HttpResponse<T> response = null;
         try {
             response = requestWrap
                     .getHttpClient()
-                    .send(httpRequest, (responseInfo) -> new ResponseJsonHandlerSubscriber<>(responseInfo.headers(), requestWrap.getReturnType()));
+                    .send(requestWrap.getHttpRequest(), (responseInfo) -> new ResponseJsonHandlerSubscriber<>(responseInfo.headers(), requestWrap.getReturnType()));
             return this.requestAfter(response, requestWrap).body();
         } catch (Exception e) {
             T retry = HttpBootStrap.getConfig().getRetryHandler().retrySync(response, requestWrap, e);
@@ -436,16 +477,16 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T handleFile(RequestWrap requestWrap, HttpRequest httpRequest) {
+    private <T> T handleFile(RequestWrap requestWrap) {
         HttpResponse<Path> response = null;
         try {
             MultipartData multipartData = requestWrap.getMultipartData();
             final Path path = multipartData.getPath();
             Assert.notNull(path, "Please pass in the file save path");
             if (multipartData.isFileDownload()) {
-                response = requestWrap.getHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofFileDownload(path, multipartData.getOpenOptions()));
+                response = requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofFileDownload(path, multipartData.getOpenOptions()));
             } else {
-                response = requestWrap.getHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofFile(path, multipartData.getOpenOptions()));
+                response = requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofFile(path, multipartData.getOpenOptions()));
             }
             return requestAfter((HttpResponse<T>) response, requestWrap).body();
         } catch (Exception e) {
@@ -459,10 +500,10 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T handleReturnBytes(RequestWrap requestWrap, HttpRequest httpRequest) {
+    private <T> T handleReturnBytes(RequestWrap requestWrap) {
         HttpResponse<byte[]> response = null;
         try {
-            response = requestWrap.getHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
+            response = requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofByteArray());
             return requestAfter((HttpResponse<T>) response, requestWrap).body();
         } catch (Exception e) {
             byte[] retry = HttpBootStrap.getConfig().getRetryHandler().retrySync(response, requestWrap, e);

@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core.convert;
 
+import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
 import io.github.fishlikewater.raiden.http.core.uttils.ByteBufferUtils;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -92,9 +93,14 @@ public class ResponseJsonHandlerSubscriber<T> implements HttpResponse.BodySubscr
         Object bean;
         if (clazz.isAssignableFrom(String.class) || clazz.isAssignableFrom(Number.class)) {
             bean = jsonStr;
-        } else {
-            bean = JSONUtils.HutoolJSON.toBean(jsonStr, clazz);
+            result.complete((T) bean);
+            return;
         }
-        result.complete((T) bean);
+        try {
+            bean = JSONUtils.JACKSON.readValue(jsonStr, clazz);
+            result.complete((T) bean);
+        } catch (Exception e) {
+            HttpExceptionCheck.INSTANCE.throwUnchecked(e);
+        }
     }
 }

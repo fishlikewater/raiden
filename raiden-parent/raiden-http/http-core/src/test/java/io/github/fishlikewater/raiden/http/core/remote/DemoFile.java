@@ -20,6 +20,7 @@ import io.github.fishlikewater.raiden.http.core.annotation.GET;
 import io.github.fishlikewater.raiden.http.core.annotation.HttpServer;
 import io.github.fishlikewater.raiden.http.core.annotation.POST;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
@@ -28,10 +29,10 @@ import java.util.concurrent.CompletableFuture;
  * 测试文件
  *
  * @author fishlikewater@126.com
- * @since 2024/03/20
  * @version 1.0.0
+ * @since 2024/03/20
  */
-@HttpServer(url = "http://127.0.0.1:8080")
+@HttpServer(url = "http://127.0.0.1:9000")
 public interface DemoFile {
 
     /**
@@ -43,8 +44,30 @@ public interface DemoFile {
     @POST("/upload")
     String uploadFile(MultipartData data);
 
+    /**
+     * 上传文件
+     *
+     * @param data 文件路径
+     * @return 文件上传结果
+     */
     @POST("/upload2")
     String uploadFile2(MultipartData data);
+
+    /**
+     * 下载文件
+     *
+     * @return 文件下载结果
+     */
+    @GET("/download")
+    InputStream download();
+
+    /**
+     * 下载文件
+     *
+     * @return 文件下载结果
+     */
+    @GET("/download")
+    CompletableFuture<InputStream> downloadAsync();
 
     /**
      * 下载文件

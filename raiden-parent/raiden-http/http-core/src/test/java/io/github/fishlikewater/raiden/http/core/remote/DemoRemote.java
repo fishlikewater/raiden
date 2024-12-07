@@ -73,6 +73,6 @@ public interface DemoRemote {
      *
      * @return {@code String}
      */
-    @GET("https://www.baiduss.com")
+    @GET("https://www.baidu.com")
     CompletableFuture<String> baidu5();
 }

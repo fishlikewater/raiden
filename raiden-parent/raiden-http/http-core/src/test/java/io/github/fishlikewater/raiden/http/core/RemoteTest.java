@@ -22,9 +22,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.util.concurrent.CompletableFuture;
 
@@ -62,35 +62,79 @@ public class RemoteTest {
         DemoRemote remote = HttpBootStrap.getProxy(DemoRemote.class);
         CompletableFuture<String> future = remote.baidu5();
         future.thenAcceptAsync(System.out::println).join();
-        System.out.println("11");
         Thread.sleep(3_000);
     }
 
     @Test
-    public void testUpload() throws FileNotFoundException {
+    public void testUpload() throws FileNotFoundException, URISyntaxException {
         DemoFile remote = HttpBootStrap.getProxy(DemoFile.class);
-        File file = new File("C:\\Users\\fishl\\Pictures\\【哲风壁纸】剑客-红装.png");
-        MultipartData multipartData = MultipartData.ofFileUpload(new FileInputStream(file), "test", file.length());
-        String s = remote.uploadFile(multipartData);
-        System.out.println(s);
+        URL resource = getClass().getClassLoader().getResource("1.png");
+        if (resource != null) {
+            File file = new File(resource.toURI());
+            MultipartData multipartData = MultipartData.ofFileUpload(new FileInputStream(file), "test", file.length());
+            String s = remote.uploadFile(multipartData);
+            System.out.println(s);
+        }
     }
 
     @Test
-    public void testUpload2() throws FileNotFoundException {
+    public void testUpload2() throws URISyntaxException {
         DemoFile remote = HttpBootStrap.getProxy(DemoFile.class);
-        File file = new File("C:\\Users\\fishl\\Pictures\\【哲风壁纸】剑客-红装.png");
-        MultipartData multipartData = MultipartData.ofFileUpload(file);
-        String s = remote.uploadFile(multipartData);
-        System.out.println(s);
+        URL resource = getClass().getClassLoader().getResource("1.png");
+        if (resource != null) {
+            File file = new File(resource.toURI());
+            MultipartData multipartData = MultipartData.ofFileUpload(file);
+            String s = remote.uploadFile(multipartData);
+            System.out.println(s);
+        }
     }
 
     @Test
-    public void testUpload3() throws FileNotFoundException {
+    public void testUpload3() throws URISyntaxException {
         DemoFile remote = HttpBootStrap.getProxy(DemoFile.class);
-        File file1 = new File("G:\\壁纸\\【哲风壁纸】剑客-红装.png");
-        File file2 = new File("G:\\壁纸\\【哲风壁纸】美女-黑丝.png");
-        MultipartData multipartData = MultipartData.ofFileUpload(file1, file2);
-        String s = remote.uploadFile(multipartData);
-        System.out.println(s);
+        URL resource1 = getClass().getClassLoader().getResource("1.png");
+        URL resource2 = getClass().getClassLoader().getResource("2.png");
+        if (resource1 != null && resource2 != null) {
+            File file1 = new File(resource1.toURI());
+            File file2 = new File(resource2.toURI());
+            MultipartData multipartData = MultipartData.ofFileUpload(file1, file2);
+            String s = remote.uploadFile(multipartData);
+            System.out.println(s);
+        }
+    }
+
+    @Test
+    public void testDownload() throws Exception {
+        DemoFile remote = HttpBootStrap.getProxy(DemoFile.class);
+        InputStream inputStream = remote.download();
+        OutputStream outputStream = new FileOutputStream("output.png");
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        System.out.println("File saved successfully.");
+        outputStream.flush();
+        outputStream.close();
+        inputStream.close();
+
+    }
+
+    @Test
+    public void testDownloadAsync() throws Exception {
+        DemoFile remote = HttpBootStrap.getProxy(DemoFile.class);
+        CompletableFuture<InputStream> completableFuture = remote.downloadAsync();
+        InputStream inputStream = completableFuture.get();
+        OutputStream outputStream = new FileOutputStream("output.png");
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        System.out.println("File saved successfully.");
+        outputStream.flush();
+        outputStream.close();
+        inputStream.close();
+
     }
 }
