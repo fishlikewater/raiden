@@ -80,52 +80,6 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         return this.requestSyncSelector(requestWrap);
     }
 
-    private <T> CompletableFuture<T> requestAsyncSelector(RequestWrap requestWrap) {
-        switch (requestWrap.getHttpMethod()) {
-            case GET -> {
-                return this.getAsync(requestWrap);
-            }
-            case DELETE -> {
-                return this.deleteAsync(requestWrap);
-            }
-            case POST -> {
-                return this.postAsync(requestWrap);
-            }
-            case PUT -> {
-                return this.putAsync(requestWrap);
-            }
-            case PATCH -> {
-                return this.patchAsync(requestWrap);
-            }
-            default -> {
-                return null;
-            }
-        }
-    }
-
-    private <T> T requestSyncSelector(RequestWrap requestWrap) {
-        switch (requestWrap.getHttpMethod()) {
-            case GET -> {
-                return this.getSync(requestWrap);
-            }
-            case DELETE -> {
-                return this.deleteSync(requestWrap);
-            }
-            case POST -> {
-                return this.postSync(requestWrap);
-            }
-            case PUT -> {
-                return this.putSync(requestWrap);
-            }
-            case PATCH -> {
-                return this.patchSync(requestWrap);
-            }
-            default -> {
-                return null;
-            }
-        }
-    }
-
     @Override
     public <T> CompletableFuture<T> getAsync(RequestWrap requestWrap) {
         this.checkHttpMethod(requestWrap, HttpMethod.GET);
@@ -220,7 +174,55 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         return handlerSync(requestWrap, httpRequest);
     }
 
-    // ---------------------------------------------------------------- private
+    // ---------------------------------------------------------------- Selector
+
+    private <T> CompletableFuture<T> requestAsyncSelector(RequestWrap requestWrap) {
+        switch (requestWrap.getHttpMethod()) {
+            case GET -> {
+                return this.getAsync(requestWrap);
+            }
+            case DELETE -> {
+                return this.deleteAsync(requestWrap);
+            }
+            case POST -> {
+                return this.postAsync(requestWrap);
+            }
+            case PUT -> {
+                return this.putAsync(requestWrap);
+            }
+            case PATCH -> {
+                return this.patchAsync(requestWrap);
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    private <T> T requestSyncSelector(RequestWrap requestWrap) {
+        switch (requestWrap.getHttpMethod()) {
+            case GET -> {
+                return this.getSync(requestWrap);
+            }
+            case DELETE -> {
+                return this.deleteSync(requestWrap);
+            }
+            case POST -> {
+                return this.postSync(requestWrap);
+            }
+            case PUT -> {
+                return this.putSync(requestWrap);
+            }
+            case PATCH -> {
+                return this.patchSync(requestWrap);
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------- Check
 
     private void checkHttpMethod(RequestWrap requestWrap, HttpMethod httpMethod) {
         if (ObjectUtils.notEquals(requestWrap.getHttpMethod(), httpMethod)) {
@@ -228,14 +230,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         }
     }
 
-    /**
-     * 生成一个随机的boundary字符串
-     *
-     * @return {@link String}
-     */
-    private String boundaryString() {
-        return StringUtils.format("Boundary {}", System.currentTimeMillis());
-    }
+    // ---------------------------------------------------------------- build HttpRequest
 
     private HttpRequest getHttpRequest(RequestWrap requestWrap) {
         URI uri = URI.create(this.getRequestUrl(requestWrap.getUrl(), requestWrap.getParamMap()));
@@ -361,6 +356,8 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         return this.jsonAsync(requestWrap);
     }
 
+    // ---------------------------------------------------------------- Async
+
     @SuppressWarnings("unchecked")
     private <T> CompletableFuture<T> streamAsync(RequestWrap requestWrap) {
         return (CompletableFuture<T>) requestWrap.getHttpClient()
@@ -418,6 +415,8 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             return ObjectUtils.isNotNullOrEmpty(res) ? CompletableFuture.completedFuture(res.body()) : null;
         };
     }
+
+    // ---------------------------------------------------------------- Sync
 
     private <T> T handlerSync(RequestWrap requestWrap, HttpRequest httpRequest) {
         requestWrap.setHttpRequest(httpRequest);
@@ -515,6 +514,8 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         }
     }
 
+    // ---------------------------------------------------------------- Interceptor
+
     private void requestBefore(RequestWrap requestWrap) {
         List<HttpClientInterceptor> interceptors = requestWrap.getInterceptors();
         if (ObjectUtils.isNullOrEmpty(interceptors)) {
@@ -537,6 +538,8 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         return response;
     }
 
+    // ---------------------------------------------------------------- Others
+
     private String getRequestUrl(String url, Map<String, String> map) {
         if (Objects.isNull(map) || map.isEmpty()) {
             return url;
@@ -556,4 +559,14 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             return newUrl.toString();
         }
     }
+
+    /**
+     * 生成一个随机的boundary字符串
+     *
+     * @return {@link String}
+     */
+    private String boundaryString() {
+        return StringUtils.format("Boundary {}", System.currentTimeMillis());
+    }
+
 }
