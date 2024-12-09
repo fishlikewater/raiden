@@ -15,10 +15,9 @@
  */
 package io.github.fishlikewater.raiden.http.core.remote;
 
-import io.github.fishlikewater.raiden.http.core.annotation.GET;
-import io.github.fishlikewater.raiden.http.core.annotation.HttpServer;
-import io.github.fishlikewater.raiden.http.core.annotation.Param;
-import io.github.fishlikewater.raiden.http.core.annotation.PathParam;
+import io.github.fishlikewater.raiden.http.core.annotation.*;
+import io.github.fishlikewater.raiden.http.core.interceptors.DemoInterceptor;
+import io.github.fishlikewater.raiden.http.core.interceptors.DemoInterceptor2;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -32,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
  * 这里使用自定义httpclient 如不设置 则会使用默认的httpclient 默认的httpclient 访问https时会校验证书
  */
 @HttpServer(sourceHttpClient = "third")
+@Interceptor({DemoInterceptor.class, DemoInterceptor2.class})
 public interface DemoRemote {
 
     /**

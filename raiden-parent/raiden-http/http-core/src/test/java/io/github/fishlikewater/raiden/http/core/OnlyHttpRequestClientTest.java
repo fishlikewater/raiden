@@ -55,7 +55,7 @@ public class OnlyHttpRequestClientTest {
                 .build();
         HttpResponse<Object> response = httpRequestClient.requestSync(requestWrap);
         System.out.println(response.statusCode());
-        CompletableFuture<HttpResponse<Object>> async = httpRequestClient.getAsync(requestWrap);
+        CompletableFuture<HttpResponse<String>> async = httpRequestClient.getAsync(requestWrap);
         async.thenAcceptAsync(res -> System.out.println(res.body())).join();
         Assert.assertNotNull(async);
     }

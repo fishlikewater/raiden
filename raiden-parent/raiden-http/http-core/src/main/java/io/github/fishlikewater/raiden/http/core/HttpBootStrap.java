@@ -172,7 +172,7 @@ public class HttpBootStrap {
             Class<? extends HttpInterceptor>[] classes = interceptorAnnotation.value();
             for (Class<? extends HttpInterceptor> aClass : classes) {
                 HttpInterceptor interceptor = config.getHttpClientBeanFactory().getInterceptor(aClass.getName());
-                if (ObjectUtils.isNotNullOrEmpty(interceptor)) {
+                if (ObjectUtils.isNullOrEmpty(interceptor)) {
                     config.getHttpClientBeanFactory().registerHttpClientInterceptor(getInterceptor(aClass));
                 }
             }

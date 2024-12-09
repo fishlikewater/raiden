@@ -13,31 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.http.core.interceptor;
+package io.github.fishlikewater.raiden.http.core.interceptors;
 
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.Response;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 
 import java.io.IOException;
 
 /**
- * {@code Interceptor}
- * 拦截器
+ * DemoInterceptor
  *
  * @author zhangxiang
  * @version 1.1.0
- * @since 2024/12/09
- */
-public interface HttpInterceptor {
+ * @since 2024/12/9
+ **/
+public class DemoInterceptor2 implements HttpInterceptor {
+    @Override
+    public Response<?> intercept(Chain chain) throws IOException, InterruptedException {
+        RequestWrap requestWrap = chain.requestWrap();
+        System.out.println(requestWrap.getUrl() + "--2");
 
-    Response<?> intercept(Chain chain) throws IOException, InterruptedException;
+        return chain.proceed(requestWrap);
+    }
 
-    int order();
-
-    interface Chain {
-
-        RequestWrap requestWrap();
-
-        Response<?> proceed(RequestWrap requestWrap) throws IOException, InterruptedException;
+    @Override
+    public int order() {
+        return -1;
     }
 }
