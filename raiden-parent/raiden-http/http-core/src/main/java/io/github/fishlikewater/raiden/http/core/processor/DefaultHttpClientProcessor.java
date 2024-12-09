@@ -40,7 +40,8 @@ import java.util.List;
 @Slf4j
 public class DefaultHttpClientProcessor implements HttpClientProcessor {
 
-    private final CallServerHttpInterceptor callServerInterceptor = new CallServerHttpInterceptor(new HttpRequestClient());
+    private final HttpRequestClient httpRequestClient = new HttpRequestClient();
+    private final CallServerHttpInterceptor callServerInterceptor = new CallServerHttpInterceptor(httpRequestClient);
 
     @SneakyThrows(Throwable.class)
     @Override
@@ -55,6 +56,7 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
             interceptors.addFirst(HttpBootStrap.getConfig().getLogInterceptor());
         }
         interceptors.addLast(callServerInterceptor);
+        httpRequestClient.buildHttpRequest(requestWrap);
         RealInterceptorChain chain = new RealInterceptorChain(requestWrap, interceptors);
         Response<?> response = chain.proceed(requestWrap);
         if (requestWrap.isSync()) {

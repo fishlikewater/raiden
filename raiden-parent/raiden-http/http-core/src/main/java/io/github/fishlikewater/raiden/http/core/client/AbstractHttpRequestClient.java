@@ -48,6 +48,13 @@ public abstract class AbstractHttpRequestClient {
      */
     public abstract <T> HttpResponse<T> requestSync(RequestWrap requestWrap) throws IOException, InterruptedException;
 
+    /**
+     * 构建HttpRequest
+     *
+     * @param requestWrap 请求封装
+     */
+    public abstract void buildHttpRequest(RequestWrap requestWrap);
+
     //--------------------get------------------------
 
     /**

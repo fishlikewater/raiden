@@ -62,7 +62,8 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         if (Objects.nonNull(multipartData) && !multipartData.isFileDownload()) {
             return this.fileAsync(requestWrap);
         }
-        return this.requestAsyncSelector(requestWrap);
+        this.toBuildHttpRequest(requestWrap);
+        return this.handlerAsync(requestWrap);
     }
 
     @Override
@@ -74,55 +75,13 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         if (Objects.nonNull(multipartData) && !multipartData.isFileDownload()) {
             return this.fileSync(requestWrap);
         }
-        return this.requestSyncSelector(requestWrap);
+        this.toBuildHttpRequest(requestWrap);
+        return this.handlerSync(requestWrap);
     }
 
-    // ---------------------------------------------------------------- Selector
-
-    private <T> CompletableFuture<HttpResponse<T>> requestAsyncSelector(RequestWrap requestWrap) {
-        switch (requestWrap.getHttpMethod()) {
-            case GET -> {
-                return this.getAsync(requestWrap);
-            }
-            case DELETE -> {
-                return this.deleteAsync(requestWrap);
-            }
-            case POST -> {
-                return this.postAsync(requestWrap);
-            }
-            case PUT -> {
-                return this.putAsync(requestWrap);
-            }
-            case PATCH -> {
-                return this.patchAsync(requestWrap);
-            }
-            default -> {
-                return null;
-            }
-        }
-    }
-
-    private <T> HttpResponse<T> requestSyncSelector(RequestWrap requestWrap) throws IOException, InterruptedException {
-        switch (requestWrap.getHttpMethod()) {
-            case GET -> {
-                return this.getSync(requestWrap);
-            }
-            case DELETE -> {
-                return this.deleteSync(requestWrap);
-            }
-            case POST -> {
-                return this.postSync(requestWrap);
-            }
-            case PUT -> {
-                return this.putSync(requestWrap);
-            }
-            case PATCH -> {
-                return this.patchSync(requestWrap);
-            }
-            default -> {
-                return null;
-            }
-        }
+    @Override
+    public void buildHttpRequest(RequestWrap requestWrap) {
+        this.toBuildHttpRequest(requestWrap);
     }
 
     @Override
@@ -217,6 +176,35 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     public <T> HttpResponse<T> formSync(RequestWrap requestWrap) throws IOException, InterruptedException {
         this.getFormHttpRequest(requestWrap);
         return handlerSync(requestWrap);
+    }
+
+    // ---------------------------------------------------------------- buildHttpRequest
+
+    private void toBuildHttpRequest(RequestWrap requestWrap) {
+        switch (requestWrap.getHttpMethod()) {
+            case GET -> {
+                this.checkHttpMethod(requestWrap, HttpMethod.GET);
+                this.getHttpRequest(requestWrap);
+            }
+            case DELETE -> {
+                this.checkHttpMethod(requestWrap, HttpMethod.DELETE);
+                this.getHttpRequest(requestWrap);
+            }
+            case POST -> {
+                this.checkHttpMethod(requestWrap, HttpMethod.POST);
+                this.getHttpRequestBody(requestWrap);
+            }
+            case PUT -> {
+                this.checkHttpMethod(requestWrap, HttpMethod.PUT);
+                this.getHttpRequestBody(requestWrap);
+            }
+            case PATCH -> {
+                this.checkHttpMethod(requestWrap, HttpMethod.PATCH);
+                this.getHttpRequestBody(requestWrap);
+            }
+            default ->
+                    HttpExceptionCheck.INSTANCE.throwUnchecked("not.support.request.method:{}", requestWrap.getHttpMethod());
+        }
     }
 
     // ---------------------------------------------------------------- Check
