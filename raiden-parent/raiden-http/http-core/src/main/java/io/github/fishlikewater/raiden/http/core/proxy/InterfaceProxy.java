@@ -28,7 +28,7 @@ import io.github.fishlikewater.raiden.http.core.annotation.Param;
 import io.github.fishlikewater.raiden.http.core.annotation.PathParam;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import io.github.fishlikewater.raiden.http.core.factory.HttpClientBeanFactory;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.HttpClientProcessor;
 
 import java.lang.reflect.Method;
@@ -79,6 +79,7 @@ public interface InterfaceProxy {
                 .returnType(returnType)
                 .typeArgumentClass(TypeUtil.getClass(typeArgument))
                 .form(form)
+                .sync(methodArgsBean.isSync())
                 .url(url)
                 .httpClient(httpClient)
                 .headMap(headMap)
@@ -87,7 +88,7 @@ public interface InterfaceProxy {
         String exceptionProcessorName = methodArgsBean.getExceptionProcessorName();
         if (ObjectUtils.isNotNullOrEmpty(interceptorNames)) {
             LambdaUtils.handle(interceptorNames, interceptorName -> {
-                HttpClientInterceptor interceptor = httpClientBeanFactory.getInterceptor(interceptorName);
+                HttpInterceptor interceptor = httpClientBeanFactory.getInterceptor(interceptorName);
                 if (ObjectUtils.isNotNullOrEmpty(interceptor)) {
                     requestWrap.addInterceptor(interceptor);
                 }

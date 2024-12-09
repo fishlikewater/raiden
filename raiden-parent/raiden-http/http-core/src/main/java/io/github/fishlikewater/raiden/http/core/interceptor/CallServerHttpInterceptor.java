@@ -20,21 +20,21 @@ import java.util.function.Function;
  * @version 1.1.0
  * @since 2024/12/09
  */
-public class CallServerInterceptor implements Interceptor {
+public class CallServerHttpInterceptor implements HttpInterceptor {
 
     private final AbstractHttpRequestClient client;
 
-    public CallServerInterceptor(AbstractHttpRequestClient client) {
+    public CallServerHttpInterceptor(AbstractHttpRequestClient client) {
         this.client = client;
     }
 
     @Override
     public Response<?> intercept(Chain chain) {
         RequestWrap requestWrap = chain.requestWrap();
-        if (requestWrap.getReturnType().isAssignableFrom(CompletableFuture.class)) {
-            return this.async(requestWrap);
-        } else {
+        if (requestWrap.isSync()) {
             return this.sync(requestWrap);
+        } else {
+            return this.async(requestWrap);
         }
     }
 

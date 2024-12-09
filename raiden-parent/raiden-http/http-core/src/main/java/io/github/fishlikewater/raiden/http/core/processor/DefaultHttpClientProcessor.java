@@ -18,14 +18,16 @@ package io.github.fishlikewater.raiden.http.core.processor;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
+import io.github.fishlikewater.raiden.http.core.Response;
 import io.github.fishlikewater.raiden.http.core.client.HttpRequestClient;
-import io.github.fishlikewater.raiden.http.core.interceptor.CallServerInterceptor;
-import io.github.fishlikewater.raiden.http.core.interceptor.Interceptor;
+import io.github.fishlikewater.raiden.http.core.interceptor.CallServerHttpInterceptor;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.RealInterceptorChain;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,25 +38,24 @@ import java.util.List;
 @Slf4j
 public class DefaultHttpClientProcessor implements HttpClientProcessor {
 
-    private final CallServerInterceptor callServerInterceptor = new CallServerInterceptor(new HttpRequestClient());
+    private final CallServerHttpInterceptor callServerInterceptor = new CallServerHttpInterceptor(new HttpRequestClient());
 
     @SneakyThrows(Throwable.class)
     @Override
     public Object handler(RequestWrap requestWrap) {
-        return request(requestWrap);
-    }
-
-    private Object request(RequestWrap requestWrap) throws IOException, InterruptedException {
-        List<Interceptor> interceptors = requestWrap.getInterceptors();
+        List<HttpInterceptor> interceptors = requestWrap.getInterceptors();
+        if (ObjectUtils.isNullOrEmpty(interceptors)) {
+            interceptors = new ArrayList<>();
+        }
         if (HttpBootStrap.getConfig().isEnableLog()) {
-            if (ObjectUtils.isNullOrEmpty(interceptors)) {
-                requestWrap.addInterceptor(HttpBootStrap.getConfig().getLogInterceptor());
-            } else {
-                interceptors.addFirst(HttpBootStrap.getConfig().getLogInterceptor());
-            }
+            interceptors.addFirst(HttpBootStrap.getConfig().getLogInterceptor());
         }
         interceptors.addLast(callServerInterceptor);
         RealInterceptorChain chain = new RealInterceptorChain(requestWrap, interceptors);
-        return chain.proceed(requestWrap);
+        Response<?> response = chain.proceed(requestWrap);
+        if (requestWrap.isSync()) {
+            return response.getSyncResponse().body();
+        }
+        return response.getAsyncResponse().thenApply(HttpResponse::body);
     }
 }

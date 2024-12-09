@@ -44,7 +44,7 @@ import java.util.concurrent.Flow;
  * @since 2023年09月25日 15:00
  **/
 @Slf4j
-public class LogInterceptor implements Interceptor {
+public class LogHttpInterceptor implements HttpInterceptor {
 
     private static final String MULTIPART_CONTENT_TYPE = "multipart/form-data";
 
@@ -66,15 +66,15 @@ public class LogInterceptor implements Interceptor {
         this.recordDetail(logLevel, headers, httpRequest);
         Response<?> response = chain.proceed(requestWrap);
 
-        if (requestWrap.getReturnType().isAssignableFrom(CompletableFuture.class)) {
+        if (requestWrap.isSync()) {
+            this.responseLog(response.getSyncResponse(), logLevel, headers);
+            return response;
+        } else {
             CompletableFuture<? extends HttpResponse<?>> future = response.getAsyncResponse().thenApply(res -> {
                 this.responseLog(res, logLevel, headers);
                 return res;
             });
             return Response.ofAsync(((CompletableFuture<HttpResponse<Object>>) future));
-        } else {
-            this.responseLog(response.getSyncResponse(), logLevel, headers);
-            return response;
         }
     }
 

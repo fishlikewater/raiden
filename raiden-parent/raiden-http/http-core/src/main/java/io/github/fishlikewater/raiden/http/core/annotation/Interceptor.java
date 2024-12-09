@@ -15,7 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core.annotation;
 
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 
 import java.lang.annotation.*;
 
@@ -36,5 +36,5 @@ public @interface Interceptor {
     /**
      * 拦截器类
      */
-    Class<? extends HttpClientInterceptor>[] value();
+    Class<? extends HttpInterceptor>[] value();
 }

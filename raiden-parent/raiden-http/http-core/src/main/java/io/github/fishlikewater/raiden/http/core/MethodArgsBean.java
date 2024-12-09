@@ -82,9 +82,20 @@ public class MethodArgsBean {
 
     private Parameter[] urlParameters;
 
+    /**
+     * 方法返回类型
+     */
     private Class<?> returnType;
 
+    /**
+     * 方法返回类型泛型参数
+     */
     private Type typeArgument;
+
+    /**
+     * 是否是同步请求
+     */
+    private boolean isSync;
 
     /**
      * 错误处理器

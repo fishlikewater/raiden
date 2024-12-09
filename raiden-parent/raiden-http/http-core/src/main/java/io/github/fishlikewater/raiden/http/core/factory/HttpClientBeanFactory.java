@@ -18,7 +18,7 @@ package io.github.fishlikewater.raiden.http.core.factory;
 import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
 import io.github.fishlikewater.raiden.http.core.annotation.HttpServer;
 import io.github.fishlikewater.raiden.http.core.annotation.Interceptor;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 
 import java.lang.reflect.Method;
@@ -74,14 +74,14 @@ public interface HttpClientBeanFactory {
      * @param interceptorName 拦截器名
      * @return 拦截器
      */
-    HttpClientInterceptor getInterceptor(String interceptorName);
+    HttpInterceptor getInterceptor(String interceptorName);
 
     /**
      * 缓存拦截器
      *
-     * @param httpClientInterceptor 拦截器
+     * @param interceptor 拦截器
      */
-    void registerHttpClientInterceptor(HttpClientInterceptor httpClientInterceptor);
+    void registerHttpClientInterceptor(HttpInterceptor interceptor);
 
     /**
      * 获取异常处理器

@@ -18,7 +18,7 @@ package io.github.fishlikewater.raiden.http.core;
 import io.github.fishlikewater.raiden.http.core.client.AbstractHttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import io.github.fishlikewater.raiden.http.core.factory.HttpClientBeanFactory;
-import io.github.fishlikewater.raiden.http.core.interceptor.LogInterceptor;
+import io.github.fishlikewater.raiden.http.core.interceptor.LogHttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.PredRequestInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.HttpClientProcessor;
 import io.github.fishlikewater.raiden.http.core.proxy.InterfaceProxy;
@@ -97,7 +97,7 @@ public class HttpConfig {
     /**
      * 全局日志拦截器
      */
-    private LogInterceptor logInterceptor = new LogInterceptor();
+    private LogHttpInterceptor logInterceptor = new LogHttpInterceptor();
 
     /**
      * 重试处理器

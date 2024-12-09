@@ -26,7 +26,7 @@ import io.github.fishlikewater.raiden.http.core.annotation.Interceptor;
 import io.github.fishlikewater.raiden.http.core.client.HttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.factory.DefaultHttpClientBeanFactory;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.PredRequestInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.DefaultHttpClientProcessor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
@@ -63,7 +63,7 @@ public class HttpBootStrap {
         config.setPredRequestInterceptor(predRequestInterceptor);
     }
 
-    public static void registryHttpClientInterceptor(HttpClientInterceptor interceptor) {
+    public static void registryHttpClientInterceptor(HttpInterceptor interceptor) {
         config.getHttpClientBeanFactory().registerHttpClientInterceptor(interceptor);
     }
 
@@ -169,9 +169,9 @@ public class HttpBootStrap {
 
     private static void cacheInterceptor(Interceptor interceptorAnnotation) {
         if (ObjectUtils.isNotNullOrEmpty(interceptorAnnotation)) {
-            Class<? extends HttpClientInterceptor>[] classes = interceptorAnnotation.value();
-            for (Class<? extends HttpClientInterceptor> aClass : classes) {
-                HttpClientInterceptor interceptor = config.getHttpClientBeanFactory().getInterceptor(aClass.getName());
+            Class<? extends HttpInterceptor>[] classes = interceptorAnnotation.value();
+            for (Class<? extends HttpInterceptor> aClass : classes) {
+                HttpInterceptor interceptor = config.getHttpClientBeanFactory().getInterceptor(aClass.getName());
                 if (ObjectUtils.isNotNullOrEmpty(interceptor)) {
                     config.getHttpClientBeanFactory().registerHttpClientInterceptor(getInterceptor(aClass));
                 }
@@ -185,7 +185,7 @@ public class HttpBootStrap {
     }
 
     @SneakyThrows
-    private static HttpClientInterceptor getInterceptor(Class<? extends HttpClientInterceptor> iClass) {
+    private static HttpInterceptor getInterceptor(Class<? extends HttpInterceptor> iClass) {
         return iClass.getDeclaredConstructor().newInstance();
     }
 

@@ -14,13 +14,13 @@ import java.util.List;
  * @version 1.1.0
  * @since 2024/12/09
  */
-public class RealInterceptorChain implements Interceptor.Chain {
+public class RealInterceptorChain implements HttpInterceptor.Chain {
 
-    private final List<Interceptor> interceptors;
+    private final List<HttpInterceptor> interceptors;
     private RequestWrap requestWrap;
     private int index;
 
-    public RealInterceptorChain(RequestWrap requestWrap, List<Interceptor> interceptors) {
+    public RealInterceptorChain(RequestWrap requestWrap, List<HttpInterceptor> interceptors) {
         this.requestWrap = requestWrap;
         this.interceptors = interceptors;
     }
@@ -35,7 +35,7 @@ public class RealInterceptorChain implements Interceptor.Chain {
         if (this.index >= this.interceptors.size()) {
             throw new AssertionError();
         }
-        Interceptor interceptor = this.interceptors.get(index);
+        HttpInterceptor interceptor = this.interceptors.get(index);
         this.incrementIndex();
         this.updateRequestWrap(requestWrap);
         Response<?> response = interceptor.intercept(this);

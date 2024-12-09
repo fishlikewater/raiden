@@ -16,7 +16,7 @@
 package io.github.fishlikewater.raiden.http.autoconfigure;
 
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -40,10 +40,10 @@ public class HttpContextRefreshedEventListener implements ApplicationListener<Co
             final HttpClient httpClient = (HttpClient) event.getApplicationContext().getBean(namesForType[0]);
             HttpBootStrap.registerHttpClient("default", httpClient);
         }
-        final String[] interceptors = event.getApplicationContext().getBeanNamesForType(HttpClientInterceptor.class);
-        for (String interceptor : interceptors) {
-            final HttpClientInterceptor httpClientInterceptor = (HttpClientInterceptor) event.getApplicationContext().getBean(interceptor);
-            HttpBootStrap.registryHttpClientInterceptor(httpClientInterceptor);
+        final String[] interceptors = event.getApplicationContext().getBeanNamesForType(HttpInterceptor.class);
+        for (String interceptorName : interceptors) {
+            final HttpInterceptor interceptor = (HttpInterceptor) event.getApplicationContext().getBean(interceptorName);
+            HttpBootStrap.registryHttpClientInterceptor(interceptor);
         }
     }
 }

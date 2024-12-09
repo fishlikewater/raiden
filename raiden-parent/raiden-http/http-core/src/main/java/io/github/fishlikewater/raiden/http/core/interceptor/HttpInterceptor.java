@@ -13,7 +13,7 @@ import java.io.IOException;
  * @version 1.1.0
  * @since 2024/12/09
  */
-public interface Interceptor {
+public interface HttpInterceptor {
 
     Response<?> intercept(Chain chain) throws IOException, InterruptedException;
 

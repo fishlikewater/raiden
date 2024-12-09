@@ -23,7 +23,7 @@ import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
 import io.github.fishlikewater.raiden.http.core.annotation.*;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +34,7 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -50,7 +51,7 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
 
     ConcurrentHashMap<String, MethodArgsBean> methodCache = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Object> proxyCache = new ConcurrentHashMap<>();
-    ConcurrentHashMap<String, HttpClientInterceptor> interceptorCache = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, HttpInterceptor> interceptorCache = new ConcurrentHashMap<>();
 
     ConcurrentHashMap<String, ExceptionProcessor> exceptionProcessorCache = new ConcurrentHashMap<>();
 
@@ -85,9 +86,9 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         }
         final String className = method.getDeclaringClass().getName();
         final String requestUrl = path.startsWith(HttpConstants.HTTP) ? path : getUrl(httpServer.protocol(), httpServer.url(), path);
-        Class<? extends HttpClientInterceptor>[] interceptors = ObjectUtils.isNotNullOrEmpty(interceptor) ? interceptor.value() : null;
+        Class<? extends HttpInterceptor>[] interceptors = ObjectUtils.isNotNullOrEmpty(interceptor) ? interceptor.value() : null;
         if (ObjectUtils.isNotNullOrEmpty(interceptors)) {
-            for (Class<? extends HttpClientInterceptor> aClass : interceptors) {
+            for (Class<? extends HttpInterceptor> aClass : interceptors) {
                 argsBean.addInterceptorName(aClass.getName());
             }
         }
@@ -103,6 +104,7 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
                 .setUrlParameters(parameters)
                 .setReturnType(returnType)
                 .setTypeArgument(typeArgument)
+                .setSync(!returnType.isAssignableFrom(CompletableFuture.class))
                 .setSourceHttpClientName(httpServer.sourceHttpClient());
 
         String name = method.toGenericString();
@@ -156,7 +158,7 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
     }
 
     @Override
-    public HttpClientInterceptor getInterceptor(String interceptorName) {
+    public HttpInterceptor getInterceptor(String interceptorName) {
         if (ObjectUtils.isNullOrEmpty(interceptorName)) {
             return null;
         }
@@ -164,8 +166,8 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
     }
 
     @Override
-    public void registerHttpClientInterceptor(HttpClientInterceptor httpClientInterceptor) {
-        this.interceptorCache.put(httpClientInterceptor.getClass().getName(), httpClientInterceptor);
+    public void registerHttpClientInterceptor(HttpInterceptor httpInterceptor) {
+        this.interceptorCache.put(httpInterceptor.getClass().getName(), httpInterceptor);
     }
 
     @Override

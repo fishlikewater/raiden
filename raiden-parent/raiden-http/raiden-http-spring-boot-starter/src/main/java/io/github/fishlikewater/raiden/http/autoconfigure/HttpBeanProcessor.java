@@ -16,7 +16,7 @@
 package io.github.fishlikewater.raiden.http.autoconfigure;
 
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import lombok.NonNull;
 import org.springframework.beans.BeansException;
@@ -45,7 +45,7 @@ public class HttpBeanProcessor implements BeanPostProcessor, BeanFactoryPostProc
 
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
-        if (bean instanceof HttpClientInterceptor interceptor) {
+        if (bean instanceof HttpInterceptor interceptor) {
             HttpBootStrap.getConfig().getHttpClientBeanFactory().registerHttpClientInterceptor(interceptor);
         }
         if (bean instanceof ExceptionProcessor exceptionProcessor) {
