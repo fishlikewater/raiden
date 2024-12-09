@@ -27,10 +27,10 @@ import io.github.fishlikewater.raiden.http.core.convert.MultiFileBodyProvider;
 import io.github.fishlikewater.raiden.http.core.convert.ResponseJsonHandlerSubscriber;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -39,12 +39,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * {@code HttpRequestClient}
@@ -57,7 +54,7 @@ import java.util.function.Function;
 public class HttpRequestClient extends AbstractHttpRequestClient {
 
     @Override
-    public <T> CompletableFuture<T> requestAsync(RequestWrap requestWrap) {
+    public <T> CompletableFuture<HttpResponse<T>> requestAsync(RequestWrap requestWrap) {
         if (requestWrap.isForm()) {
             return this.formAsync(requestWrap);
         }
@@ -69,7 +66,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     }
 
     @Override
-    public <T> T requestSync(RequestWrap requestWrap) {
+    public <T> HttpResponse<T> requestSync(RequestWrap requestWrap) throws IOException, InterruptedException {
         if (requestWrap.isForm()) {
             return this.formSync(requestWrap);
         }
@@ -80,103 +77,9 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         return this.requestSyncSelector(requestWrap);
     }
 
-    @Override
-    public <T> CompletableFuture<T> getAsync(RequestWrap requestWrap) {
-        this.checkHttpMethod(requestWrap, HttpMethod.GET);
-        HttpRequest httpRequest = getHttpRequest(requestWrap);
-        return handlerAsync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> T getSync(RequestWrap requestWrap) {
-        this.checkHttpMethod(requestWrap, HttpMethod.GET);
-        HttpRequest httpRequest = getHttpRequest(requestWrap);
-        return handlerSync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> deleteAsync(RequestWrap requestWrap) {
-        this.checkHttpMethod(requestWrap, HttpMethod.DELETE);
-        HttpRequest httpRequest = getHttpRequest(requestWrap);
-        return handlerAsync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> T deleteSync(RequestWrap requestWrap) {
-        this.checkHttpMethod(requestWrap, HttpMethod.DELETE);
-        HttpRequest httpRequest = getHttpRequest(requestWrap);
-        return handlerSync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> postAsync(RequestWrap requestWrap) {
-        this.checkHttpMethod(requestWrap, HttpMethod.POST);
-        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
-        return handlerAsync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> T postSync(RequestWrap requestWrap) {
-        this.checkHttpMethod(requestWrap, HttpMethod.POST);
-        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
-        return handlerSync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> putAsync(RequestWrap requestWrap) {
-        this.checkHttpMethod(requestWrap, HttpMethod.PUT);
-        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
-        return handlerAsync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> T putSync(RequestWrap requestWrap) {
-        this.checkHttpMethod(requestWrap, HttpMethod.PUT);
-        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
-        return handlerSync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> patchAsync(RequestWrap requestWrap) {
-        this.checkHttpMethod(requestWrap, HttpMethod.PATCH);
-        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
-        return handlerAsync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> T patchSync(RequestWrap requestWrap) {
-        this.checkHttpMethod(requestWrap, HttpMethod.PATCH);
-        HttpRequest httpRequest = getHttpRequestBody(requestWrap);
-        return handlerSync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> fileAsync(RequestWrap requestWrap) {
-        HttpRequest httpRequest = getFileHttpRequest(requestWrap);
-        return handlerAsync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> T fileSync(RequestWrap requestWrap) {
-        HttpRequest httpRequest = getFileHttpRequest(requestWrap);
-        return handlerSync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> formAsync(RequestWrap requestWrap) {
-        HttpRequest httpRequest = getFormHttpRequest(requestWrap);
-        return handlerAsync(requestWrap, httpRequest);
-    }
-
-    @Override
-    public <T> T formSync(RequestWrap requestWrap) {
-        HttpRequest httpRequest = getFormHttpRequest(requestWrap);
-        return handlerSync(requestWrap, httpRequest);
-    }
-
     // ---------------------------------------------------------------- Selector
 
-    private <T> CompletableFuture<T> requestAsyncSelector(RequestWrap requestWrap) {
+    private <T> CompletableFuture<HttpResponse<T>> requestAsyncSelector(RequestWrap requestWrap) {
         switch (requestWrap.getHttpMethod()) {
             case GET -> {
                 return this.getAsync(requestWrap);
@@ -199,7 +102,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         }
     }
 
-    private <T> T requestSyncSelector(RequestWrap requestWrap) {
+    private <T> HttpResponse<T> requestSyncSelector(RequestWrap requestWrap) throws IOException, InterruptedException {
         switch (requestWrap.getHttpMethod()) {
             case GET -> {
                 return this.getSync(requestWrap);
@@ -222,6 +125,100 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         }
     }
 
+    @Override
+    public <T> CompletableFuture<HttpResponse<T>> getAsync(RequestWrap requestWrap) {
+        this.checkHttpMethod(requestWrap, HttpMethod.GET);
+        this.getHttpRequest(requestWrap);
+        return handlerAsync(requestWrap);
+    }
+
+    @Override
+    public <T> HttpResponse<T> getSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.checkHttpMethod(requestWrap, HttpMethod.GET);
+        this.getHttpRequest(requestWrap);
+        return handlerSync(requestWrap);
+    }
+
+    @Override
+    public <T> CompletableFuture<HttpResponse<T>> deleteAsync(RequestWrap requestWrap) {
+        this.checkHttpMethod(requestWrap, HttpMethod.DELETE);
+        this.getHttpRequest(requestWrap);
+        return handlerAsync(requestWrap);
+    }
+
+    @Override
+    public <T> HttpResponse<T> deleteSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.checkHttpMethod(requestWrap, HttpMethod.DELETE);
+        this.getHttpRequest(requestWrap);
+        return handlerSync(requestWrap);
+    }
+
+    @Override
+    public <T> CompletableFuture<HttpResponse<T>> postAsync(RequestWrap requestWrap) {
+        this.checkHttpMethod(requestWrap, HttpMethod.POST);
+        this.getHttpRequestBody(requestWrap);
+        return handlerAsync(requestWrap);
+    }
+
+    @Override
+    public <T> HttpResponse<T> postSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.checkHttpMethod(requestWrap, HttpMethod.POST);
+        this.getHttpRequestBody(requestWrap);
+        return handlerSync(requestWrap);
+    }
+
+    @Override
+    public <T> CompletableFuture<HttpResponse<T>> putAsync(RequestWrap requestWrap) {
+        this.checkHttpMethod(requestWrap, HttpMethod.PUT);
+        this.getHttpRequestBody(requestWrap);
+        return handlerAsync(requestWrap);
+    }
+
+    @Override
+    public <T> HttpResponse<T> putSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.checkHttpMethod(requestWrap, HttpMethod.PUT);
+        this.getHttpRequestBody(requestWrap);
+        return handlerSync(requestWrap);
+    }
+
+    @Override
+    public <T> CompletableFuture<HttpResponse<T>> patchAsync(RequestWrap requestWrap) {
+        this.checkHttpMethod(requestWrap, HttpMethod.PATCH);
+        this.getHttpRequestBody(requestWrap);
+        return handlerAsync(requestWrap);
+    }
+
+    @Override
+    public <T> HttpResponse<T> patchSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.checkHttpMethod(requestWrap, HttpMethod.PATCH);
+        this.getHttpRequestBody(requestWrap);
+        return handlerSync(requestWrap);
+    }
+
+    @Override
+    public <T> CompletableFuture<HttpResponse<T>> fileAsync(RequestWrap requestWrap) {
+        this.getFileHttpRequest(requestWrap);
+        return handlerAsync(requestWrap);
+    }
+
+    @Override
+    public <T> HttpResponse<T> fileSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.getFileHttpRequest(requestWrap);
+        return handlerSync(requestWrap);
+    }
+
+    @Override
+    public <T> CompletableFuture<HttpResponse<T>> formAsync(RequestWrap requestWrap) {
+        this.getFormHttpRequest(requestWrap);
+        return handlerAsync(requestWrap);
+    }
+
+    @Override
+    public <T> HttpResponse<T> formSync(RequestWrap requestWrap) throws IOException, InterruptedException {
+        this.getFormHttpRequest(requestWrap);
+        return handlerSync(requestWrap);
+    }
+
     // ---------------------------------------------------------------- Check
 
     private void checkHttpMethod(RequestWrap requestWrap, HttpMethod httpMethod) {
@@ -232,7 +229,7 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
 
     // ---------------------------------------------------------------- build HttpRequest
 
-    private HttpRequest getHttpRequest(RequestWrap requestWrap) {
+    private void getHttpRequest(RequestWrap requestWrap) {
         URI uri = URI.create(this.getRequestUrl(requestWrap.getUrl(), requestWrap.getParamMap()));
         final HttpRequest.Builder builder = HttpRequest.newBuilder().uri(uri);
         if (Objects.nonNull(requestWrap.getHeadMap())) {
@@ -245,11 +242,9 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         }
         HttpRequest httpRequest = builder.build();
         requestWrap.setHttpRequest(httpRequest);
-        requestBefore(requestWrap);
-        return requestWrap.getHttpRequest();
     }
 
-    private HttpRequest getHttpRequestBody(RequestWrap requestWrap) {
+    private void getHttpRequestBody(RequestWrap requestWrap) {
         String body = Objects.isNull(requestWrap.getBodyObject()) ? "" : JSONUtils.HutoolJSON.toJsonStr(requestWrap.getBodyObject());
         HttpRequest.BodyPublisher requestBody = HttpRequest.BodyPublishers.ofString(body);
         final HttpRequest.Builder builder = HttpRequest.newBuilder()
@@ -265,11 +260,9 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         }
         HttpRequest httpRequest = builder.build();
         requestWrap.setHttpRequest(httpRequest);
-        requestBefore(requestWrap);
-        return requestWrap.getHttpRequest();
     }
 
-    private HttpRequest getFormHttpRequest(RequestWrap requestWrap) {
+    private void getFormHttpRequest(RequestWrap requestWrap) {
         String url = requestWrap.getUrl();
         Map<String, String> headMap = requestWrap.getHeadMap();
         Map<String, String> paramMap = requestWrap.getParamMap();
@@ -307,11 +300,9 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         }
         HttpRequest httpRequest = builder.build();
         requestWrap.setHttpRequest(httpRequest);
-        requestBefore(requestWrap);
-        return requestWrap.getHttpRequest();
     }
 
-    private HttpRequest getFileHttpRequest(RequestWrap requestWrap) {
+    private void getFileHttpRequest(RequestWrap requestWrap) {
         if (Objects.isNull(requestWrap.getHttpClient())) {
             requestWrap.setHttpClient(HttpBootStrap.getHttpClient(HttpConstants.DEFAULT));
         }
@@ -326,12 +317,12 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         builder.method(requestWrap.getHttpMethod().name(), requestBody);
         HttpRequest httpRequest = builder.build();
         requestWrap.setHttpRequest(httpRequest);
-        requestBefore(requestWrap);
-        return requestWrap.getHttpRequest();
     }
 
-    private <T> CompletableFuture<T> handlerAsync(RequestWrap requestWrap, HttpRequest httpRequest) {
-        requestWrap.setHttpRequest(httpRequest);
+    // ---------------------------------------------------------------- Async
+
+    @SuppressWarnings("all")
+    private <T> CompletableFuture<HttpResponse<T>> handlerAsync(RequestWrap requestWrap) {
         Class<?> typeArgumentClass = requestWrap.getTypeArgumentClass();
         MultipartData multipartData = requestWrap.getMultipartData();
         HttpClient httpClient = requestWrap.getHttpClient();
@@ -339,87 +330,62 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
             requestWrap.setHttpClient(HttpBootStrap.getHttpClient(HttpConstants.DEFAULT));
         }
         if (typeArgumentClass.isAssignableFrom(byte[].class)) {
-            return this.byteAsync(requestWrap);
+            return (CompletableFuture) this.byteAsync(requestWrap);
         }
         if (typeArgumentClass.isAssignableFrom(InputStream.class)) {
-            return this.streamAsync(requestWrap);
+            return (CompletableFuture) this.streamAsync(requestWrap);
         }
         if (typeArgumentClass.isAssignableFrom(Path.class) && Objects.nonNull(multipartData)) {
             final Path path = multipartData.getPath();
             Assert.notNull(path, "Please pass in the file save path");
             if (multipartData.isFileDownload()) {
-                return this.downFile(requestWrap);
+                return (CompletableFuture) this.downFile(requestWrap);
             } else {
-                return this.uploadFile(requestWrap);
+                return (CompletableFuture) this.uploadFile(requestWrap);
             }
         }
         return this.jsonAsync(requestWrap);
     }
 
-    // ---------------------------------------------------------------- Async
-
-    @SuppressWarnings("unchecked")
-    private <T> CompletableFuture<T> streamAsync(RequestWrap requestWrap) {
-        return (CompletableFuture<T>) requestWrap.getHttpClient()
-                .sendAsync(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofInputStream())
-                .thenApply(res -> requestAfter(res, requestWrap))
-                .handleAsync(this.throwableFunction(requestWrap))
-                .thenCompose(Function.identity());
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> CompletableFuture<T> byteAsync(RequestWrap requestWrap) {
-        return (CompletableFuture<T>) requestWrap.getHttpClient()
-                .sendAsync(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofByteArray())
-                .thenApply(res -> requestAfter(res, requestWrap))
-                .handleAsync(this.throwableFunction(requestWrap))
-                .thenCompose(Function.identity());
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> CompletableFuture<T> downFile(RequestWrap requestWrap) {
-        return (CompletableFuture<T>) requestWrap.getHttpClient()
-                .sendAsync(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofFileDownload(requestWrap.getMultipartData().getPath(), requestWrap.getMultipartData().getOpenOptions()))
-                .thenApply(res -> requestAfter(res, requestWrap))
-                .handleAsync(this.throwableFunction(requestWrap))
-                .thenCompose(Function.identity());
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> CompletableFuture<T> uploadFile(RequestWrap requestWrap) {
-        return (CompletableFuture<T>) requestWrap.getHttpClient()
-                .sendAsync(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofFile(requestWrap.getMultipartData().getPath(), requestWrap.getMultipartData().getOpenOptions()))
-                .thenApply(res -> requestAfter(res, requestWrap))
-                .handleAsync(this.throwableFunction(requestWrap))
-                .thenCompose(Function.identity());
-    }
-
-    private <T> CompletableFuture<T> jsonAsync(RequestWrap requestWrap) {
+    private CompletableFuture<HttpResponse<InputStream>> streamAsync(RequestWrap requestWrap) {
         return requestWrap.getHttpClient()
-                .sendAsync(requestWrap.getHttpRequest(), (responseInfo) -> new ResponseJsonHandlerSubscriber<T>(responseInfo.headers(), requestWrap.getTypeArgumentClass()))
-                .thenApply(res -> requestAfter(res, requestWrap))
-                .handleAsync(this.throwableFunction(requestWrap))
-                .thenCompose(Function.identity());
+                .sendAsync(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofInputStream());
     }
 
-    private <T> BiFunction<HttpResponse<T>, Throwable, CompletableFuture<T>> throwableFunction(RequestWrap requestWrap) {
-        return (res, ex) -> {
-            if (ObjectUtils.isNullOrEmpty(ex)) {
-                return CompletableFuture.completedFuture(res.body());
-            }
-            CompletableFuture<T> retry = HttpBootStrap.getConfig().getRetryHandler().retryAsync(res, requestWrap, ex);
-            if (ObjectUtils.isNotNullOrEmpty(retry)) {
-                return retry;
-            }
-            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, res, ex);
-            return ObjectUtils.isNotNullOrEmpty(res) ? CompletableFuture.completedFuture(res.body()) : null;
-        };
+    private CompletableFuture<HttpResponse<byte[]>> byteAsync(RequestWrap requestWrap) {
+        return requestWrap.getHttpClient()
+                .sendAsync(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofByteArray());
+    }
+
+    private CompletableFuture<HttpResponse<Path>> downFile(RequestWrap requestWrap) {
+        return requestWrap
+                .getHttpClient()
+                .sendAsync(
+                        requestWrap.getHttpRequest(),
+                        HttpResponse.BodyHandlers.ofFileDownload(requestWrap.getMultipartData().getPath(), requestWrap.getMultipartData().getOpenOptions()));
+    }
+
+    private CompletableFuture<HttpResponse<Path>> uploadFile(RequestWrap requestWrap) {
+        return requestWrap
+                .getHttpClient()
+                .sendAsync(
+                        requestWrap.getHttpRequest(),
+                        HttpResponse.BodyHandlers.ofFile(requestWrap.getMultipartData().getPath(), requestWrap.getMultipartData().getOpenOptions()));
+
+    }
+
+    private <T> CompletableFuture<HttpResponse<T>> jsonAsync(RequestWrap requestWrap) {
+        return requestWrap
+                .getHttpClient()
+                .sendAsync(
+                        requestWrap.getHttpRequest(),
+                        (responseInfo) -> new ResponseJsonHandlerSubscriber<>(responseInfo.headers(), requestWrap.getTypeArgumentClass()));
     }
 
     // ---------------------------------------------------------------- Sync
 
-    private <T> T handlerSync(RequestWrap requestWrap, HttpRequest httpRequest) {
-        requestWrap.setHttpRequest(httpRequest);
+    @SuppressWarnings("all")
+    private <T> HttpResponse<T> handlerSync(RequestWrap requestWrap) throws IOException, InterruptedException {
         Class<?> returnType = requestWrap.getReturnType();
         HttpClient httpClient = requestWrap.getHttpClient();
         MultipartData multipartData = requestWrap.getMultipartData();
@@ -429,113 +395,43 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
         }
 
         if (returnType.isAssignableFrom(byte[].class)) {
-            return handleReturnBytes(requestWrap);
+            return (HttpResponse) handleReturnBytes(requestWrap);
         }
         if (returnType.isAssignableFrom(Path.class) && Objects.nonNull(multipartData)) {
-            return handleFile(requestWrap);
+            return (HttpResponse) handleFile(requestWrap);
         }
 
         if (returnType.isAssignableFrom(InputStream.class)) {
-            return handleStream(requestWrap);
+            return (HttpResponse) handleStream(requestWrap);
         }
         return this.handleJson(requestWrap);
 
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T handleStream(RequestWrap requestWrap) {
-        HttpResponse<InputStream> response = null;
-        try {
-            response = requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofInputStream());
-            return requestAfter((HttpResponse<T>) response, requestWrap).body();
-        } catch (Exception e) {
-            InputStream retry = HttpBootStrap.getConfig().getRetryHandler().retrySync(response, requestWrap, e);
-            if (ObjectUtils.isNotNullOrEmpty(retry)) {
-                return (T) retry;
-            }
-            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, response, e);
-            return ObjectUtils.isNotNullOrEmpty(response) ? (T) response.body() : null;
+    private HttpResponse<InputStream> handleStream(RequestWrap requestWrap) throws IOException, InterruptedException {
+        return requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofInputStream());
+    }
+
+    private <T> HttpResponse<T> handleJson(RequestWrap requestWrap) throws IOException, InterruptedException {
+        return requestWrap
+                .getHttpClient()
+                .send(requestWrap.getHttpRequest(), (responseInfo) -> new ResponseJsonHandlerSubscriber<>(responseInfo.headers(), requestWrap.getReturnType()));
+    }
+
+    private HttpResponse<Path> handleFile(RequestWrap requestWrap) throws IOException, InterruptedException {
+
+        MultipartData multipartData = requestWrap.getMultipartData();
+        final Path path = multipartData.getPath();
+        Assert.notNull(path, "Please pass in the file save path");
+        if (multipartData.isFileDownload()) {
+            return requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofFileDownload(path, multipartData.getOpenOptions()));
+        } else {
+            return requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofFile(path, multipartData.getOpenOptions()));
         }
     }
 
-    private <T> T handleJson(RequestWrap requestWrap) {
-        HttpResponse<T> response = null;
-        try {
-            response = requestWrap
-                    .getHttpClient()
-                    .send(requestWrap.getHttpRequest(), (responseInfo) -> new ResponseJsonHandlerSubscriber<>(responseInfo.headers(), requestWrap.getReturnType()));
-            return this.requestAfter(response, requestWrap).body();
-        } catch (Exception e) {
-            T retry = HttpBootStrap.getConfig().getRetryHandler().retrySync(response, requestWrap, e);
-            if (ObjectUtils.isNotNullOrEmpty(retry)) {
-                return retry;
-            }
-            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, response, e);
-            return ObjectUtils.isNotNullOrEmpty(response) ? response.body() : null;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T handleFile(RequestWrap requestWrap) {
-        HttpResponse<Path> response = null;
-        try {
-            MultipartData multipartData = requestWrap.getMultipartData();
-            final Path path = multipartData.getPath();
-            Assert.notNull(path, "Please pass in the file save path");
-            if (multipartData.isFileDownload()) {
-                response = requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofFileDownload(path, multipartData.getOpenOptions()));
-            } else {
-                response = requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofFile(path, multipartData.getOpenOptions()));
-            }
-            return requestAfter((HttpResponse<T>) response, requestWrap).body();
-        } catch (Exception e) {
-            Path retry = HttpBootStrap.getConfig().getRetryHandler().retrySync(response, requestWrap, e);
-            if (ObjectUtils.isNotNullOrEmpty(retry)) {
-                return (T) retry;
-            }
-            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, response, e);
-            return ObjectUtils.isNotNullOrEmpty(response) ? (T) response.body() : null;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T handleReturnBytes(RequestWrap requestWrap) {
-        HttpResponse<byte[]> response = null;
-        try {
-            response = requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofByteArray());
-            return requestAfter((HttpResponse<T>) response, requestWrap).body();
-        } catch (Exception e) {
-            byte[] retry = HttpBootStrap.getConfig().getRetryHandler().retrySync(response, requestWrap, e);
-            if (ObjectUtils.isNotNullOrEmpty(retry)) {
-                return (T) retry;
-            }
-            requestWrap.getExceptionProcessor().exceptionHandle(requestWrap, response, e);
-            return ObjectUtils.isNotNullOrEmpty(response) ? (T) response.body() : null;
-        }
-    }
-
-    // ---------------------------------------------------------------- Interceptor
-
-    private void requestBefore(RequestWrap requestWrap) {
-        List<HttpClientInterceptor> interceptors = requestWrap.getInterceptors();
-        if (ObjectUtils.isNullOrEmpty(interceptors)) {
-            return;
-        }
-        for (HttpClientInterceptor interceptor : interceptors) {
-            interceptor.requestBefore(requestWrap);
-        }
-    }
-
-    private <T> HttpResponse<T> requestAfter(HttpResponse<T> response, RequestWrap requestWrap) {
-        if (ObjectUtils.notEquals(response.statusCode(), HttpConstants.HTTP_OK)) {
-            requestWrap.getExceptionProcessor().invalidRespHandle(requestWrap, response);
-        }
-        if (Objects.nonNull(requestWrap.getInterceptors())) {
-            for (HttpClientInterceptor interceptor : requestWrap.getInterceptors()) {
-                response = interceptor.requestAfter(requestWrap, response);
-            }
-        }
-        return response;
+    private HttpResponse<byte[]> handleReturnBytes(RequestWrap requestWrap) throws IOException, InterruptedException {
+        return requestWrap.getHttpClient().send(requestWrap.getHttpRequest(), HttpResponse.BodyHandlers.ofByteArray());
     }
 
     // ---------------------------------------------------------------- Others

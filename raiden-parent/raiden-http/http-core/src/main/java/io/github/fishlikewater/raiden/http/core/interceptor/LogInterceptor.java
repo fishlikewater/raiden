@@ -18,10 +18,12 @@ package io.github.fishlikewater.raiden.http.core.interceptor;
 
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
+import io.github.fishlikewater.raiden.http.core.Response;
 import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import io.github.fishlikewater.raiden.http.core.uttils.ByteBufferUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Flow;
 
 /**
@@ -41,45 +44,65 @@ import java.util.concurrent.Flow;
  * @since 2023年09月25日 15:00
  **/
 @Slf4j
-public class LogInterceptor implements HttpClientInterceptor {
+public class LogInterceptor implements Interceptor {
 
     private static final String MULTIPART_CONTENT_TYPE = "multipart/form-data";
 
     @Override
-    public void requestBefore(RequestWrap requestWrap) {
+    public int order() {
+        return Integer.MIN_VALUE;
+    }
+
+    @Override
+    @SuppressWarnings("all")
+    public Response<?> intercept(Chain chain) throws IOException, InterruptedException {
+        RequestWrap requestWrap = chain.requestWrap();
         HttpRequest httpRequest = requestWrap.getHttpRequest();
         final LogLevel logLevel = HttpBootStrap.getConfig().getLogLevel();
         final HttpHeaders headers = httpRequest.headers();
         log.info("请求地址: {}", httpRequest.uri().toString());
         log.info("请求方法: {}", httpRequest.method());
-        recordHeads(logLevel, headers);
-        if (logLevel == LogLevel.DETAIL) {
-            httpRequest.bodyPublisher().ifPresent(bodyPublisher -> {
-                final Optional<String> contentType = headers.firstValue("Content-Type");
-                contentType.ifPresent(s -> {
-                    if (!s.contains(MULTIPART_CONTENT_TYPE)) {
-                        getRequestData(bodyPublisher);
-                    }
-                });
+        this.recordHeads(logLevel, headers);
+        this.recordDetail(logLevel, headers, httpRequest);
+        Response<?> response = chain.proceed(requestWrap);
+
+        if (requestWrap.getReturnType().isAssignableFrom(CompletableFuture.class)) {
+            CompletableFuture<? extends HttpResponse<?>> future = response.getAsyncResponse().thenApply(res -> {
+                this.responseLog(res, logLevel, headers);
+                return res;
             });
+            return Response.ofAsync(((CompletableFuture<HttpResponse<Object>>) future));
+        } else {
+            this.responseLog(response.getSyncResponse(), logLevel, headers);
+            return response;
         }
     }
 
-    @Override
-    public <T> HttpResponse<T> requestAfter(RequestWrap requestWrap, HttpResponse<T> response) {
+    private void responseLog(HttpResponse<?> response, LogLevel logLevel, HttpHeaders headers) {
         log.info("----------------------------------------------------------------");
         log.info("响应信息: ");
-        final LogLevel logLevel = HttpBootStrap.getConfig().getLogLevel();
         final int state = response.statusCode();
         log.info("{}<-{}", state, response.uri().toString());
-        final HttpHeaders headers = response.headers();
         recordHeads(logLevel, headers);
         if (logLevel == LogLevel.DETAIL) {
             final String responseStr = response.body().toString();
             log.info("响应数据: {}", responseStr);
         }
         log.info("----------------------------------------------------------------");
-        return response;
+    }
+
+    private void recordDetail(LogLevel logLevel, HttpHeaders headers, HttpRequest httpRequest) {
+        if (logLevel != LogLevel.DETAIL) {
+            return;
+        }
+        httpRequest.bodyPublisher().ifPresent(bodyPublisher -> {
+            final Optional<String> contentType = headers.firstValue("Content-Type");
+            contentType.ifPresent(s -> {
+                if (!s.contains(MULTIPART_CONTENT_TYPE)) {
+                    getRequestData(bodyPublisher);
+                }
+            });
+        });
     }
 
     private void recordHeads(LogLevel logLevel, HttpHeaders headers) {

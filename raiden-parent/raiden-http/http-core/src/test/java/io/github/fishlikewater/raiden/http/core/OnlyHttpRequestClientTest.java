@@ -22,6 +22,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -43,7 +45,7 @@ public class OnlyHttpRequestClientTest {
     }
 
     @Test
-    public void testClient() {
+    public void testClient() throws IOException, InterruptedException {
         AbstractHttpRequestClient httpRequestClient = HttpBootStrap.getConfig().getHttpClient();
         RequestWrap requestWrap = RequestWrap.builder()
                 .httpMethod(HttpMethod.GET)
@@ -51,10 +53,10 @@ public class OnlyHttpRequestClientTest {
                 .typeArgumentClass(String.class)
                 .url("https://www.baidu.com")
                 .build();
-        String sync = httpRequestClient.requestSync(requestWrap);
-        System.out.println(sync);
-        CompletableFuture<String> async = httpRequestClient.getAsync(requestWrap);
-        async.thenAcceptAsync(System.out::println).join();
+        HttpResponse<Object> response = httpRequestClient.requestSync(requestWrap);
+        System.out.println(response.statusCode());
+        CompletableFuture<HttpResponse<Object>> async = httpRequestClient.getAsync(requestWrap);
+        async.thenAcceptAsync(res -> System.out.println(res.body())).join();
         Assert.assertNotNull(async);
     }
 }

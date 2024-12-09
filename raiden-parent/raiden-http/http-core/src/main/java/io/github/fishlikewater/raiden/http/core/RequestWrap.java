@@ -17,7 +17,7 @@ package io.github.fishlikewater.raiden.http.core;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpClientInterceptor;
+import io.github.fishlikewater.raiden.http.core.interceptor.Interceptor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -87,7 +87,7 @@ public class RequestWrap {
     /**
      * 请求拦截器
      */
-    private List<HttpClientInterceptor> interceptors;
+    private List<Interceptor> interceptors;
 
     /**
      * 异常处理器
@@ -114,7 +114,7 @@ public class RequestWrap {
      */
     private HttpRequest httpRequest;
 
-    public synchronized void addInterceptor(HttpClientInterceptor interceptor) {
+    public synchronized void addInterceptor(Interceptor interceptor) {
         if (ObjectUtils.isNullOrEmpty(this.interceptors)) {
             this.interceptors = new ArrayList<>();
         }

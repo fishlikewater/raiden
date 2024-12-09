@@ -26,6 +26,7 @@ module raiden.http.core {
     requires java.net.http;
     requires cn.hutool.core;
     requires io.github.classgraph;
+    requires jdk.httpserver;
 
     exports io.github.fishlikewater.raiden.http.core;
     exports io.github.fishlikewater.raiden.http.core.enums;
