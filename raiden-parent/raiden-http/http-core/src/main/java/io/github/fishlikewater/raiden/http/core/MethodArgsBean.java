@@ -80,6 +80,9 @@ public class MethodArgsBean {
      */
     private String url;
 
+    /**
+     * url参数
+     */
     private Parameter[] urlParameters;
 
     /**

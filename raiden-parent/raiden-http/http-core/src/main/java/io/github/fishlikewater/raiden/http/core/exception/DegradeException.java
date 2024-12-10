@@ -13,35 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.http.core.interceptor;
+package io.github.fishlikewater.raiden.http.core.exception;
 
-import io.github.fishlikewater.raiden.http.core.RequestWrap;
-import io.github.fishlikewater.raiden.http.core.Response;
+import io.github.fishlikewater.raiden.core.exception.AbstractException;
 
-import java.io.IOException;
+import java.io.Serial;
 
 /**
- * {@code Interceptor}
- * 拦截器
+ * {@code DegradeException}
+ * 熔断异常
  *
  * @author zhangxiang
  * @version 1.1.0
- * @since 2024/12/09
+ * @since 2024/12/10
  */
-public interface HttpInterceptor {
+public class DegradeException extends AbstractException {
 
-    Response<?> intercept(Chain chain) throws IOException, InterruptedException;
-
-    int order();
-
-    interface Chain {
-
-        RequestWrap requestWrap();
-
-        Response<?> proceed(RequestWrap requestWrap) throws IOException, InterruptedException;
-
-        Response<?> proceed() throws IOException, InterruptedException;
-
-        void reset();
-    }
+    @Serial
+    private static final long serialVersionUID = -8502072746385972181L;
 }

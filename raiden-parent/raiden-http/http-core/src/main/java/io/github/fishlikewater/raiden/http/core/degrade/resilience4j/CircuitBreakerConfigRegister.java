@@ -13,35 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.http.core.interceptor;
-
-import io.github.fishlikewater.raiden.http.core.RequestWrap;
-import io.github.fishlikewater.raiden.http.core.Response;
-
-import java.io.IOException;
+package io.github.fishlikewater.raiden.http.core.degrade.resilience4j;
 
 /**
- * {@code Interceptor}
- * 拦截器
+ * {@code CircuitBreakerConfigRegistrar}
+ * 熔断配置注册器
  *
  * @author zhangxiang
  * @version 1.1.0
- * @since 2024/12/09
+ * @since 2024/12/10
  */
-public interface HttpInterceptor {
+public interface CircuitBreakerConfigRegister {
 
-    Response<?> intercept(Chain chain) throws IOException, InterruptedException;
 
-    int order();
-
-    interface Chain {
-
-        RequestWrap requestWrap();
-
-        Response<?> proceed(RequestWrap requestWrap) throws IOException, InterruptedException;
-
-        Response<?> proceed() throws IOException, InterruptedException;
-
-        void reset();
-    }
 }

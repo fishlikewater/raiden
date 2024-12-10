@@ -22,6 +22,7 @@ import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * <p>
@@ -75,6 +76,14 @@ public interface HttpClientBeanFactory {
      * @return 拦截器
      */
     HttpInterceptor getInterceptor(String interceptorName);
+
+    /**
+     * 获取拦截器
+     *
+     * @param interceptorNames 拦截器名
+     * @return 拦截器
+     */
+    List<HttpInterceptor> getInterceptors(List<String> interceptorNames);
 
     /**
      * 缓存拦截器

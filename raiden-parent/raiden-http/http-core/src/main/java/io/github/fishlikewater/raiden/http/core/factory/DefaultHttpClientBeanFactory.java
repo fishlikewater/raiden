@@ -32,10 +32,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -75,7 +77,6 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         Heads heads = method.getAnnotation(Heads.class);
         Map<String, String> headMap = MapUtil.newHashMap();
         if (Objects.nonNull(heads)) {
-
             Arrays.stream(heads.value())
                     .map(h -> h.split(HttpConstants.HEAD_SPLIT_SYMBOL, 2))
                     .forEach(s -> {
@@ -111,6 +112,55 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         methodCache.put(name, argsBean);
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getProxyObject(Class<T> tClass) {
+        return (T) this.proxyCache.get(tClass.getName());
+    }
+
+    @Override
+    public void cacheProxyObject(String className, Object proxyObject) {
+        this.proxyCache.put(className, proxyObject);
+    }
+
+    @Override
+    public HttpInterceptor getInterceptor(String interceptorName) {
+        if (ObjectUtils.isNullOrEmpty(interceptorName)) {
+            return null;
+        }
+        return this.interceptorCache.get(interceptorName);
+    }
+
+    @Override
+    public List<HttpInterceptor> getInterceptors(List<String> interceptorNames) {
+        if (ObjectUtils.isNotNullOrEmpty(interceptorNames)) {
+            return interceptorNames
+                    .stream()
+                    .map(this::getInterceptor)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+        return List.of();
+    }
+
+    @Override
+    public void registerHttpClientInterceptor(HttpInterceptor httpInterceptor) {
+        this.interceptorCache.put(httpInterceptor.getClass().getName(), httpInterceptor);
+    }
+
+    @Override
+    public ExceptionProcessor getExceptionProcessor(String name) {
+        if (ObjectUtils.isNullOrEmpty(name)) {
+            return null;
+        }
+        return this.exceptionProcessorCache.get(name);
+    }
+
+    @Override
+    public void registerExceptionProcessor(ExceptionProcessor exceptionProcessor) {
+        this.exceptionProcessorCache.put(exceptionProcessor.getClass().getName(), exceptionProcessor);
+    }
+
     private MethodArgsBean handleMethodAnnotation(Method method) {
         MethodArgsBean.MethodArgsBeanBuilder builder = MethodArgsBean.builder();
         final Annotation[] annotations = method.getAnnotations();
@@ -144,43 +194,6 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
             }
         }
         return builder.build();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T getProxyObject(Class<T> tClass) {
-        return (T) this.proxyCache.get(tClass.getName());
-    }
-
-    @Override
-    public void cacheProxyObject(String className, Object proxyObject) {
-        this.proxyCache.put(className, proxyObject);
-    }
-
-    @Override
-    public HttpInterceptor getInterceptor(String interceptorName) {
-        if (ObjectUtils.isNullOrEmpty(interceptorName)) {
-            return null;
-        }
-        return this.interceptorCache.get(interceptorName);
-    }
-
-    @Override
-    public void registerHttpClientInterceptor(HttpInterceptor httpInterceptor) {
-        this.interceptorCache.put(httpInterceptor.getClass().getName(), httpInterceptor);
-    }
-
-    @Override
-    public ExceptionProcessor getExceptionProcessor(String name) {
-        if (ObjectUtils.isNullOrEmpty(name)) {
-            return null;
-        }
-        return this.exceptionProcessorCache.get(name);
-    }
-
-    @Override
-    public void registerExceptionProcessor(ExceptionProcessor exceptionProcessor) {
-        this.exceptionProcessorCache.put(exceptionProcessor.getClass().getName(), exceptionProcessor);
     }
 
     private String getUrl(String protocol, String url, String path) {

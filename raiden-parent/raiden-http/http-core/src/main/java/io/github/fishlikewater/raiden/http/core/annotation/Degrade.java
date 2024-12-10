@@ -13,35 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.http.core.interceptor;
+package io.github.fishlikewater.raiden.http.core.annotation;
 
-import io.github.fishlikewater.raiden.http.core.RequestWrap;
-import io.github.fishlikewater.raiden.http.core.Response;
+import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
+import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
 
-import java.io.IOException;
+import java.lang.annotation.*;
 
 /**
- * {@code Interceptor}
- * 拦截器
+ * {@code Degrade}
+ * 熔断注解
  *
  * @author zhangxiang
  * @version 1.1.0
- * @since 2024/12/09
+ * @since 2024/12/10
  */
-public interface HttpInterceptor {
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Degrade {
 
-    Response<?> intercept(Chain chain) throws IOException, InterruptedException;
+    DegradeType type() default DegradeType.RESILIENCE4J;
 
-    int order();
+    String circuitBreakerConfigName() default "";
 
-    interface Chain {
-
-        RequestWrap requestWrap();
-
-        Response<?> proceed(RequestWrap requestWrap) throws IOException, InterruptedException;
-
-        Response<?> proceed() throws IOException, InterruptedException;
-
-        void reset();
-    }
+    Class<? extends FallbackFactory<?>> fallback();
 }

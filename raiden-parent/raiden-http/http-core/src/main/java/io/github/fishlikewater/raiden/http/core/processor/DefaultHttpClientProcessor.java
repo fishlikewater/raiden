@@ -21,9 +21,8 @@ import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.Response;
 import io.github.fishlikewater.raiden.http.core.client.HttpRequestClient;
-import io.github.fishlikewater.raiden.http.core.interceptor.CallServerHttpInterceptor;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
-import io.github.fishlikewater.raiden.http.core.interceptor.RealInterceptorChain;
+import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
+import io.github.fishlikewater.raiden.http.core.interceptor.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,6 +41,9 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
 
     private final HttpRequestClient httpRequestClient = new HttpRequestClient();
     private final CallServerHttpInterceptor callServerInterceptor = new CallServerHttpInterceptor(httpRequestClient);
+    private final RetryInterceptor retryInterceptor = new RetryInterceptor();
+    private final Resilience4jInterceptor resilience4jInterceptor = new Resilience4jInterceptor();
+    private final SentinelInterceptor sentinelInterceptor = new SentinelInterceptor();
 
     @SneakyThrows(Throwable.class)
     @Override
@@ -55,10 +57,18 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
         if (HttpBootStrap.getConfig().isEnableLog()) {
             interceptors.addFirst(HttpBootStrap.getConfig().getLogInterceptor());
         }
+        interceptors.addLast(retryInterceptor);
+        if (requestWrap.isDegrade()) {
+            interceptors.addLast(
+                    requestWrap.getDegradeType() == DegradeType.RESILIENCE4J
+                            ? resilience4jInterceptor
+                            : sentinelInterceptor
+            );
+        }
         interceptors.addLast(callServerInterceptor);
         httpRequestClient.buildHttpRequest(requestWrap);
         RealInterceptorChain chain = new RealInterceptorChain(requestWrap, interceptors);
-        Response<?> response = chain.proceed(requestWrap);
+        Response<?> response = chain.proceed();
         if (requestWrap.isSync()) {
             return response.getSyncResponse().body();
         }

@@ -39,5 +39,5 @@ module raiden.http.core {
     exports io.github.fishlikewater.raiden.http.core.convert;
     exports io.github.fishlikewater.raiden.http.core.factory;
     exports io.github.fishlikewater.raiden.http.core.client;
-    exports io.github.fishlikewater.raiden.http.core.retry;
+    exports io.github.fishlikewater.raiden.http.core.degrade;
 }

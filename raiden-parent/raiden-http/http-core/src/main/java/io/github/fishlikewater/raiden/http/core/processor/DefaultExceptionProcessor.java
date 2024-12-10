@@ -34,7 +34,7 @@ public class DefaultExceptionProcessor implements ExceptionProcessor {
 
     @Override
     public <T> void invalidRespHandle(RequestWrap requestWrap, HttpResponse<T> response) {
-        log.error("request failed, response status code: {}", response.statusCode());
+        log.info("request invalid, response status code: {}", response.statusCode());
     }
 
     @Override

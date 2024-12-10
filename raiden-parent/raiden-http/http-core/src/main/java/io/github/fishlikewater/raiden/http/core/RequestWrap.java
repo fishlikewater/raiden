@@ -16,6 +16,8 @@
 package io.github.fishlikewater.raiden.http.core;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
+import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
+import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
@@ -113,6 +115,21 @@ public class RequestWrap {
      * 重试次数
      */
     private int retryCount;
+
+    /**
+     * 是否启用熔断降级
+     */
+    private boolean degrade;
+
+    /**
+     * 降级处理
+     */
+    private FallbackFactory<?> fallbackFactory;
+
+    /**
+     * 熔断降级类型
+     */
+    private DegradeType degradeType;
 
     /**
      * 实际请求对象

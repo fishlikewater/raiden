@@ -22,8 +22,6 @@ import io.github.fishlikewater.raiden.http.core.interceptor.LogHttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.PredRequestInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.HttpClientProcessor;
 import io.github.fishlikewater.raiden.http.core.proxy.InterfaceProxy;
-import io.github.fishlikewater.raiden.http.core.retry.Retry;
-import io.github.fishlikewater.raiden.http.core.retry.RetryHandler;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegistry;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -98,9 +96,4 @@ public class HttpConfig {
      * 全局日志拦截器
      */
     private LogHttpInterceptor logInterceptor = new LogHttpInterceptor();
-
-    /**
-     * 重试处理器
-     */
-    private Retry retryHandler = new RetryHandler();
 }

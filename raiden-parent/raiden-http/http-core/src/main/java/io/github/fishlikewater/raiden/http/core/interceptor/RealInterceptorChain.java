@@ -60,6 +60,16 @@ public class RealInterceptorChain implements HttpInterceptor.Chain {
         return response;
     }
 
+    @Override
+    public Response<?> proceed() throws IOException, InterruptedException {
+        return this.proceed(this.requestWrap);
+    }
+
+    @Override
+    public void reset() {
+        this.index = 0;
+    }
+
     private void updateRequestWrap(RequestWrap requestWrap) {
         this.requestWrap = requestWrap;
     }

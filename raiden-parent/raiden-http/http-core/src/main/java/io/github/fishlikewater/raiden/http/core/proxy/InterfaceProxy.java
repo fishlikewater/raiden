@@ -19,7 +19,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.StrFormatter;
 import cn.hutool.core.util.TypeUtil;
-import io.github.fishlikewater.raiden.core.LambdaUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.*;
 import io.github.fishlikewater.raiden.http.core.annotation.Body;
@@ -28,7 +27,6 @@ import io.github.fishlikewater.raiden.http.core.annotation.Param;
 import io.github.fishlikewater.raiden.http.core.annotation.PathParam;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import io.github.fishlikewater.raiden.http.core.factory.HttpClientBeanFactory;
-import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.HttpClientProcessor;
 
 import java.lang.reflect.Method;
@@ -87,12 +85,7 @@ public interface InterfaceProxy {
         List<String> interceptorNames = methodArgsBean.getInterceptorNames();
         String exceptionProcessorName = methodArgsBean.getExceptionProcessorName();
         if (ObjectUtils.isNotNullOrEmpty(interceptorNames)) {
-            LambdaUtils.handle(interceptorNames, interceptorName -> {
-                HttpInterceptor interceptor = httpClientBeanFactory.getInterceptor(interceptorName);
-                if (ObjectUtils.isNotNullOrEmpty(interceptor)) {
-                    requestWrap.addInterceptor(interceptor);
-                }
-            });
+            requestWrap.setInterceptors(httpClientBeanFactory.getInterceptors(interceptorNames));
         }
         if (ObjectUtils.isNotNullOrEmpty(exceptionProcessorName)) {
             requestWrap.setExceptionProcessor(httpClientBeanFactory.getExceptionProcessor(exceptionProcessorName));
