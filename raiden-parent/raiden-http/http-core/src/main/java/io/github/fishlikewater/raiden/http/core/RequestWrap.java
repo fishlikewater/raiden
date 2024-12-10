@@ -26,6 +26,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.lang.reflect.Method;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.util.ArrayList;
@@ -45,6 +46,16 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestWrap {
+
+    /**
+     * 被调用的方法
+     */
+    private Method method;
+
+    /**
+     * 方法参数
+     */
+    private Object[] args;
 
     /**
      * 请求方式
@@ -120,6 +131,11 @@ public class RequestWrap {
      * 是否启用熔断降级
      */
     private boolean degrade;
+
+    /**
+     * 熔断降级配置名称
+     */
+    private String circuitBreakerConfigName;
 
     /**
      * 降级处理

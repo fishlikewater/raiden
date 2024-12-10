@@ -107,6 +107,11 @@ public class MethodArgsBean {
      */
     private String exceptionProcessorName;
 
+    /**
+     * 降级处理
+     */
+    private String fallbackFactoryName;
+
     public void addInterceptorName(String interceptorName) {
         if (this.interceptorNames == null) {
             this.interceptorNames = new ArrayList<>();

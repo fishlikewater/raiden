@@ -16,8 +16,10 @@
 package io.github.fishlikewater.raiden.http.core.factory;
 
 import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
+import io.github.fishlikewater.raiden.http.core.annotation.Degrade;
 import io.github.fishlikewater.raiden.http.core.annotation.HttpServer;
 import io.github.fishlikewater.raiden.http.core.annotation.Interceptor;
+import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 
@@ -49,8 +51,9 @@ public interface HttpClientBeanFactory {
      * @param method      方法
      * @param httpServer  HttpServer注解
      * @param interceptor Interceptor注解
+     * @param degrade     注解
      */
-    void cacheMethod(Method method, HttpServer httpServer, Interceptor interceptor);
+    void cacheMethod(Method method, HttpServer httpServer, Interceptor interceptor, Degrade degrade);
 
     /**
      * 获取代理对象
@@ -106,4 +109,19 @@ public interface HttpClientBeanFactory {
      * @param exceptionProcessor 异常处理器
      */
     void registerExceptionProcessor(ExceptionProcessor exceptionProcessor);
+
+    /**
+     * 获取fallback工厂
+     *
+     * @param name fallback工厂名
+     * @return fallback工厂
+     */
+    FallbackFactory<?> getFallbackFactory(String name);
+
+    /**
+     * 缓存fallback工厂
+     *
+     * @param fallbackFactory fallback工厂
+     */
+    void registerFallbackFactory(FallbackFactory<?> fallbackFactory);
 }

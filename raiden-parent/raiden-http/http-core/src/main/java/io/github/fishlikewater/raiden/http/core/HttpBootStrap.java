@@ -21,6 +21,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
+import io.github.fishlikewater.raiden.http.core.annotation.Degrade;
 import io.github.fishlikewater.raiden.http.core.annotation.HttpServer;
 import io.github.fishlikewater.raiden.http.core.annotation.Interceptor;
 import io.github.fishlikewater.raiden.http.core.client.HttpRequestClient;
@@ -147,15 +148,16 @@ public class HttpBootStrap {
     }
 
     private static void cache(Method[] methods, Class<?> clazz) {
-        Interceptor interceptorAnnotation = clazz.getAnnotation(Interceptor.class);
+        Interceptor interceptor = clazz.getAnnotation(Interceptor.class);
         HttpServer httpServer = clazz.getAnnotation(HttpServer.class);
+        Degrade degrade = clazz.getAnnotation(Degrade.class);
         if (config.isSelfManager()) {
             cacheProxyClass(clazz);
-            cacheInterceptor(interceptorAnnotation);
+            cacheInterceptor(interceptor);
             cacheExceptionProcessor(httpServer);
         }
         for (Method method : methods) {
-            config.getHttpClientBeanFactory().cacheMethod(method, httpServer, interceptorAnnotation);
+            config.getHttpClientBeanFactory().cacheMethod(method, httpServer, interceptor, degrade);
         }
     }
 

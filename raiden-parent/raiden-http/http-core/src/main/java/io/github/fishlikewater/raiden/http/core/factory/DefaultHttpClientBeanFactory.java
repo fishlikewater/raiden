@@ -22,6 +22,7 @@ import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
 import io.github.fishlikewater.raiden.http.core.annotation.*;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
+import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
@@ -56,6 +57,7 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
     ConcurrentHashMap<String, HttpInterceptor> interceptorCache = new ConcurrentHashMap<>();
 
     ConcurrentHashMap<String, ExceptionProcessor> exceptionProcessorCache = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, FallbackFactory<?>> fallbackFactoryCache = new ConcurrentHashMap<>();
 
     @Override
     public MethodArgsBean getMethodArgsBean(String methodName) {
@@ -63,7 +65,7 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
     }
 
     @Override
-    public void cacheMethod(Method method, HttpServer httpServer, Interceptor interceptor) {
+    public void cacheMethod(Method method, HttpServer httpServer, Interceptor interceptor, Degrade degrade) {
         MethodArgsBean argsBean = this.handleMethodAnnotation(method);
         if (Objects.isNull(argsBean.getRequestMethod())) {
             return;
@@ -74,6 +76,7 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         final Type returnType1 = TypeUtil.getReturnType(method);
         final Type typeArgument = TypeUtil.getTypeArgument(returnType1);
         Parameter[] parameters = method.getParameters();
+
         Heads heads = method.getAnnotation(Heads.class);
         Map<String, String> headMap = MapUtil.newHashMap();
         if (Objects.nonNull(heads)) {
@@ -85,6 +88,14 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
                         headMap.put(key, value);
                     });
         }
+
+        Degrade methodDegrade = method.getAnnotation(Degrade.class);
+        if (ObjectUtils.isNotNullOrEmpty(methodDegrade)) {
+            argsBean.setFallbackFactoryName(methodDegrade.fallback().getName());
+        } else if (ObjectUtils.isNotNullOrEmpty(degrade)) {
+            argsBean.setFallbackFactoryName(degrade.fallback().getName());
+        }
+
         final String className = method.getDeclaringClass().getName();
         final String requestUrl = path.startsWith(HttpConstants.HTTP) ? path : getUrl(httpServer.protocol(), httpServer.url(), path);
         Class<? extends HttpInterceptor>[] interceptors = ObjectUtils.isNotNullOrEmpty(interceptor) ? interceptor.value() : null;
@@ -93,6 +104,7 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
                 argsBean.addInterceptorName(aClass.getName());
             }
         }
+
         String exceptionProcessorClassName = ObjectUtils.isNotNullOrEmpty(httpServer.exceptionProcessor()) ? httpServer.exceptionProcessor().getName() : null;
         argsBean.setClassName(className)
                 .setServerName(serverName)
@@ -159,6 +171,16 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
     @Override
     public void registerExceptionProcessor(ExceptionProcessor exceptionProcessor) {
         this.exceptionProcessorCache.put(exceptionProcessor.getClass().getName(), exceptionProcessor);
+    }
+
+    @Override
+    public FallbackFactory<?> getFallbackFactory(String name) {
+        return null;
+    }
+
+    @Override
+    public void registerFallbackFactory(FallbackFactory<?> fallbackFactory) {
+
     }
 
     private MethodArgsBean handleMethodAnnotation(Method method) {

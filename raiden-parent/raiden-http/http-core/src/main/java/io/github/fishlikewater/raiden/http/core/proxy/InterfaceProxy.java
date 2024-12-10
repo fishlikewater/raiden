@@ -73,6 +73,8 @@ public interface InterfaceProxy {
 
         HttpClient httpClient = HttpBootStrap.getHttpClient(methodArgsBean.getSourceHttpClientName());
         RequestWrap requestWrap = RequestWrap.builder()
+                .method(method)
+                .args(args)
                 .httpMethod(httpMethod)
                 .returnType(returnType)
                 .typeArgumentClass(TypeUtil.getClass(typeArgument))
@@ -94,6 +96,7 @@ public interface InterfaceProxy {
         if (ObjectUtils.isNotNullOrEmpty(parameters)) {
             this.buildParams(requestWrap, parameters, args);
         }
+
         /* 设置重试次数*/
         requestWrap.setRetryCount(HttpBootStrap.getConfig().getMaxRetryCount());
 

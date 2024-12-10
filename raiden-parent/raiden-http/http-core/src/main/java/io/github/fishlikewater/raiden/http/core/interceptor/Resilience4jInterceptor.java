@@ -15,9 +15,12 @@
  */
 package io.github.fishlikewater.raiden.http.core.interceptor;
 
+import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.Response;
+import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * {@code Resilience4jInterceptor}
@@ -28,9 +31,23 @@ import java.io.IOException;
  * @since 2024/12/10
  */
 public class Resilience4jInterceptor implements HttpInterceptor {
+
+    private final ConcurrentHashMap<String, Object> fallbackCreateObject = new ConcurrentHashMap<>();
+
     @Override
     public Response<?> intercept(Chain chain) throws IOException, InterruptedException {
-        return chain.proceed();
+        if (!chain.requestWrap().isDegrade()) {
+            return chain.proceed();
+        }
+        return this.degrade(chain);
+    }
+
+    private Response<?> degrade(Chain chain) {
+        RequestWrap requestWrap = chain.requestWrap();
+        String circuitBreakerConfigName = requestWrap.getCircuitBreakerConfigName();
+        FallbackFactory<?> fallbackFactory = requestWrap.getFallbackFactory();
+
+        return null;
     }
 
     @Override
