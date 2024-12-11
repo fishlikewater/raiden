@@ -70,26 +70,32 @@ public class LogHttpInterceptor implements HttpInterceptor {
             return response;
         }
         if (requestWrap.isSync()) {
-            this.responseLog(response.getSyncResponse(), logLevel, headers);
+            this.responseLog(response.getSyncResponse(), logLevel);
             return response;
         } else {
             CompletableFuture<? extends HttpResponse<?>> future = response.getAsyncResponse().thenApply(res -> {
-                this.responseLog(res, logLevel, headers);
+                this.responseLog(res, logLevel);
                 return res;
             });
             return Response.ofAsync(((CompletableFuture<HttpResponse<Object>>) future));
         }
     }
 
-    private void responseLog(HttpResponse<?> response, LogLevel logLevel, HttpHeaders headers) {
+    private void responseLog(HttpResponse<?> response, LogLevel logLevel) {
         log.info("----------------------------------------------------------------");
         log.info("响应信息: ");
         final int state = response.statusCode();
         log.info("{}<-{}", state, response.uri().toString());
+        HttpHeaders headers = response.headers();
         recordHeads(logLevel, headers);
         if (logLevel == LogLevel.DETAIL) {
-            final String responseStr = response.body().toString();
-            log.info("响应数据: {}", responseStr);
+            final Optional<String> contentType = headers.firstValue("Content-Type");
+            contentType.ifPresent(s -> {
+                if (!s.contains(MULTIPART_CONTENT_TYPE)) {
+                    final String responseStr = response.body().toString();
+                    log.info("响应数据: {}", responseStr);
+                }
+            });
         }
         log.info("----------------------------------------------------------------");
     }

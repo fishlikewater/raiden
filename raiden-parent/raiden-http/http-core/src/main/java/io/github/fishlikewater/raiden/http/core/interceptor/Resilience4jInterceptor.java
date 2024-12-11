@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core.interceptor;
 
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.Response;
@@ -82,6 +83,9 @@ public class Resilience4jInterceptor implements HttpInterceptor, DegradeIntercep
     @SuppressWarnings("all")
     private Response fallback(CallNotPermittedException e, RequestWrap requestWrap) {
         FallbackFactory fallbackFactory = requestWrap.getFallbackFactory();
+        if (ObjectUtils.isNullOrEmpty(fallbackFactory)) {
+            throw e;
+        }
         Object o = this.get(fallbackFactory.getClass().getName(), fallbackFactory, e);
         Object invoke = null;
         try {
