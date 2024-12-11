@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.http.core.interceptor;
 
 
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.Response;
@@ -65,7 +66,9 @@ public class LogHttpInterceptor implements HttpInterceptor {
         this.recordHeads(logLevel, headers);
         this.recordDetail(logLevel, headers, httpRequest);
         Response response = chain.proceed(requestWrap);
-
+        if (ObjectUtils.isNotNullOrEmpty(response.getFallbackResponse())) {
+            return response;
+        }
         if (requestWrap.isSync()) {
             this.responseLog(response.getSyncResponse(), logLevel, headers);
             return response;
