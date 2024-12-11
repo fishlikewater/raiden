@@ -47,7 +47,7 @@ public class RemoteTest {
         HttpBootStrap.getConfig()
                 .setEnableLog(false)
                 .setLogLevel(LogLevel.BASIC)
-                .setMaxRetryCount(0)
+                .setMaxRetryCount(1)
                 .setRetryInterval(2000);
 
         CircuitBreakerConfig config = CircuitBreakerConfig.custom()

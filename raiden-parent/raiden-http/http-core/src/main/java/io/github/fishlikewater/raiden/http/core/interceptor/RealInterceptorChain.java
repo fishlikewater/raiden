@@ -46,14 +46,14 @@ public class RealInterceptorChain implements HttpInterceptor.Chain {
     }
 
     @Override
-    public Response<?> proceed(RequestWrap requestWrap) throws IOException, InterruptedException {
+    public Response proceed(RequestWrap requestWrap) throws IOException, InterruptedException {
         if (this.index >= this.interceptors.size()) {
             throw new AssertionError();
         }
         HttpInterceptor interceptor = this.interceptors.get(index);
         this.incrementIndex();
         this.updateRequestWrap(requestWrap);
-        Response<?> response = interceptor.intercept(this);
+        Response response = interceptor.intercept(this);
         if (ObjectUtils.isNullOrEmpty(response)) {
             throw new NullPointerException("interceptor " + interceptor + " returned null");
         }
@@ -61,7 +61,7 @@ public class RealInterceptorChain implements HttpInterceptor.Chain {
     }
 
     @Override
-    public Response<?> proceed() throws IOException, InterruptedException {
+    public Response proceed() throws IOException, InterruptedException {
         return this.proceed(this.requestWrap);
     }
 

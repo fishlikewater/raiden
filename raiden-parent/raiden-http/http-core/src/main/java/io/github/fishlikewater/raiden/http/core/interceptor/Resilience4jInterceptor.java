@@ -52,14 +52,14 @@ public class Resilience4jInterceptor implements HttpInterceptor, DegradeIntercep
     }
 
     @Override
-    public Response<?> intercept(Chain chain) throws IOException, InterruptedException {
+    public Response intercept(Chain chain) throws IOException, InterruptedException {
         if (!chain.requestWrap().isDegrade()) {
             return chain.proceed();
         }
         return this.degrade(chain);
     }
 
-    private Response<?> degrade(Chain chain) throws IOException, InterruptedException {
+    private Response degrade(Chain chain) throws IOException, InterruptedException {
         RequestWrap requestWrap = chain.requestWrap();
         String configName = requestWrap.getCircuitBreakerConfigName();
         CircuitBreakerConfigRegistry registry = HttpBootStrap.getConfig().getBreakerConfigRegistry();
@@ -68,7 +68,7 @@ public class Resilience4jInterceptor implements HttpInterceptor, DegradeIntercep
         StopWatch stopWatch = StopWatch.start();
         try {
             circuitBreaker.acquirePermission();
-            Response<?> response = chain.proceed();
+            Response response = chain.proceed();
             circuitBreaker.onResult(stopWatch.stop().toNanos(), TimeUnit.NANOSECONDS, response);
             return response;
         } catch (CallNotPermittedException e) {
@@ -80,8 +80,8 @@ public class Resilience4jInterceptor implements HttpInterceptor, DegradeIntercep
     }
 
     @SuppressWarnings("all")
-    private Response<?> fallback(CallNotPermittedException e, RequestWrap requestWrap) {
-        FallbackFactory<?> fallbackFactory = requestWrap.getFallbackFactory();
+    private Response fallback(CallNotPermittedException e, RequestWrap requestWrap) {
+        FallbackFactory fallbackFactory = requestWrap.getFallbackFactory();
         Object o = this.get(fallbackFactory.getClass().getName(), fallbackFactory, e);
         Object invoke = null;
         try {

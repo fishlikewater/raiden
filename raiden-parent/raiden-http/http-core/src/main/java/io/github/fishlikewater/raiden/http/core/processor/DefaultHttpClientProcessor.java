@@ -52,10 +52,10 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
         } else {
             interceptors = LambdaUtils.sort(interceptors, (Comparator.comparingInt(HttpInterceptor::order)));
         }
+        interceptors.addFirst(retryInterceptor);
         if (HttpBootStrap.getConfig().isEnableLog()) {
             interceptors.addFirst(HttpBootStrap.getConfig().getLogInterceptor());
         }
-        interceptors.addLast(retryInterceptor);
         if (requestWrap.isDegrade()) {
             interceptors.addLast(requestWrap.getDegradeType() == DegradeType.RESILIENCE4J
                     ? Resilience4jInterceptorBuilder.INSTANCE
@@ -65,7 +65,7 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
         interceptors.addLast(callServerInterceptor);
         httpRequestClient.buildHttpRequest(requestWrap);
         RealInterceptorChain chain = new RealInterceptorChain(requestWrap, interceptors);
-        Response<?> response = chain.proceed();
+        Response response = chain.proceed();
         if (ObjectUtils.isNotNullOrEmpty(response.getFallbackResponse())) {
             return response.getFallbackResponse();
         }

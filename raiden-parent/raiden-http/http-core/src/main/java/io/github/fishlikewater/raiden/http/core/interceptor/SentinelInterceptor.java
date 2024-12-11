@@ -30,7 +30,7 @@ import java.io.IOException;
 public class SentinelInterceptor implements HttpInterceptor {
 
     @Override
-    public Response<?> intercept(Chain chain) throws IOException, InterruptedException {
+    public Response intercept(Chain chain) throws IOException, InterruptedException {
         return chain.proceed();
     }
 

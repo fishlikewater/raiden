@@ -44,7 +44,7 @@ public class CallServerHttpInterceptor implements HttpInterceptor {
     }
 
     @Override
-    public Response<?> intercept(Chain chain) {
+    public Response intercept(Chain chain) {
         RequestWrap requestWrap = chain.requestWrap();
         if (requestWrap.isSync()) {
             return this.sync(requestWrap);
@@ -53,7 +53,7 @@ public class CallServerHttpInterceptor implements HttpInterceptor {
         }
     }
 
-    private Response<Object> sync(RequestWrap requestWrap) {
+    private Response sync(RequestWrap requestWrap) {
         //同步
         HttpResponse<Object> response = null;
         ExceptionProcessor exceptionProcessor = requestWrap.getExceptionProcessor();
@@ -73,7 +73,7 @@ public class CallServerHttpInterceptor implements HttpInterceptor {
         }
     }
 
-    private Response<Object> async(RequestWrap requestWrap) {
+    private Response async(RequestWrap requestWrap) {
         //异步
         CompletableFuture<HttpResponse<Object>> future = this.client
                 .requestAsync(requestWrap)

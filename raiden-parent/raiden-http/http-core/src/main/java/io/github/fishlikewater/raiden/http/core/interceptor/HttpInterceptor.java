@@ -30,7 +30,7 @@ import java.io.IOException;
  */
 public interface HttpInterceptor {
 
-    Response<?> intercept(Chain chain) throws IOException, InterruptedException;
+    Response intercept(Chain chain) throws IOException, InterruptedException;
 
     int order();
 
@@ -38,9 +38,9 @@ public interface HttpInterceptor {
 
         RequestWrap requestWrap();
 
-        Response<?> proceed(RequestWrap requestWrap) throws IOException, InterruptedException;
+        Response proceed(RequestWrap requestWrap) throws IOException, InterruptedException;
 
-        Response<?> proceed() throws IOException, InterruptedException;
+        Response proceed() throws IOException, InterruptedException;
 
         void reset();
     }

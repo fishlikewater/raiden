@@ -31,38 +31,38 @@ import java.util.concurrent.CompletableFuture;
  * @since 2024/12/09
  */
 @Data
-public class Response<T> implements Serializable {
+public class Response implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 6203784062620103712L;
 
-    private CompletableFuture<HttpResponse<T>> asyncResponse;
+    private CompletableFuture<HttpResponse<Object>> asyncResponse;
 
-    private HttpResponse<T> syncResponse;
+    private HttpResponse<Object> syncResponse;
 
-    private T fallbackResponse;
+    private Object fallbackResponse;
 
-    private Response(CompletableFuture<HttpResponse<T>> asyncResponse) {
+    private Response(CompletableFuture<HttpResponse<Object>> asyncResponse) {
         this.asyncResponse = asyncResponse;
     }
 
-    private Response(HttpResponse<T> syncResponse) {
+    private Response(HttpResponse<Object> syncResponse) {
         this.syncResponse = syncResponse;
     }
 
-    private Response(T fallbackResponse) {
+    private Response(Object fallbackResponse) {
         this.fallbackResponse = fallbackResponse;
     }
 
-    public static <T> Response<T> ofAsync(CompletableFuture<HttpResponse<T>> asyncResponse) {
-        return new Response<>(asyncResponse);
+    public static Response ofAsync(CompletableFuture<HttpResponse<Object>> asyncResponse) {
+        return new Response(asyncResponse);
     }
 
-    public static <T> Response<T> ofSync(HttpResponse<T> syncResponse) {
-        return new Response<>(syncResponse);
+    public static Response ofSync(HttpResponse<Object> syncResponse) {
+        return new Response(syncResponse);
     }
 
-    public static <T> Response<T> ofFallback(T fallbackResponse) {
-        return new Response<>(fallbackResponse);
+    public static Response ofFallback(Object fallbackResponse) {
+        return new Response(fallbackResponse);
     }
 }

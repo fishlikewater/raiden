@@ -55,7 +55,7 @@ public class LogHttpInterceptor implements HttpInterceptor {
 
     @Override
     @SuppressWarnings("all")
-    public Response<?> intercept(Chain chain) throws IOException, InterruptedException {
+    public Response intercept(Chain chain) throws IOException, InterruptedException {
         RequestWrap requestWrap = chain.requestWrap();
         HttpRequest httpRequest = requestWrap.getHttpRequest();
         final LogLevel logLevel = HttpBootStrap.getConfig().getLogLevel();
@@ -64,7 +64,7 @@ public class LogHttpInterceptor implements HttpInterceptor {
         log.info("请求方法: {}", httpRequest.method());
         this.recordHeads(logLevel, headers);
         this.recordDetail(logLevel, headers, httpRequest);
-        Response<?> response = chain.proceed(requestWrap);
+        Response response = chain.proceed(requestWrap);
 
         if (requestWrap.isSync()) {
             this.responseLog(response.getSyncResponse(), logLevel, headers);

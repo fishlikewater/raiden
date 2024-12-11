@@ -30,7 +30,7 @@ import java.io.IOException;
  **/
 public class DemoInterceptor2 implements HttpInterceptor {
     @Override
-    public Response<?> intercept(Chain chain) throws IOException, InterruptedException {
+    public Response intercept(Chain chain) throws IOException, InterruptedException {
         RequestWrap requestWrap = chain.requestWrap();
         System.out.println(requestWrap.getUrl() + "--2");
 

@@ -36,7 +36,7 @@ public interface RetryHandler {
 
     Logger log = LoggerFactory.getLogger(RetryHandler.class);
 
-    default Response<?> retry(HttpInterceptor.Chain chain, Throwable e) throws IOException, InterruptedException {
+    default Response retry(HttpInterceptor.Chain chain, Throwable e) throws IOException, InterruptedException {
         int retryCount = chain.requestWrap().getRetryCount();
         int maxRetryCount = HttpBootStrap.getConfig().getMaxRetryCount();
         if (retryCount > 0 && retryCount <= maxRetryCount) {

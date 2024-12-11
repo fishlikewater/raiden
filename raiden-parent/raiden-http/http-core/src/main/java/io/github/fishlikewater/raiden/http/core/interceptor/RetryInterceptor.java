@@ -20,6 +20,9 @@ import io.github.fishlikewater.raiden.http.core.Response;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 /**
  * {@code RetryInterceptor}
@@ -33,31 +36,35 @@ import java.io.IOException;
 public class RetryInterceptor implements HttpInterceptor, RetryHandler {
 
     @Override
-    public Response<?> intercept(Chain chain) throws IOException, InterruptedException {
+    public Response intercept(Chain chain) throws IOException, InterruptedException {
         try {
-            Response<?> response = chain.proceed();
-            this.determineAsyncResponse(response, chain);
-            return response;
+            Response response = chain.proceed();
+            return this.determineAsyncResponse(response, chain);
         } catch (Exception e) {
             return this.retry(chain, e);
         }
     }
-
 
     @Override
     public int order() {
         return 0;
     }
 
-    private void determineAsyncResponse(Response<?> response, Chain chain) {
+    private Response determineAsyncResponse(Response response, Chain chain) {
         if (ObjectUtils.isNotNullOrEmpty(response.getAsyncResponse())) {
-            response.getAsyncResponse().thenApply(t -> {
-                try {
-                    return this.retry(chain, null).getAsyncResponse();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            CompletableFuture<HttpResponse<Object>> future = response.getAsyncResponse().handleAsync((res, ex) -> {
+                        if (ObjectUtils.isNullOrEmpty(ex)) {
+                            return CompletableFuture.completedFuture(res);
+                        }
+                        try {
+                            return this.retry(chain, ex).getAsyncResponse();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .thenCompose(Function.identity());
+            return Response.ofAsync(future);
         }
+        return response;
     }
 }
