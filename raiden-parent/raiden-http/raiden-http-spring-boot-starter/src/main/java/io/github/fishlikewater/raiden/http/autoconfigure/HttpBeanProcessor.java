@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.http.autoconfigure;
 
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
+import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import lombok.NonNull;
@@ -50,6 +51,9 @@ public class HttpBeanProcessor implements BeanPostProcessor, BeanFactoryPostProc
         }
         if (bean instanceof ExceptionProcessor exceptionProcessor) {
             HttpBootStrap.getConfig().getHttpClientBeanFactory().registerExceptionProcessor(exceptionProcessor);
+        }
+        if (bean instanceof FallbackFactory<?> fallback) {
+            HttpBootStrap.getConfig().getHttpClientBeanFactory().registerFallbackFactory(fallback);
         }
         return bean;
     }

@@ -46,6 +46,10 @@ public class Assert {
         }
     }
 
+    public static void isTrue(boolean expression, String message, Object... args) {
+        isTrue(expression, StringUtils.format(message, args));
+    }
+
     /**
      * Assert a boolean expression, throwing an {@code IllegalArgumentException}
      * if the expression evaluates to {@code false}.
@@ -77,6 +81,10 @@ public class Assert {
         if (object != null) {
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public static void isNull(Object object, String message, Object... args) {
+        isNull(object, String.format(message, args));
     }
 
     /**
@@ -119,6 +127,10 @@ public class Assert {
         if (object == null) {
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public static void notNull(Object object, String message, Object... args) {
+        notNull(object, StringUtils.format(message, args));
     }
 
     /**
@@ -164,6 +176,10 @@ public class Assert {
         if (!StrUtil.isNotBlank(text)) {
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public static void hasLength(String text, String message, Object... args) {
+        hasLength(text, StringUtils.format(message, args));
     }
 
     /**
@@ -215,6 +231,10 @@ public class Assert {
         }
     }
 
+    public static void hasText(String text, String message, Object... args) {
+        hasText(text, StringUtils.format(message, args));
+    }
+
     /**
      * Assert that the given String contains valid text content; that is, it must not
      * be {@code null} and must contain at least one non-whitespace character.
@@ -264,6 +284,10 @@ public class Assert {
         }
     }
 
+    public static void doesNotContain(String textToSearch, String substring, String message, Object... args) {
+        doesNotContain(textToSearch, substring, StringUtils.format(message, args));
+    }
+
     /**
      * Assert that the given text does not contain the given substring.
      * <pre class="code">
@@ -308,6 +332,10 @@ public class Assert {
         if (ObjectUtils.isNullOrEmpty(array)) {
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public static void notEmpty(Object[] array, String message, Object... args) {
+        notEmpty(array, StringUtils.format(message, args));
     }
 
     /**
@@ -359,6 +387,10 @@ public class Assert {
         }
     }
 
+    public static void noNullElements(Object[] array, String message, Object... args) {
+        noNullElements(array, StringUtils.format(message, args));
+    }
+
     /**
      * Assert that an array contains no {@code null} elements.
      * <p>Note: Does not complain if the array is empty!
@@ -406,6 +438,10 @@ public class Assert {
         if (CollectionUtils.isEmpty(collection)) {
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public static void notEmpty(Collection<?> collection, String message, Object... args) {
+        notEmpty(collection, StringUtils.format(message, args));
     }
 
     /**
@@ -460,6 +496,10 @@ public class Assert {
         }
     }
 
+    public static void noNullElements(Collection<?> collection, String message, Object... args) {
+        noNullElements(collection, StringUtils.format(message, args));
+    }
+
     /**
      * Assert that a collection contains no {@code null} elements.
      * <p>Note: Does not complain if the collection is empty!
@@ -496,6 +536,10 @@ public class Assert {
         if (CollectionUtils.isEmpty(map)) {
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public static void notEmpty(Map<?, ?> map, String message, Object... args) {
+        notEmpty(map, StringUtils.format(message, args));
     }
 
     /**
@@ -548,6 +592,10 @@ public class Assert {
         }
     }
 
+    public static void isInstanceOf(Class<?> type, Object obj, String message, Object... args) {
+        isInstanceOf(type, obj, StringUtils.format(message, args));
+    }
+
     /**
      * Assert that the provided object is an instance of the provided class.
      * <pre class="code">
@@ -598,6 +646,10 @@ public class Assert {
         if (subType == null || !superType.isAssignableFrom(subType)) {
             assignableCheckFailed(superType, subType, message);
         }
+    }
+
+    public static void isAssignable(Class<?> superType, Class<?> subType, String message, Object... args) {
+        isAssignable(superType, subType, StringUtils.format(message, args));
     }
 
     /**

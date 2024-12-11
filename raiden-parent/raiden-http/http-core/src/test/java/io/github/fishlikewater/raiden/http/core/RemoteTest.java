@@ -18,6 +18,7 @@ package io.github.fishlikewater.raiden.http.core;
 import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import io.github.fishlikewater.raiden.http.core.remote.DemoFile;
 import io.github.fishlikewater.raiden.http.core.remote.DemoRemote;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.http.HttpClient;
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -45,8 +47,19 @@ public class RemoteTest {
         HttpBootStrap.getConfig()
                 .setEnableLog(false)
                 .setLogLevel(LogLevel.BASIC)
-                .setMaxRetryCount(1)
+                .setMaxRetryCount(0)
                 .setRetryInterval(2000);
+
+        CircuitBreakerConfig config = CircuitBreakerConfig.custom()
+                .failureRateThreshold(50) // 当失败率达到50%时打开断路器
+                .waitDurationInOpenState(Duration.ofSeconds(10)) // 断路器打开状态持续时间
+                .slidingWindowSize(10) // 滑动窗口大小
+                .minimumNumberOfCalls(3) // 最少调用次数以激活断路器逻辑
+                .build();
+
+        HttpBootStrap.getConfig()
+                .getBreakerConfigRegistry()
+                .register("test", config);
     }
 
     @Test
@@ -135,6 +148,18 @@ public class RemoteTest {
         outputStream.flush();
         outputStream.close();
         inputStream.close();
+    }
 
+    @Test
+    public void testDegrade() {
+        DemoRemote remote = HttpBootStrap.getProxy(DemoRemote.class);
+        for (int i = 0; i < 10; i++) {
+            try {
+                String s = remote.baidu();
+                System.out.println(s);
+            } catch (Exception ignore) {
+                System.out.println(i);
+            }
+        }
     }
 }

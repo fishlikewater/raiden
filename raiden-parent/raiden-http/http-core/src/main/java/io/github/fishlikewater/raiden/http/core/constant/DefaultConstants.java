@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.http.core.degrade.resilience4j;
+package io.github.fishlikewater.raiden.http.core.constant;
 
 /**
- * {@code CircuitBreakerConfigRegistrar}
- * 熔断配置注册器
+ * {@code DefaultConstants}
  *
  * @author zhangxiang
  * @version 1.1.0
- * @since 2024/12/10
+ * @since 2024/12/11
  */
-public interface CircuitBreakerConfigRegister {
+public interface DefaultConstants {
 
-    void register(CircuitBreakerConfigRegistry registry);
+    String DEFAULT_CIRCUIT_BREAKER_CONFIG = "defaultCircuitBreakerConfig";
 }

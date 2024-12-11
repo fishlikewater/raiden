@@ -38,9 +38,6 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * <p>
- *
- * </p>
  *
  * @author fishlikewater@126.com
  * @version 1.0.0
@@ -75,6 +72,9 @@ public interface InterfaceProxy {
         RequestWrap requestWrap = RequestWrap.builder()
                 .method(method)
                 .args(args)
+                .degrade(methodArgsBean.isDegrade())
+                .degradeType(methodArgsBean.getDegradeType())
+                .circuitBreakerConfigName(methodArgsBean.getCircuitBreakerConfigName())
                 .httpMethod(httpMethod)
                 .returnType(returnType)
                 .typeArgumentClass(TypeUtil.getClass(typeArgument))
@@ -86,11 +86,15 @@ public interface InterfaceProxy {
                 .build();
         List<String> interceptorNames = methodArgsBean.getInterceptorNames();
         String exceptionProcessorName = methodArgsBean.getExceptionProcessorName();
+        String fallbackFactoryName = methodArgsBean.getFallbackFactoryName();
         if (ObjectUtils.isNotNullOrEmpty(interceptorNames)) {
             requestWrap.setInterceptors(httpClientBeanFactory.getInterceptors(interceptorNames));
         }
         if (ObjectUtils.isNotNullOrEmpty(exceptionProcessorName)) {
             requestWrap.setExceptionProcessor(httpClientBeanFactory.getExceptionProcessor(exceptionProcessorName));
+        }
+        if (ObjectUtils.isNotNullOrEmpty(fallbackFactoryName)) {
+            requestWrap.setFallbackFactory(httpClientBeanFactory.getFallbackFactory(fallbackFactoryName));
         }
         /* 构建请求参数*/
         if (ObjectUtils.isNotNullOrEmpty(parameters)) {

@@ -15,12 +15,21 @@
  */
 package io.github.fishlikewater.raiden.http.core.interceptor;
 
+import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.Response;
 import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
+import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegistry;
+import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.core.StopWatch;
 
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * {@code Resilience4jInterceptor}
@@ -30,9 +39,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 1.1.0
  * @since 2024/12/10
  */
-public class Resilience4jInterceptor implements HttpInterceptor {
+public class Resilience4jInterceptor implements HttpInterceptor, DegradeInterceptor {
 
-    private final ConcurrentHashMap<String, Object> fallbackCreateObject = new ConcurrentHashMap<>();
+    private final CircuitBreakerRegistry circuitBreakerRegistry;
+
+    public Resilience4jInterceptor(CircuitBreakerRegistry circuitBreakerRegistry) {
+        this.circuitBreakerRegistry = circuitBreakerRegistry;
+    }
 
     @Override
     public Response<?> intercept(Chain chain) throws IOException, InterruptedException {
@@ -42,12 +55,37 @@ public class Resilience4jInterceptor implements HttpInterceptor {
         return this.degrade(chain);
     }
 
-    private Response<?> degrade(Chain chain) {
+    private Response<?> degrade(Chain chain) throws IOException, InterruptedException {
         RequestWrap requestWrap = chain.requestWrap();
-        String circuitBreakerConfigName = requestWrap.getCircuitBreakerConfigName();
-        FallbackFactory<?> fallbackFactory = requestWrap.getFallbackFactory();
+        String configName = requestWrap.getCircuitBreakerConfigName();
+        CircuitBreakerConfigRegistry registry = HttpBootStrap.getConfig().getBreakerConfigRegistry();
+        CircuitBreakerConfig breakerConfig = registry.get(configName);
+        CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker(this.parseName(requestWrap), breakerConfig);
+        StopWatch stopWatch = StopWatch.start();
+        try {
+            circuitBreaker.acquirePermission();
+            Response<?> response = chain.proceed();
+            circuitBreaker.onResult(stopWatch.stop().toNanos(), TimeUnit.NANOSECONDS, response);
+            return response;
+        } catch (CallNotPermittedException e) {
+            return this.fallback(e, requestWrap);
+        } catch (Throwable throwable) {
+            circuitBreaker.onError(stopWatch.stop().toNanos(), TimeUnit.NANOSECONDS, throwable);
+            throw throwable;
+        }
+    }
 
-        return null;
+    @SuppressWarnings("all")
+    private Response<?> fallback(CallNotPermittedException e, RequestWrap requestWrap) {
+        FallbackFactory<?> fallbackFactory = requestWrap.getFallbackFactory();
+        Object o = this.get(fallbackFactory.getClass().getName(), fallbackFactory, e);
+        Object invoke = null;
+        try {
+            invoke = requestWrap.getMethod().invoke(o, requestWrap.getArgs());
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            return HttpExceptionCheck.INSTANCE.throwUnchecked(ex);
+        }
+        return Response.ofFallback(invoke);
     }
 
     @Override

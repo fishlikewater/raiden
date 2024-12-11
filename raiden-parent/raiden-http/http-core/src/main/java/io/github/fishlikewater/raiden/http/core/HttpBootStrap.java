@@ -26,6 +26,8 @@ import io.github.fishlikewater.raiden.http.core.annotation.HttpServer;
 import io.github.fishlikewater.raiden.http.core.annotation.Interceptor;
 import io.github.fishlikewater.raiden.http.core.client.HttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
+import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
+import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegistry;
 import io.github.fishlikewater.raiden.http.core.factory.DefaultHttpClientBeanFactory;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.PredRequestInterceptor;
@@ -114,6 +116,7 @@ public class HttpBootStrap {
         if (config.isSelfManager()) {
             registerDefaultHttpClient();
             config.getSourceHttpClientRegistry().init();
+            config.setBreakerConfigRegistry(new CircuitBreakerConfigRegistry(null));
         }
         if (Objects.isNull(config.getHttpClient())) {
             config.setHttpClient(new HttpRequestClient());
@@ -121,7 +124,6 @@ public class HttpBootStrap {
         if (Objects.isNull(config.getHttpClientBeanFactory())) {
             config.setHttpClientBeanFactory(new DefaultHttpClientBeanFactory());
         }
-
         if (Objects.isNull(config.getHttpClientProcessor())) {
             config.setHttpClientProcessor(new DefaultHttpClientProcessor());
         }
@@ -155,9 +157,21 @@ public class HttpBootStrap {
             cacheProxyClass(clazz);
             cacheInterceptor(interceptor);
             cacheExceptionProcessor(httpServer);
+            cacheDegrade(degrade);
         }
         for (Method method : methods) {
             config.getHttpClientBeanFactory().cacheMethod(method, httpServer, interceptor, degrade);
+        }
+    }
+
+    private static void cacheDegrade(Degrade degrade) {
+        if (ObjectUtils.isNullOrEmpty(degrade)) {
+            return;
+        }
+        Class<? extends FallbackFactory<?>> fallback = degrade.fallback();
+        FallbackFactory<?> fallbackFactory = config.getHttpClientBeanFactory().getFallbackFactory(fallback.getName());
+        if (ObjectUtils.isNullOrEmpty(fallbackFactory)) {
+            config.getHttpClientBeanFactory().registerFallbackFactory(getFallbackFactory(fallback));
         }
     }
 
@@ -170,13 +184,14 @@ public class HttpBootStrap {
     }
 
     private static void cacheInterceptor(Interceptor interceptorAnnotation) {
-        if (ObjectUtils.isNotNullOrEmpty(interceptorAnnotation)) {
-            Class<? extends HttpInterceptor>[] classes = interceptorAnnotation.value();
-            for (Class<? extends HttpInterceptor> aClass : classes) {
-                HttpInterceptor interceptor = config.getHttpClientBeanFactory().getInterceptor(aClass.getName());
-                if (ObjectUtils.isNullOrEmpty(interceptor)) {
-                    config.getHttpClientBeanFactory().registerHttpClientInterceptor(getInterceptor(aClass));
-                }
+        if (ObjectUtils.isNullOrEmpty(interceptorAnnotation)) {
+            return;
+        }
+        Class<? extends HttpInterceptor>[] classes = interceptorAnnotation.value();
+        for (Class<? extends HttpInterceptor> aClass : classes) {
+            HttpInterceptor interceptor = config.getHttpClientBeanFactory().getInterceptor(aClass.getName());
+            if (ObjectUtils.isNullOrEmpty(interceptor)) {
+                config.getHttpClientBeanFactory().registerHttpClientInterceptor(getInterceptor(aClass));
             }
         }
     }
@@ -194,5 +209,10 @@ public class HttpBootStrap {
     @SneakyThrows
     private static ExceptionProcessor getExceptionProcessor(Class<? extends ExceptionProcessor> processorClass) {
         return processorClass.getDeclaredConstructor().newInstance();
+    }
+
+    @SneakyThrows
+    private static FallbackFactory<?> getFallbackFactory(Class<? extends FallbackFactory<?>> fallback) {
+        return fallback.getDeclaredConstructor().newInstance();
     }
 }

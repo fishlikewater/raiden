@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core;
 
+import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
 import io.github.fishlikewater.raiden.http.core.enums.HttpMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -101,6 +102,11 @@ public class MethodArgsBean {
     private boolean isSync;
 
     /**
+     * 是否启用熔断
+     */
+    private boolean degrade;
+
+    /**
      * 错误处理器
      *
      * @since 1.0.2
@@ -111,6 +117,16 @@ public class MethodArgsBean {
      * 降级处理
      */
     private String fallbackFactoryName;
+
+    /**
+     * 熔断降级配置名称
+     */
+    private String circuitBreakerConfigName;
+
+    /**
+     * 熔断降级类型
+     */
+    private DegradeType degradeType;
 
     public void addInterceptorName(String interceptorName) {
         if (this.interceptorNames == null) {

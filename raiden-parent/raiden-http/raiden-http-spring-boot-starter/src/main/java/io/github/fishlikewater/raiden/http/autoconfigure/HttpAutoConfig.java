@@ -17,6 +17,8 @@ package io.github.fishlikewater.raiden.http.autoconfigure;
 
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
+import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegister;
+import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegistry;
 import io.github.fishlikewater.raiden.http.core.processor.DefaultExceptionProcessor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegister;
@@ -94,5 +96,14 @@ public class HttpAutoConfig {
         sourceHttpClientRegistry.init();
         HttpBootStrap.getConfig().setSourceHttpClientRegistry(sourceHttpClientRegistry);
         return sourceHttpClientRegistry;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public CircuitBreakerConfigRegistry circuitBreakerConfigRegistry(
+            @Autowired(required = false) List<CircuitBreakerConfigRegister> circuitBreakerConfigRegisters) {
+        CircuitBreakerConfigRegistry registry = new CircuitBreakerConfigRegistry(circuitBreakerConfigRegisters);
+        HttpBootStrap.getConfig().setBreakerConfigRegistry(registry);
+        return registry;
     }
 }

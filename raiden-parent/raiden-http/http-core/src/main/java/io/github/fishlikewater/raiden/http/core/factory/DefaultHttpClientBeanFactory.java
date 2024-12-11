@@ -91,9 +91,15 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
 
         Degrade methodDegrade = method.getAnnotation(Degrade.class);
         if (ObjectUtils.isNotNullOrEmpty(methodDegrade)) {
+            argsBean.setDegrade(true);
             argsBean.setFallbackFactoryName(methodDegrade.fallback().getName());
+            argsBean.setDegradeType(methodDegrade.type());
+            argsBean.setCircuitBreakerConfigName(methodDegrade.circuitBreakerConfigName());
         } else if (ObjectUtils.isNotNullOrEmpty(degrade)) {
+            argsBean.setDegrade(true);
             argsBean.setFallbackFactoryName(degrade.fallback().getName());
+            argsBean.setDegradeType(degrade.type());
+            argsBean.setCircuitBreakerConfigName(degrade.circuitBreakerConfigName());
         }
 
         final String className = method.getDeclaringClass().getName();
@@ -175,12 +181,12 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
 
     @Override
     public FallbackFactory<?> getFallbackFactory(String name) {
-        return null;
+        return this.fallbackFactoryCache.get(name);
     }
 
     @Override
     public void registerFallbackFactory(FallbackFactory<?> fallbackFactory) {
-
+        this.fallbackFactoryCache.put(fallbackFactory.getClass().getName(), fallbackFactory);
     }
 
     private MethodArgsBean handleMethodAnnotation(Method method) {

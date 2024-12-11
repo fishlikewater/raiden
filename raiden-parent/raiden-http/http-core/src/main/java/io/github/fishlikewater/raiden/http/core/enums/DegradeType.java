@@ -25,8 +25,6 @@ package io.github.fishlikewater.raiden.http.core.enums;
  */
 public enum DegradeType {
 
-    NONE,
-
     RESILIENCE4J,
 
     SENTINEL;

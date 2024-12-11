@@ -40,6 +40,8 @@ public class Response<T> implements Serializable {
 
     private HttpResponse<T> syncResponse;
 
+    private T fallbackResponse;
+
     private Response(CompletableFuture<HttpResponse<T>> asyncResponse) {
         this.asyncResponse = asyncResponse;
     }
@@ -48,11 +50,19 @@ public class Response<T> implements Serializable {
         this.syncResponse = syncResponse;
     }
 
+    private Response(T fallbackResponse) {
+        this.fallbackResponse = fallbackResponse;
+    }
+
     public static <T> Response<T> ofAsync(CompletableFuture<HttpResponse<T>> asyncResponse) {
-        return new Response<T>(asyncResponse);
+        return new Response<>(asyncResponse);
     }
 
     public static <T> Response<T> ofSync(HttpResponse<T> syncResponse) {
-        return new Response<T>(syncResponse);
+        return new Response<>(syncResponse);
+    }
+
+    public static <T> Response<T> ofFallback(T fallbackResponse) {
+        return new Response<>(fallbackResponse);
     }
 }

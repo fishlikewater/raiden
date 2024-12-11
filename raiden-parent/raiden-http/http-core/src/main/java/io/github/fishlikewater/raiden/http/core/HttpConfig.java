@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.http.core;
 
 import io.github.fishlikewater.raiden.http.core.client.AbstractHttpRequestClient;
+import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegistry;
 import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import io.github.fishlikewater.raiden.http.core.factory.HttpClientBeanFactory;
 import io.github.fishlikewater.raiden.http.core.interceptor.LogHttpInterceptor;
@@ -96,4 +97,9 @@ public class HttpConfig {
      * 全局日志拦截器
      */
     private LogHttpInterceptor logInterceptor = new LogHttpInterceptor();
+
+    /**
+     * 熔断注册器
+     */
+    private CircuitBreakerConfigRegistry breakerConfigRegistry;
 }
