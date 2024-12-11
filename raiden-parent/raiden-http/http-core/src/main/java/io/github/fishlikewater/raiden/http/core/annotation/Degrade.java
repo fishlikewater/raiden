@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core.annotation;
 
+import io.github.fishlikewater.raiden.http.core.constant.DefaultConstants;
 import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
 import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
 
@@ -35,7 +36,7 @@ public @interface Degrade {
 
     DegradeType type() default DegradeType.RESILIENCE4J;
 
-    String circuitBreakerConfigName() default "";
+    String circuitBreakerConfigName() default DefaultConstants.DEFAULT_CIRCUIT_BREAKER_CONFIG;
 
     Class<? extends FallbackFactory<?>> fallback();
 }
