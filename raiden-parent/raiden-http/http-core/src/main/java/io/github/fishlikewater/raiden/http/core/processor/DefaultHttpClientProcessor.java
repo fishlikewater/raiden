@@ -23,7 +23,6 @@ import io.github.fishlikewater.raiden.http.core.Response;
 import io.github.fishlikewater.raiden.http.core.client.HttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
 import io.github.fishlikewater.raiden.http.core.interceptor.*;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,8 +42,6 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
     private final HttpRequestClient httpRequestClient = new HttpRequestClient();
     private final CallServerHttpInterceptor callServerInterceptor = new CallServerHttpInterceptor(httpRequestClient);
     private final RetryInterceptor retryInterceptor = new RetryInterceptor();
-    private final Resilience4jInterceptor resilience4jInterceptor = new Resilience4jInterceptor(CircuitBreakerRegistry.ofDefaults());
-    private final SentinelInterceptor sentinelInterceptor = new SentinelInterceptor();
 
     @SneakyThrows(Throwable.class)
     @Override
@@ -61,8 +58,8 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
         interceptors.addLast(retryInterceptor);
         if (requestWrap.isDegrade()) {
             interceptors.addLast(requestWrap.getDegradeType() == DegradeType.RESILIENCE4J
-                            ? resilience4jInterceptor
-                            : sentinelInterceptor
+                    ? Resilience4jInterceptorBuilder.INSTANCE
+                    : SentinelInterceptorBuilder.INSTANCE
             );
         }
         interceptors.addLast(callServerInterceptor);
@@ -76,5 +73,13 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
             return response.getSyncResponse().body();
         }
         return response.getAsyncResponse().thenApply(HttpResponse::body);
+    }
+
+    private static class Resilience4jInterceptorBuilder {
+        private static final Resilience4jInterceptor INSTANCE = new Resilience4jInterceptor();
+    }
+
+    private static class SentinelInterceptorBuilder {
+        private static final SentinelInterceptor INSTANCE = new SentinelInterceptor();
     }
 }

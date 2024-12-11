@@ -47,6 +47,10 @@ public class Resilience4jInterceptor implements HttpInterceptor, DegradeIntercep
         this.circuitBreakerRegistry = circuitBreakerRegistry;
     }
 
+    public Resilience4jInterceptor() {
+        this.circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
+    }
+
     @Override
     public Response<?> intercept(Chain chain) throws IOException, InterruptedException {
         if (!chain.requestWrap().isDegrade()) {

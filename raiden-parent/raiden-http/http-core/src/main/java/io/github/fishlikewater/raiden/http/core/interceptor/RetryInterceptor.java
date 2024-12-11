@@ -15,13 +15,11 @@
  */
 package io.github.fishlikewater.raiden.http.core.interceptor;
 
-import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.Response;
-import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * {@code RetryInterceptor}
@@ -32,37 +30,34 @@ import java.util.concurrent.TimeUnit;
  * @since 2024/12/10
  */
 @Slf4j
-public class RetryInterceptor implements HttpInterceptor {
+public class RetryInterceptor implements HttpInterceptor, RetryHandler {
 
     @Override
     public Response<?> intercept(Chain chain) throws IOException, InterruptedException {
         try {
-            return chain.proceed();
+            Response<?> response = chain.proceed();
+            this.determineAsyncResponse(response, chain);
+            return response;
         } catch (Exception e) {
-            int retryCount = chain.requestWrap().getRetryCount();
-            int maxRetryCount = HttpBootStrap.getConfig().getMaxRetryCount();
-            if (retryCount > 0 && retryCount <= maxRetryCount) {
-                log.error("raiden.http: request.failed, will.retry.request,wait.{}ms", HttpBootStrap.getConfig().getRetryInterval());
-                this.sleep();
-                chain.requestWrap().setRetryCount(--retryCount);
-                chain.reset();
-                return chain.proceed();
-            } else {
-                return HttpExceptionCheck.INSTANCE.throwUnchecked(e);
-            }
+            return this.retry(chain, e);
         }
     }
+
 
     @Override
     public int order() {
         return 0;
     }
 
-    private void sleep() {
-        try {
-            TimeUnit.MILLISECONDS.sleep(HttpBootStrap.getConfig().getRetryInterval());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+    private void determineAsyncResponse(Response<?> response, Chain chain) {
+        if (ObjectUtils.isNotNullOrEmpty(response.getAsyncResponse())) {
+            response.getAsyncResponse().thenApply(t -> {
+                try {
+                    return this.retry(chain, null).getAsyncResponse();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
     }
 }

@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -100,6 +101,7 @@ public class HttpAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnBean(CircuitBreakerConfigRegister.class)
     public CircuitBreakerConfigRegistry circuitBreakerConfigRegistry(
             @Autowired(required = false) List<CircuitBreakerConfigRegister> circuitBreakerConfigRegisters) {
         CircuitBreakerConfigRegistry registry = new CircuitBreakerConfigRegistry(circuitBreakerConfigRegisters);
