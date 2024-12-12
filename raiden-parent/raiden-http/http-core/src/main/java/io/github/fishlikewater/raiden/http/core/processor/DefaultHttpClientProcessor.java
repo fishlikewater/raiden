@@ -21,6 +21,7 @@ import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.Response;
 import io.github.fishlikewater.raiden.http.core.client.HttpRequestClient;
+import io.github.fishlikewater.raiden.http.core.constant.DefaultConstants;
 import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
 import io.github.fishlikewater.raiden.http.core.interceptor.*;
 import lombok.SneakyThrows;
@@ -61,6 +62,15 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
                     ? Resilience4jInterceptorBuilder.INSTANCE
                     : SentinelInterceptorBuilder.INSTANCE
             );
+        } else {
+            if (HttpBootStrap.getConfig().isEnableDegrade()) {
+                interceptors.addLast(HttpBootStrap.getConfig().getDegradeType() == DegradeType.RESILIENCE4J
+                        ? Resilience4jInterceptorBuilder.INSTANCE
+                        : SentinelInterceptorBuilder.INSTANCE
+                );
+                requestWrap.setDegrade(true);
+                requestWrap.setCircuitBreakerConfigName(DefaultConstants.GLOBAL_CIRCUIT_BREAKER_CONFIG);
+            }
         }
         interceptors.addLast(callServerInterceptor);
         httpRequestClient.buildHttpRequest(requestWrap);

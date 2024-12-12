@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.http.core.interceptor;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.Response;
+import io.github.fishlikewater.raiden.http.core.exception.DegradeException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -41,6 +42,9 @@ public class RetryInterceptor implements HttpInterceptor, RetryHandler {
             Response response = chain.proceed();
             return this.determineAsyncResponse(response, chain);
         } catch (Exception e) {
+            if (e instanceof DegradeException) {
+                throw e;
+            }
             return this.retry(chain, e);
         }
     }

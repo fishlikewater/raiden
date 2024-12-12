@@ -25,9 +25,11 @@ import io.github.fishlikewater.raiden.http.core.annotation.Degrade;
 import io.github.fishlikewater.raiden.http.core.annotation.HttpServer;
 import io.github.fishlikewater.raiden.http.core.annotation.Interceptor;
 import io.github.fishlikewater.raiden.http.core.client.HttpRequestClient;
+import io.github.fishlikewater.raiden.http.core.constant.DefaultConstants;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
 import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegistry;
+import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.GlobalBreakerConfigRegister;
 import io.github.fishlikewater.raiden.http.core.factory.DefaultHttpClientBeanFactory;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.PredRequestInterceptor;
@@ -66,10 +68,6 @@ public class HttpBootStrap {
         config.setPredRequestInterceptor(predRequestInterceptor);
     }
 
-    public static void registryHttpClientInterceptor(HttpInterceptor interceptor) {
-        config.getHttpClientBeanFactory().registerHttpClientInterceptor(interceptor);
-    }
-
     public static HttpClient getHttpClient(String className) {
         return config.getSourceHttpClientRegistry().get(className);
     }
@@ -93,6 +91,10 @@ public class HttpBootStrap {
             registry.register(HttpConstants.DEFAULT, defaultClient);
         }));
         config.setSourceHttpClientRegistry(sourceHttpClientRegistry);
+    }
+
+    public static void globalBreakerConfigRegister(GlobalBreakerConfigRegister configRegister) {
+        config.getBreakerConfigRegistry().register(DefaultConstants.GLOBAL_CIRCUIT_BREAKER_CONFIG, configRegister.get());
     }
 
     /**

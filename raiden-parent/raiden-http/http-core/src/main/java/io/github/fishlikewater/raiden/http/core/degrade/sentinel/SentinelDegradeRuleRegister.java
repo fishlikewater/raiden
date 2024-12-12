@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.http.core.constant;
+package io.github.fishlikewater.raiden.http.core.degrade.sentinel;
 
 /**
- * {@code DefaultConstants}
+ * {@code SentinelDegradeRuleRegister}
+ * sentinel规则注册
  *
  * @author zhangxiang
  * @version 1.1.0
- * @since 2024/12/11
+ * @since 2024/12/12
  */
-public interface DefaultConstants {
+public interface SentinelDegradeRuleRegister {
 
-    String DEFAULT_CIRCUIT_BREAKER_CONFIG = "defaultCircuitBreakerConfig";
-    String GLOBAL_CIRCUIT_BREAKER_CONFIG = "globalCircuitBreakerConfig";
 }

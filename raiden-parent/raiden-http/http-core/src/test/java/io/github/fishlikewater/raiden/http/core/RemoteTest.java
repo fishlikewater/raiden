@@ -15,7 +15,10 @@
  */
 package io.github.fishlikewater.raiden.http.core;
 
+import io.github.fishlikewater.raiden.http.core.degrade.DemoGlobalBreakerConfigRegister;
+import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
 import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
+import io.github.fishlikewater.raiden.http.core.exception.DegradeException;
 import io.github.fishlikewater.raiden.http.core.remote.DemoFile;
 import io.github.fishlikewater.raiden.http.core.remote.DemoRemote;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -47,7 +50,7 @@ public class RemoteTest {
         HttpBootStrap.getConfig()
                 .setEnableLog(false)
                 .setLogLevel(LogLevel.BASIC)
-                .setMaxRetryCount(1)
+                .setMaxRetryCount(0)
                 .setRetryInterval(2000);
 
         CircuitBreakerConfig config = CircuitBreakerConfig.custom()
@@ -57,9 +60,15 @@ public class RemoteTest {
                 .minimumNumberOfCalls(3) // 最少调用次数以激活断路器逻辑
                 .build();
 
+        HttpBootStrap.globalBreakerConfigRegister(new DemoGlobalBreakerConfigRegister());
+
         HttpBootStrap.getConfig()
                 .getBreakerConfigRegistry()
                 .register("test", config);
+
+        HttpBootStrap.getConfig()
+                .setEnableDegrade(true)
+                .setDegradeType(DegradeType.RESILIENCE4J);
     }
 
     @Test
@@ -157,8 +166,10 @@ public class RemoteTest {
             try {
                 String s = remote.baidu();
                 System.out.println(s);
-            } catch (Exception ignore) {
-                System.out.println(i);
+            } catch (DegradeException e) {
+                System.out.println("熔断了");
+            } catch (Exception e) {
+                System.out.println(e.getCause().getMessage());
             }
         }
     }

@@ -21,6 +21,7 @@ import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.Response;
 import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
 import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegistry;
+import io.github.fishlikewater.raiden.http.core.exception.DegradeException;
 import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -84,7 +85,7 @@ public class Resilience4jInterceptor implements HttpInterceptor, DegradeIntercep
     private Response fallback(CallNotPermittedException e, RequestWrap requestWrap) {
         FallbackFactory fallbackFactory = requestWrap.getFallbackFactory();
         if (ObjectUtils.isNullOrEmpty(fallbackFactory)) {
-            throw e;
+            throw new DegradeException(e);
         }
         Object o = this.get(fallbackFactory.getClass().getName(), fallbackFactory, e);
         Object invoke = null;

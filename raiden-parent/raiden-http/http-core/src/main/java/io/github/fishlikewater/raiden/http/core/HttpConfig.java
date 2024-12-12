@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.http.core;
 
 import io.github.fishlikewater.raiden.http.core.client.AbstractHttpRequestClient;
 import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegistry;
+import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
 import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import io.github.fishlikewater.raiden.http.core.factory.HttpClientBeanFactory;
 import io.github.fishlikewater.raiden.http.core.interceptor.LogHttpInterceptor;
@@ -57,6 +58,16 @@ public class HttpConfig {
      * 是否开启日志
      */
     private boolean enableLog;
+
+    /**
+     * 是否开全局启熔断降级
+     */
+    private boolean enableDegrade;
+
+    /**
+     * 全局熔断降级类型
+     */
+    private DegradeType degradeType;
 
     /**
      * 接口代理

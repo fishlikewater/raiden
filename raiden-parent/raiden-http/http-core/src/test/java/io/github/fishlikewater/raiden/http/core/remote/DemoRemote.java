@@ -16,7 +16,6 @@
 package io.github.fishlikewater.raiden.http.core.remote;
 
 import io.github.fishlikewater.raiden.http.core.annotation.*;
-import io.github.fishlikewater.raiden.http.core.degrade.DemoRemoteFallback;
 import io.github.fishlikewater.raiden.http.core.interceptors.DemoInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptors.DemoInterceptor2;
 
@@ -33,7 +32,7 @@ import java.util.concurrent.CompletableFuture;
  */
 @HttpServer(sourceHttpClient = "third")
 @Interceptor({DemoInterceptor.class, DemoInterceptor2.class})
-@Degrade(circuitBreakerConfigName = "test", fallback = DemoRemoteFallback.class)
+//@Degrade(circuitBreakerConfigName = "test", fallback = DemoRemoteFallback.class)
 public interface DemoRemote {
 
     /**

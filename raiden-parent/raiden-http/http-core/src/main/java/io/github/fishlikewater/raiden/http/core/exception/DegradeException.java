@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.core.exception;
 
+import io.github.fishlikewater.raiden.core.enums.StatusEnum;
 import io.github.fishlikewater.raiden.core.exception.AbstractException;
 
 import java.io.Serial;
@@ -31,4 +32,28 @@ public class DegradeException extends AbstractException {
 
     @Serial
     private static final long serialVersionUID = -8502072746385972181L;
+
+    public DegradeException() {
+        super();
+    }
+
+    public DegradeException(Throwable e) {
+        super(e);
+    }
+
+    public DegradeException(StatusEnum status) {
+        super(status);
+    }
+
+    public DegradeException(StatusEnum status, String message, Object... args) {
+        super(status, message, args);
+    }
+
+    public DegradeException(String message, Object... args) {
+        super(message, args);
+    }
+
+    public DegradeException(Throwable e, String message, Object... args) {
+        super(e, message, args);
+    }
 }

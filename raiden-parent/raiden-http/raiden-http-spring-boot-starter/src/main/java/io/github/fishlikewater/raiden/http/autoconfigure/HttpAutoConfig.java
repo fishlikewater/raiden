@@ -15,10 +15,13 @@
  */
 package io.github.fishlikewater.raiden.http.autoconfigure;
 
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
+import io.github.fishlikewater.raiden.http.core.constant.DefaultConstants;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegister;
 import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegistry;
+import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.GlobalBreakerConfigRegister;
 import io.github.fishlikewater.raiden.http.core.processor.DefaultExceptionProcessor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegister;
@@ -77,7 +80,7 @@ public class HttpAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    public ServiceInstanceChooser retrofitServiceInstanceChooser() {
+    public ServiceInstanceChooser serviceInstanceChooser() {
         return new ServiceInstanceChooser.NoValidServiceInstanceChooser();
     }
 
@@ -103,8 +106,12 @@ public class HttpAutoConfig {
     @ConditionalOnMissingBean
     @ConditionalOnBean(CircuitBreakerConfigRegister.class)
     public CircuitBreakerConfigRegistry circuitBreakerConfigRegistry(
+            @Autowired(required = false) GlobalBreakerConfigRegister globalBreakerConfigRegister,
             @Autowired(required = false) List<CircuitBreakerConfigRegister> circuitBreakerConfigRegisters) {
         CircuitBreakerConfigRegistry registry = new CircuitBreakerConfigRegistry(circuitBreakerConfigRegisters);
+        if (ObjectUtils.isNotNullOrEmpty(globalBreakerConfigRegister)) {
+            registry.register(DefaultConstants.GLOBAL_CIRCUIT_BREAKER_CONFIG, globalBreakerConfigRegister.get());
+        }
         HttpBootStrap.getConfig().setBreakerConfigRegistry(registry);
         return registry;
     }
