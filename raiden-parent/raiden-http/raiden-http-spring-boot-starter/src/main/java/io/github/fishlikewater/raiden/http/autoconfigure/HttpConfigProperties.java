@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.http.autoconfigure;
 
+import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
 import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -38,4 +39,10 @@ public class HttpConfigProperties {
     private LogLevel logLevel;
 
     private int maxRetryCount;
+
+    private long retryInterval;
+
+    private boolean enableGlobalDegrade;
+
+    private DegradeType degradeType;
 }

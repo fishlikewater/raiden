@@ -38,6 +38,7 @@ import org.springframework.context.annotation.Role;
 
 import java.net.http.HttpClient;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -112,6 +113,16 @@ public class HttpAutoConfig {
         if (ObjectUtils.isNotNullOrEmpty(globalBreakerConfigRegister)) {
             registry.register(DefaultConstants.GLOBAL_CIRCUIT_BREAKER_CONFIG, globalBreakerConfigRegister.get());
         }
+        HttpBootStrap.getConfig().setBreakerConfigRegistry(registry);
+        return registry;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnBean(GlobalBreakerConfigRegister.class)
+    public CircuitBreakerConfigRegistry circuitBreakerConfigRegistry2(GlobalBreakerConfigRegister globalBreakerConfigRegister) {
+        CircuitBreakerConfigRegistry registry = new CircuitBreakerConfigRegistry(new ArrayList<>());
+        registry.register(DefaultConstants.GLOBAL_CIRCUIT_BREAKER_CONFIG, globalBreakerConfigRegister.get());
         HttpBootStrap.getConfig().setBreakerConfigRegistry(registry);
         return registry;
     }

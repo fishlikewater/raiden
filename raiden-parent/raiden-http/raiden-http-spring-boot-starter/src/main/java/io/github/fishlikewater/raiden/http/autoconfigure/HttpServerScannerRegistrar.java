@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.http.autoconfigure;
 
 import io.github.fishlikewater.raiden.http.autoconfigure.annotation.HttpScan;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
+import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
 import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -64,10 +65,12 @@ public class HttpServerScannerRegistrar implements ImportBeanDefinitionRegistrar
         if (attributes == null) {
             return;
         }
-        final Boolean enableLog = environment.getProperty("raiden.http.enable-log", boolean.class, false);
+        final boolean enableLog = environment.getProperty("raiden.http.enable-log", boolean.class, false);
         final LogLevel logLevel = environment.getProperty("raiden.http.log-level", LogLevel.class, LogLevel.BASIC);
-        final Integer maxRetryCount = environment.getProperty("raiden.http.max-retry-count", Integer.class, 0);
-        final Long retryInterval = environment.getProperty("raiden.http.retry-interval", Long.class, 500L);
+        final int maxRetryCount = environment.getProperty("raiden.http.max-retry-count", int.class, 0);
+        final int retryInterval = environment.getProperty("raiden.http.max-retry-interval", int.class, 0);
+        final boolean enableGlobalDegrade = environment.getProperty("raiden.http.enable-global-degrade", boolean.class, false);
+        final DegradeType degradeType = environment.getProperty("raiden.http.degrade-type", DegradeType.class, DegradeType.RESILIENCE4J);
         // Specify the base package for scanning
         String[] basePackages = getPackagesToScan(attributes);
         try {
@@ -77,6 +80,8 @@ public class HttpServerScannerRegistrar implements ImportBeanDefinitionRegistrar
         }
         HttpBootStrap.getConfig().setMaxRetryCount(maxRetryCount);
         HttpBootStrap.getConfig().setRetryInterval(retryInterval);
+        HttpBootStrap.getConfig().setEnableDegrade(enableGlobalDegrade);
+        HttpBootStrap.getConfig().setDegradeType(degradeType);
         if (enableLog) {
             HttpBootStrap.getConfig().setEnableLog(true);
             HttpBootStrap.getConfig().setLogLevel(logLevel);
