@@ -30,6 +30,7 @@ import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
 import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegistry;
 import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.GlobalBreakerConfigRegister;
+import io.github.fishlikewater.raiden.http.core.degrade.sentinel.SentinelDegradeRuleRegistry;
 import io.github.fishlikewater.raiden.http.core.factory.DefaultHttpClientBeanFactory;
 import io.github.fishlikewater.raiden.http.core.interceptor.HttpInterceptor;
 import io.github.fishlikewater.raiden.http.core.interceptor.PredRequestInterceptor;
@@ -93,7 +94,7 @@ public class HttpBootStrap {
         config.setSourceHttpClientRegistry(sourceHttpClientRegistry);
     }
 
-    public static void globalBreakerConfigRegister(GlobalBreakerConfigRegister configRegister) {
+    public static void registerGlobalBreakerConfig(GlobalBreakerConfigRegister configRegister) {
         config.getBreakerConfigRegistry().register(DefaultConstants.GLOBAL_CIRCUIT_BREAKER_CONFIG, configRegister.get());
     }
 
@@ -119,6 +120,7 @@ public class HttpBootStrap {
             registerDefaultHttpClient();
             config.getSourceHttpClientRegistry().init();
             config.setBreakerConfigRegistry(new CircuitBreakerConfigRegistry(null));
+            config.setSentDegradeRuleRegistry(new SentinelDegradeRuleRegistry(null));
         }
         if (Objects.isNull(config.getHttpClient())) {
             config.setHttpClient(new HttpRequestClient());

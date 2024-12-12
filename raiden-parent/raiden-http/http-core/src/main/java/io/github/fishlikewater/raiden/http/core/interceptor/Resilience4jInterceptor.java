@@ -15,14 +15,10 @@
  */
 package io.github.fishlikewater.raiden.http.core.interceptor;
 
-import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.Response;
-import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
 import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegistry;
-import io.github.fishlikewater.raiden.http.core.exception.DegradeException;
-import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -30,7 +26,6 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.core.StopWatch;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -79,22 +74,6 @@ public class Resilience4jInterceptor implements HttpInterceptor, DegradeIntercep
             circuitBreaker.onError(stopWatch.stop().toNanos(), TimeUnit.NANOSECONDS, throwable);
             throw throwable;
         }
-    }
-
-    @SuppressWarnings("all")
-    private Response fallback(CallNotPermittedException e, RequestWrap requestWrap) {
-        FallbackFactory fallbackFactory = requestWrap.getFallbackFactory();
-        if (ObjectUtils.isNullOrEmpty(fallbackFactory)) {
-            throw new DegradeException(e);
-        }
-        Object o = this.get(fallbackFactory.getClass().getName(), fallbackFactory, e);
-        Object invoke = null;
-        try {
-            invoke = requestWrap.getMethod().invoke(o, requestWrap.getArgs());
-        } catch (IllegalAccessException | InvocationTargetException ex) {
-            return HttpExceptionCheck.INSTANCE.throwUnchecked(ex);
-        }
-        return Response.ofFallback(invoke);
     }
 
     @Override

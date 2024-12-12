@@ -16,14 +16,14 @@
 package io.github.fishlikewater.raiden.http.core.degrade.sentinel;
 
 /**
- * {@code SentinelDegradeRuleRegister}
- * sentinel规则注册
+ * {@code GlobalSentinelConfigRegister}
+ * 全局sentinel配置
  *
  * @author zhangxiang
  * @version 1.1.0
  * @since 2024/12/12
  */
-public interface SentinelDegradeRuleRegister {
+public interface GlobalSentinelConfigRegister {
 
-    void register(SentinelDegradeRuleRegistry registry);
+    SentinelDegradeRule get();
 }

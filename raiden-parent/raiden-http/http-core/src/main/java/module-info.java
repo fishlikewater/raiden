@@ -29,6 +29,7 @@ module raiden.http.core {
     requires jdk.httpserver;
     requires io.github.resilience4j.circuitbreaker;
     requires io.github.resilience4j.core;
+    requires sentinel.core;
 
     exports io.github.fishlikewater.raiden.http.core;
     exports io.github.fishlikewater.raiden.http.core.enums;
@@ -43,4 +44,5 @@ module raiden.http.core {
     exports io.github.fishlikewater.raiden.http.core.client;
     exports io.github.fishlikewater.raiden.http.core.degrade;
     exports io.github.fishlikewater.raiden.http.core.degrade.resilience4j;
+    exports io.github.fishlikewater.raiden.http.core.degrade.sentinel;
 }

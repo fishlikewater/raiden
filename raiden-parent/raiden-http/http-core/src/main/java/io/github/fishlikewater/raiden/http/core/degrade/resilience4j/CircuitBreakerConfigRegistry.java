@@ -38,7 +38,7 @@ public class CircuitBreakerConfigRegistry {
 
     public CircuitBreakerConfigRegistry(List<CircuitBreakerConfigRegister> register) {
         this.circuitBreakerConfigMap = new HashMap<>(8);
-        circuitBreakerConfigMap.put(DefaultConstants.DEFAULT_CIRCUIT_BREAKER_CONFIG, CircuitBreakerConfig.ofDefaults());
+        this.circuitBreakerConfigMap.put(DefaultConstants.DEFAULT_CIRCUIT_BREAKER_CONFIG, CircuitBreakerConfig.ofDefaults());
         if (ObjectUtils.isNotNullOrEmpty(register)) {
             register.forEach(registrar -> registrar.register(this));
         }
@@ -49,7 +49,7 @@ public class CircuitBreakerConfigRegistry {
     }
 
     public CircuitBreakerConfig get(String name) {
-        CircuitBreakerConfig circuitBreakerConfig = circuitBreakerConfigMap.get(name);
+        CircuitBreakerConfig circuitBreakerConfig = this.circuitBreakerConfigMap.get(name);
         Assert.notNull(circuitBreakerConfig, "not.found! name: {}", name);
         return circuitBreakerConfig;
     }

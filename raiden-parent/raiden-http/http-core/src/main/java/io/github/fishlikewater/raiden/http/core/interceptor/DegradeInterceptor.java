@@ -15,11 +15,19 @@
  */
 package io.github.fishlikewater.raiden.http.core.interceptor;
 
+import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
+import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import io.github.fishlikewater.raiden.http.core.RequestWrap;
+import io.github.fishlikewater.raiden.http.core.Response;
 import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
+import io.github.fishlikewater.raiden.http.core.degrade.sentinel.SentinelDegradeRule;
+import io.github.fishlikewater.raiden.http.core.exception.DegradeException;
+import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -51,5 +59,36 @@ public interface DegradeInterceptor {
 
     default String parseName(RequestWrap requestWrap) {
         return requestWrap.getHttpMethod().name() + CommonConstants.Symbol.SYMBOL_COLON + requestWrap.getUrl();
+    }
+
+    default Response fallback(Exception e, RequestWrap requestWrap) {
+        FallbackFactory<?> fallbackFactory = requestWrap.getFallbackFactory();
+        if (ObjectUtils.isNullOrEmpty(fallbackFactory)) {
+            throw new DegradeException(e);
+        }
+        Object o = this.get(fallbackFactory.getClass().getName(), fallbackFactory, e);
+        Object invoke;
+        try {
+            invoke = requestWrap.getMethod().invoke(o, requestWrap.getArgs());
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            return HttpExceptionCheck.INSTANCE.throwUnchecked(ex);
+        }
+        return Response.ofFallback(invoke);
+    }
+
+    default void loadSentinelConfig(String resourceName, SentinelDegradeRule rule) {
+        synchronized (this) {
+            if (DegradeRuleManager.hasConfig(resourceName)) {
+                return;
+            }
+            DegradeRule degradeRule = new DegradeRule(resourceName);
+            degradeRule.setGrade(rule.getGrade());
+            degradeRule.setCount(rule.getCount());
+            degradeRule.setTimeWindow(rule.getTimeWindow());
+            degradeRule.setMinRequestAmount(rule.getMinRequestAmount());
+            degradeRule.setSlowRatioThreshold(rule.getSlowRatioThreshold());
+            degradeRule.setStatIntervalMs(rule.getStatIntervalMs());
+            DegradeRuleManager.loadRules(Collections.singletonList(degradeRule));
+        }
     }
 }

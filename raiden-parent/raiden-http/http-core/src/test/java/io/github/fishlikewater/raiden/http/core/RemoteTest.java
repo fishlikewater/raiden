@@ -15,7 +15,9 @@
  */
 package io.github.fishlikewater.raiden.http.core;
 
+import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 import io.github.fishlikewater.raiden.http.core.degrade.DemoGlobalBreakerConfigRegister;
+import io.github.fishlikewater.raiden.http.core.degrade.sentinel.SentinelDegradeRule;
 import io.github.fishlikewater.raiden.http.core.enums.DegradeType;
 import io.github.fishlikewater.raiden.http.core.enums.LogLevel;
 import io.github.fishlikewater.raiden.http.core.exception.DegradeException;
@@ -60,14 +62,25 @@ public class RemoteTest {
                 .minimumNumberOfCalls(3) // 最少调用次数以激活断路器逻辑
                 .build();
 
-        HttpBootStrap.globalBreakerConfigRegister(new DemoGlobalBreakerConfigRegister());
+        SentinelDegradeRule rule = new SentinelDegradeRule();
+        rule.setGrade(RuleConstant.DEGRADE_GRADE_RT);
+        rule.setCount(10);
+        rule.setMinRequestAmount(3);
+        rule.setTimeWindow(2);
+        rule.setSlowRatioThreshold(1.0);
+
+        HttpBootStrap.registerGlobalBreakerConfig(new DemoGlobalBreakerConfigRegister());
 
         HttpBootStrap.getConfig()
                 .getBreakerConfigRegistry()
                 .register("test", config);
 
         HttpBootStrap.getConfig()
-                .setEnableDegrade(true)
+                .getSentDegradeRuleRegistry()
+                .register("test", rule);
+
+        HttpBootStrap.getConfig()
+                .setEnableDegrade(false)
                 .setDegradeType(DegradeType.RESILIENCE4J);
     }
 
@@ -160,9 +173,9 @@ public class RemoteTest {
     }
 
     @Test
-    public void testDegrade() {
+    public void testDegrade() throws InterruptedException {
         DemoRemote remote = HttpBootStrap.getProxy(DemoRemote.class);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             try {
                 String s = remote.baidu();
                 System.out.println(s);

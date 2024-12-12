@@ -15,15 +15,34 @@
  */
 package io.github.fishlikewater.raiden.http.core.degrade.sentinel;
 
+import lombok.Data;
+
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
- * {@code SentinelDegradeRuleRegister}
- * sentinel规则注册
+ * {@code SentinelDegradeRule}
+ * sentinel规则定义
  *
  * @author zhangxiang
  * @version 1.1.0
  * @since 2024/12/12
  */
-public interface SentinelDegradeRuleRegister {
+@Data
+public class SentinelDegradeRule implements Serializable {
 
-    void register(SentinelDegradeRuleRegistry registry);
+    @Serial
+    private static final long serialVersionUID = 3459059170450357298L;
+
+    private int grade = 0;
+
+    private double count;
+
+    private int timeWindow;
+
+    private int minRequestAmount = 5;
+
+    private double slowRatioThreshold = 1.0;
+
+    private int statIntervalMs = 1000;
 }

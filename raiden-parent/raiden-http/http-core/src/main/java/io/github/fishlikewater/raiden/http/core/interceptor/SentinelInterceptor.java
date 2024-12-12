@@ -15,7 +15,17 @@
  */
 package io.github.fishlikewater.raiden.http.core.interceptor;
 
+import com.alibaba.csp.sentinel.Entry;
+import com.alibaba.csp.sentinel.EntryType;
+import com.alibaba.csp.sentinel.ResourceTypeConstants;
+import com.alibaba.csp.sentinel.SphU;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
+import io.github.fishlikewater.raiden.http.core.HttpBootStrap;
+import io.github.fishlikewater.raiden.http.core.RequestWrap;
 import io.github.fishlikewater.raiden.http.core.Response;
+import io.github.fishlikewater.raiden.http.core.degrade.sentinel.SentinelDegradeRule;
+import io.github.fishlikewater.raiden.http.core.degrade.sentinel.SentinelDegradeRuleRegistry;
 
 import java.io.IOException;
 
@@ -27,15 +37,35 @@ import java.io.IOException;
  * @version 1.1.0
  * @since 2024/12/10
  */
-public class SentinelInterceptor implements HttpInterceptor {
+public class SentinelInterceptor implements HttpInterceptor, DegradeInterceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException, InterruptedException {
-        return chain.proceed();
+        if (!chain.requestWrap().isDegrade()) {
+            return chain.proceed();
+        }
+        return this.degrade(chain);
     }
 
     @Override
     public int order() {
         return 0;
+    }
+
+    private Response degrade(Chain chain) throws IOException, InterruptedException {
+        RequestWrap requestWrap = chain.requestWrap();
+        String configName = requestWrap.getCircuitBreakerConfigName();
+        SentinelDegradeRuleRegistry registry = HttpBootStrap.getConfig().getSentDegradeRuleRegistry();
+        SentinelDegradeRule rule = registry.get(configName);
+        String resourceName = this.parseName(chain.requestWrap());
+        boolean hasConfig = DegradeRuleManager.hasConfig(resourceName);
+        if (!hasConfig) {
+            this.loadSentinelConfig(resourceName, rule);
+        }
+        try (Entry ignored = SphU.entry(resourceName, ResourceTypeConstants.COMMON_WEB, EntryType.OUT)) {
+            return chain.proceed();
+        } catch (BlockException e) {
+            return this.fallback(e, requestWrap);
+        }
     }
 }
