@@ -22,6 +22,9 @@ import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
 import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegister;
 import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.CircuitBreakerConfigRegistry;
 import io.github.fishlikewater.raiden.http.core.degrade.resilience4j.GlobalBreakerConfigRegister;
+import io.github.fishlikewater.raiden.http.core.degrade.sentinel.GlobalSentinelConfigRegister;
+import io.github.fishlikewater.raiden.http.core.degrade.sentinel.SentinelDegradeRuleRegister;
+import io.github.fishlikewater.raiden.http.core.degrade.sentinel.SentinelDegradeRuleRegistry;
 import io.github.fishlikewater.raiden.http.core.processor.DefaultExceptionProcessor;
 import io.github.fishlikewater.raiden.http.core.processor.ExceptionProcessor;
 import io.github.fishlikewater.raiden.http.core.source.SourceHttpClientRegister;
@@ -124,6 +127,30 @@ public class HttpAutoConfig {
         CircuitBreakerConfigRegistry registry = new CircuitBreakerConfigRegistry(new ArrayList<>());
         registry.register(DefaultConstants.GLOBAL_CIRCUIT_BREAKER_CONFIG, globalBreakerConfigRegister.get());
         HttpBootStrap.getConfig().setBreakerConfigRegistry(registry);
+        return registry;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnBean(SentinelDegradeRuleRegister.class)
+    public SentinelDegradeRuleRegistry sentinelDegradeRuleRegistry(
+            @Autowired(required = false) GlobalSentinelConfigRegister globalSentinelConfigRegister,
+            @Autowired(required = false) List<SentinelDegradeRuleRegister> sentinelDegradeRuleRegisters) {
+        SentinelDegradeRuleRegistry registry = new SentinelDegradeRuleRegistry(sentinelDegradeRuleRegisters);
+        if (ObjectUtils.isNotNullOrEmpty(globalSentinelConfigRegister)) {
+            registry.register(DefaultConstants.GLOBAL_CIRCUIT_BREAKER_CONFIG, globalSentinelConfigRegister.get());
+        }
+        HttpBootStrap.getConfig().setSentDegradeRuleRegistry(registry);
+        return registry;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnBean(GlobalSentinelConfigRegister.class)
+    public SentinelDegradeRuleRegistry sentinelDegradeRuleRegistry2(GlobalSentinelConfigRegister globalSentinelConfigRegister) {
+        SentinelDegradeRuleRegistry registry = new SentinelDegradeRuleRegistry(new ArrayList<>());
+        registry.register(DefaultConstants.GLOBAL_CIRCUIT_BREAKER_CONFIG, globalSentinelConfigRegister.get());
+        HttpBootStrap.getConfig().setSentDegradeRuleRegistry(registry);
         return registry;
     }
 }
