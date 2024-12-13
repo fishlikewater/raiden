@@ -55,7 +55,6 @@ public class LogHttpInterceptor implements HttpInterceptor {
     }
 
     @Override
-    @SuppressWarnings("all")
     public Response intercept(Chain chain) throws IOException, InterruptedException {
         RequestWrap requestWrap = chain.requestWrap();
         HttpRequest httpRequest = requestWrap.getHttpRequest();
@@ -73,11 +72,11 @@ public class LogHttpInterceptor implements HttpInterceptor {
             this.responseLog(response.getSyncResponse(), logLevel);
             return response;
         } else {
-            CompletableFuture<? extends HttpResponse<?>> future = response.getAsyncResponse().thenApply(res -> {
+            CompletableFuture<HttpResponse<Object>> future = response.getAsyncResponse().thenApply(res -> {
                 this.responseLog(res, logLevel);
                 return res;
             });
-            return Response.ofAsync(((CompletableFuture<HttpResponse<Object>>) future));
+            return Response.ofAsync(future);
         }
     }
 
