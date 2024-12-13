@@ -16,7 +16,6 @@
 package io.github.fishlikewater.raiden.http.core.proxy;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.StrFormatter;
 import cn.hutool.core.util.TypeUtil;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
@@ -33,12 +32,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.net.http.HttpClient;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- *
  * @author fishlikewater@126.com
  * @version 1.0.0
  * @since 2023年09月23日 18:30
@@ -115,8 +114,8 @@ public interface InterfaceProxy {
      * @param args        参数
      */
     default void buildParams(RequestWrap requestWrap, Parameter[] parameters, Object[] args) {
-        Map<String, String> paramMap = MapUtil.newHashMap();
-        Map<String, String> paramPath = MapUtil.newHashMap();
+        Map<String, String> paramMap = new HashMap<>();
+        Map<String, String> paramPath = new HashMap<>();
         Object bodyObject = null;
         MultipartData multipartData = null;
         for (int i = 0; i < parameters.length; i++) {
