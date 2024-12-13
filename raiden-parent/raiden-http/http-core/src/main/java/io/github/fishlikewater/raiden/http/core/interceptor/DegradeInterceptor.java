@@ -25,6 +25,8 @@ import io.github.fishlikewater.raiden.http.core.degrade.FallbackFactory;
 import io.github.fishlikewater.raiden.http.core.degrade.sentinel.SentinelDegradeRule;
 import io.github.fishlikewater.raiden.http.core.exception.DegradeException;
 import io.github.fishlikewater.raiden.http.core.exception.HttpExceptionCheck;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -40,6 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public interface DegradeInterceptor {
 
     ConcurrentHashMap<String, Object> fallbackFactoryObjects = new ConcurrentHashMap<>();
+    Logger log = LoggerFactory.getLogger(DegradeInterceptor.class);
 
     default Object get(String name, FallbackFactory<?> factory, Throwable cause) {
         Object o = fallbackFactoryObjects.get(name);
@@ -62,6 +65,7 @@ public interface DegradeInterceptor {
     }
 
     default Response fallback(Exception e, RequestWrap requestWrap) {
+        log.error("degrade.trigger: type: [{}]", requestWrap.getDegradeType().name());
         FallbackFactory<?> fallbackFactory = requestWrap.getFallbackFactory();
         if (ObjectUtils.isNullOrEmpty(fallbackFactory)) {
             throw new DegradeException(e);

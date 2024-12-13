@@ -69,6 +69,7 @@ public class DefaultHttpClientProcessor implements HttpClientProcessor {
                         : SentinelInterceptorBuilder.INSTANCE
                 );
                 requestWrap.setDegrade(true);
+                requestWrap.setDegradeType(HttpBootStrap.getConfig().getDegradeType());
                 requestWrap.setCircuitBreakerConfigName(DefaultConstants.GLOBAL_CIRCUIT_BREAKER_CONFIG);
             }
         }
