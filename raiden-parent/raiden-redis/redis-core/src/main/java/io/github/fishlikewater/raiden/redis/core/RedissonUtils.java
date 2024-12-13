@@ -15,7 +15,6 @@
  */
 package io.github.fishlikewater.raiden.redis.core;
 
-import cn.hutool.core.bean.BeanUtil;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -40,7 +39,7 @@ public class RedissonUtils {
     public static RedissonClient redissonClient(RedissonPatternCfg cfg, BiConsumer<RedissonConfig, RedissonPatternCfg> fx) {
         RedissonConfig config = new RedissonConfig();
         final SingleServerConfig singleServerConfig = new Config().useSingleServer();
-        BeanUtil.copyProperties(cfg.getSingle(), singleServerConfig, true);
+        copyProperties(cfg.getSingle(), singleServerConfig);
         config.setSingleServerConfig(singleServerConfig);
 
         fx.accept(config, cfg);
@@ -111,5 +110,27 @@ public class RedissonUtils {
         } else {
             config.setCodec(cfg.getCodec());
         }
+    }
+
+    private static void copyProperties(RedissonPatternCfg.Single single, SingleServerConfig singleServerConfig) {
+        if (ObjectUtils.isNullOrEmpty(single)) {
+            return;
+        }
+        singleServerConfig
+                .setPassword(single.getPassword())
+                .setAddress(single.getAddress())
+                .setUsername(single.getUsername())
+                .setDatabase(single.getDatabase())
+                .setSubscriptionConnectionMinimumIdleSize(single.getSubscriptionConnectionMinimumIdleSize())
+                .setSubscriptionConnectionPoolSize(single.getSubscriptionConnectionPoolSize())
+                .setConnectionMinimumIdleSize(single.getConnectionMinimumIdleSize())
+                .setConnectionPoolSize(single.getConnectionPoolSize())
+                .setDnsMonitoringInterval(single.getDnsMonitoringInterval())
+                .setIdleConnectionTimeout(single.getIdleConnectionTimeout())
+                .setConnectTimeout(single.getConnectTimeout())
+                .setTimeout(single.getTimeout())
+                .setSubscriptionTimeout(single.getSubscriptionTimeout())
+                .setRetryAttempts(single.getRetryAttempts())
+                .setRetryInterval(single.getRetryInterval());
     }
 }
