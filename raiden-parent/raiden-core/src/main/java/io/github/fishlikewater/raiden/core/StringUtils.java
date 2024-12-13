@@ -15,12 +15,13 @@
  */
 package io.github.fishlikewater.raiden.core;
 
-import cn.hutool.core.util.StrUtil;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import jakarta.annotation.Nullable;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -31,9 +32,43 @@ import java.util.*;
  * @version 1.0.0
  * @since 2024/05/30
  */
-public final class StringUtils extends StrUtil {
+public final class StringUtils {
 
     private static final String[] EMPTY_STRING_ARRAY = {};
+
+    /**
+     * <p>判断字符串是否为空</p>
+     * <p>例:</p>
+     * <ol>
+     *     <li>StringUtils.isBlank(null) // true</li>
+     *     <li>StringUtils.isBlank("") // true</li>
+     *     <li>StringUtils.isBlank(" ") // true</li>
+     *     <li>StringUtils.isBlank(" a") // false</li>
+     * </ol>
+     *
+     * @param str 字符串
+     * @return 是否为空
+     */
+    public static boolean isBlank(CharSequence str) {
+        return null == str || str.isEmpty();
+    }
+
+    /**
+     * <p>判断字符串是否不为空</p>
+     * <p>例:</p>
+     * <ol>
+     *     <li>StringUtils.isNotBlank(null) // false</li>
+     *     <li>StringUtils.isNotBlank("") // false</li>
+     *     <li>StringUtils.isNotBlank(" ") // false</li>
+     *     <li>StringUtils.isNotBlank(" a") // true</li>
+     * </ol>
+     *
+     * @param str 字符串
+     * @return 是否不为空
+     */
+    public static boolean isNotBlank(CharSequence str) {
+        return !isBlank(str);
+    }
 
     /**
      * <p>格式化字符串</p>
@@ -102,6 +137,22 @@ public final class StringUtils extends StrUtil {
     }
 
     /**
+     * <p>字符串替换</p>
+     * <p>例:</p>
+     * <pre>
+     *     StringUtils.replace("a=1&b=2", "&", "|") // a=1|b=2
+     * </pre>
+     *
+     * @param value       字符串
+     * @param searchStr   要替换的字符串
+     * @param replacement 替换的字符串
+     * @return 替换后的字符串
+     */
+    public static String replace(String value, String searchStr, String replacement) {
+        return value.replace(searchStr, replacement);
+    }
+
+    /**
      * Copy from spring utils StringUtils<br/>
      * Tokenize the given {@code String} into a {@code String} array via a
      * {@link StringTokenizer}.
@@ -145,7 +196,140 @@ public final class StringUtils extends StrUtil {
      *                   (potentially {@code null} or empty)
      * @return the resulting {@code String} array
      */
+    @SuppressWarnings("all")
     public static String[] toStringArray(@Nullable Collection<String> collection) {
         return (CollectionUtils.isNotEmpty(collection) ? collection.toArray(EMPTY_STRING_ARRAY) : EMPTY_STRING_ARRAY);
+    }
+
+    /**
+     * 清理空白字符
+     *
+     * @param str 被清理的字符串
+     * @return 清理后的字符串
+     */
+    public static String cleanBlank(CharSequence str) {
+        int len = str.length();
+        final StringBuilder sb = new StringBuilder(len);
+        char c;
+        for (int i = 0; i < len; i++) {
+            c = str.charAt(i);
+            if (!isBlankChar(c)) {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 是否空白符<br>
+     * 空白符包括空格、制表符、全角空格和不间断空格<br>
+     *
+     * @param c 字符
+     * @return 是否空白符
+     */
+    public static boolean isBlankChar(int c) {
+        return Character.isWhitespace(c)
+                || Character.isSpaceChar(c)
+                || c == '\ufeff'
+                || c == '\u202a'
+                || c == '\u0000'
+                || c == 'ㅤ'
+                || c == '⠀'
+                || c == '\u180e';
+    }
+
+    /**
+     * <p>将byte[]转换为字符串</p>
+     * <p>例:</p>
+     * <pre>
+     *     byte[] key = "123456".getBytes();
+     *     String str = StringUtils.utf8Str(key); // 123456
+     * </pre>
+     *
+     * @param key byte[]
+     * @return 字符串
+     */
+    public static String utf8Str(byte[] key) {
+        return new String(key, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * <p>将字符串转换为byte[]</p>
+     * <p>例:</p>
+     * <pre>
+     *     String str = "123456";
+     *     byte[] key = StringUtils.bytes(str); // [49,50,51,52,53,54]
+     * </pre>
+     *
+     * @param data 字符串
+     * @return byte[]
+     */
+    public static byte[] bytes(String data, Charset charset) {
+        return data.getBytes(charset);
+    }
+
+    /**
+     * 首字母小写
+     *
+     * @param string 原始字符串
+     * @return 首字母小写字符串
+     */
+    public static String lowerFirst(String string) {
+        if (StringUtils.isNotBlank(string)) {
+            if (string.length() > 1) {
+                return Character.toLowerCase(string.charAt(0)) + string.substring(1);
+            } else {
+                return string.toLowerCase();
+            }
+        }
+        return string;
+    }
+
+    /**
+     * 比较两个字符串是否相等
+     *
+     * @param str1 字符串1
+     * @param str2 字符串2
+     * @return 是否相等
+     */
+    public static boolean equals(String str1, String str2) {
+        return Objects.equals(str1, str2);
+    }
+
+    /**
+     * 判断字符串是否以指定字符串结尾
+     *
+     * @param currentValue 当前值
+     * @param endValue     结尾值
+     * @return 结果
+     */
+    public static boolean endWith(String currentValue, String endValue) {
+        return StringUtils.isNotBlank(currentValue)
+                && StringUtils.isNotBlank(endValue)
+                && currentValue.endsWith(endValue);
+    }
+
+    /**
+     * 判断字符串是否以指定字符串开头
+     *
+     * @param currentValue 当前值
+     * @param startValue   开始值
+     * @return 结果
+     */
+    public static boolean startWith(String currentValue, String startValue) {
+        return StringUtils.isNotBlank(currentValue)
+                && StringUtils.isNotBlank(startValue)
+                && currentValue.startsWith(startValue);
+    }
+
+    /**
+     * 判断字符串是否以指定字符串开头，忽略大小写
+     *
+     * @param algorithm 算法
+     * @param pbe       pbe
+     * @return 结果
+     */
+    public static boolean startWithIgnoreCase(String algorithm, String pbe) {
+        return algorithm.toUpperCase().startsWith(pbe.toUpperCase());
     }
 }

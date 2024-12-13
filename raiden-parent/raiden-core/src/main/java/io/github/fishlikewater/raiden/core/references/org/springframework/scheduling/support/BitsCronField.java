@@ -16,8 +16,8 @@
 
 package io.github.fishlikewater.raiden.core.references.org.springframework.scheduling.support;
 
-import cn.hutool.core.util.StrUtil;
 import io.github.fishlikewater.raiden.core.Assert;
+import io.github.fishlikewater.raiden.core.StringUtils;
 
 import java.time.DateTimeException;
 import java.time.temporal.Temporal;
@@ -116,14 +116,13 @@ final class BitsCronField extends CronField {
         Assert.notNull(type, "Type must not be null");
         try {
             BitsCronField result = new BitsCronField(type);
-            String[] fields = StrUtil.splitToArray(value, ",");
+            String[] fields = StringUtils.tokenizeToStringArray(value, ",", false, false);
             for (String field : fields) {
                 int slashPos = field.indexOf('/');
                 if (slashPos == -1) {
                     ValueRange range = parseRange(field, type);
                     result.setBits(range);
-                }
-                else {
+                } else {
                     String rangeStr = field.substring(0, slashPos);
                     String deltaStr = field.substring(slashPos + 1);
                     ValueRange range = parseRange(rangeStr, type);
@@ -138,8 +137,7 @@ final class BitsCronField extends CronField {
                 }
             }
             return result;
-        }
-        catch (DateTimeException | IllegalArgumentException ex) {
+        } catch (DateTimeException | IllegalArgumentException ex) {
             String msg = ex.getMessage() + " '" + value + "'";
             throw new IllegalArgumentException(msg, ex);
         }
@@ -148,14 +146,12 @@ final class BitsCronField extends CronField {
     private static ValueRange parseRange(String value, Type type) {
         if (value.equals("*")) {
             return type.range();
-        }
-        else {
+        } else {
             int hyphenPos = value.indexOf('-');
             if (hyphenPos == -1) {
                 int result = type.checkValidValue(Integer.parseInt(value));
                 return ValueRange.of(result, result);
-            }
-            else {
+            } else {
                 int min = Integer.parseInt(value.substring(0, hyphenPos));
                 int max = Integer.parseInt(value.substring(hyphenPos + 1));
                 min = type.checkValidValue(min);
@@ -179,8 +175,7 @@ final class BitsCronField extends CronField {
         }
         if (next == current) {
             return temporal;
-        }
-        else {
+        } else {
             int count = 0;
             current = type().get(temporal);
             while (current != next && count++ < CronExpression.MAX_ATTEMPTS) {
@@ -207,8 +202,7 @@ final class BitsCronField extends CronField {
         long result = this.bits & (MASK << fromIndex);
         if (result != 0) {
             return Long.numberOfTrailingZeros(result);
-        }
-        else {
+        } else {
             return -1;
         }
 
@@ -217,10 +211,9 @@ final class BitsCronField extends CronField {
     private void setBits(ValueRange range) {
         if (range.getMinimum() == range.getMaximum()) {
             setBit((int) range.getMinimum());
-        }
-        else {
+        } else {
             long minMask = MASK << range.getMinimum();
-            long maxMask = MASK >>> - (range.getMaximum() + 1);
+            long maxMask = MASK >>> -(range.getMaximum() + 1);
             this.bits |= (minMask & maxMask);
         }
     }
@@ -228,8 +221,7 @@ final class BitsCronField extends CronField {
     private void setBits(ValueRange range, int delta) {
         if (delta == 1) {
             setBits(range);
-        }
-        else {
+        } else {
             for (int i = (int) range.getMinimum(); i <= range.getMaximum(); i += delta) {
                 setBit(i);
             }
@@ -241,7 +233,7 @@ final class BitsCronField extends CronField {
     }
 
     private void clearBit(int index) {
-        this.bits &=  ~(1L << index);
+        this.bits &= ~(1L << index);
     }
 
     @Override
@@ -268,11 +260,11 @@ final class BitsCronField extends CronField {
         int i = nextSetBit(0);
         if (i != -1) {
             builder.append(i);
-            i = nextSetBit(i+1);
+            i = nextSetBit(i + 1);
             while (i != -1) {
                 builder.append(", ");
                 builder.append(i);
-                i = nextSetBit(i+1);
+                i = nextSetBit(i + 1);
             }
         }
         builder.append('}');

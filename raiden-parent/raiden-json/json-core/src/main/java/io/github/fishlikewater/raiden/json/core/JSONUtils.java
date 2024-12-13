@@ -15,8 +15,6 @@
  */
 package io.github.fishlikewater.raiden.json.core;
 
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.BeanDescription;
@@ -32,6 +30,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import io.github.fishlikewater.raiden.core.DatePattern;
 import io.github.fishlikewater.raiden.json.core.jackson.BigNumberSerializer;
 import io.github.fishlikewater.raiden.json.core.jackson.JackSonNotNullSerialize;
 import io.github.fishlikewater.raiden.json.core.jackson.JacksonUtils;
@@ -84,10 +83,6 @@ public final class JSONUtils {
     }
 
     private JSONUtils() {
-    }
-
-    public static class HutoolJSON extends JSONUtil {
-
     }
 
     private static class NeedNotNullSerializerModifier extends BeanSerializerModifier {

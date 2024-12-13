@@ -22,7 +22,6 @@
  */
 module raiden.core {
     requires static lombok;
-    requires cn.hutool.core;
     requires transitive org.slf4j;
     requires jakarta.annotation;
 

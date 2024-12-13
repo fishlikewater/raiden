@@ -15,11 +15,6 @@
  */
 package io.github.fishlikewater.raiden.core;
 
-import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.core.util.StrUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +36,7 @@ public class EnumUtils {
      * @return 是否是枚举
      */
     public static boolean isEnum(Class<?> clazz) {
-        Assert.notNull(clazz);
+        Assert.notNull(clazz, "is null");
         return clazz.isEnum();
     }
 
@@ -52,7 +47,7 @@ public class EnumUtils {
      * @return 是否为Enum类
      */
     public static boolean isEnum(Object obj) {
-        Assert.notNull(obj);
+        Assert.notNull(obj, "is null");
         return obj.getClass().isEnum();
     }
 
@@ -79,7 +74,7 @@ public class EnumUtils {
      * @return 枚举值
      */
     public static <E extends Enum<E>> E fromString(Class<E> enumClass, String value, E defaultValue) {
-        return ObjectUtil.defaultIfNull(fromStringQuietly(enumClass, value), defaultValue);
+        return ObjectUtils.defaultIfNullOrEmpty(fromStringQuietly(enumClass, value), defaultValue);
     }
 
     /**
@@ -91,7 +86,7 @@ public class EnumUtils {
      * @return 枚举值
      */
     public static <E extends Enum<E>> E fromStringQuietly(Class<E> enumClass, String value) {
-        if (null == enumClass || StrUtil.isBlank(value)) {
+        if (null == enumClass || StringUtils.isBlank(value)) {
             return null;
         }
 
@@ -116,25 +111,6 @@ public class EnumUtils {
         final List<String> list = new ArrayList<>(enums.length);
         for (Enum<?> e : enums) {
             list.add(e.name());
-        }
-        return list;
-    }
-
-    /**
-     * 获得枚举类中各枚举对象下指定字段的值
-     *
-     * @param clazz     枚举类
-     * @param fieldName 字段名，最终调用getXXX方法
-     * @return 字段值列表
-     */
-    public static List<Object> getFieldValues(Class<? extends Enum<?>> clazz, String fieldName) {
-        final Enum<?>[] enums = clazz.getEnumConstants();
-        if (null == enums) {
-            return null;
-        }
-        final List<Object> list = new ArrayList<>(enums.length);
-        for (Enum<?> e : enums) {
-            list.add(ReflectUtil.getFieldValue(e, fieldName));
         }
         return list;
     }

@@ -122,7 +122,7 @@ public class Hex {
      * @return 十六进制String
      */
     public static String encodeHexStr(String data, Charset charset) {
-        return encodeHexStr(StringUtils.bytes(data, charset), true);
+        return encodeHexStr(data.getBytes(charset), true);
     }
 
     /**
@@ -167,10 +167,10 @@ public class Hex {
      * @return 字符串
      */
     public static String decodeHexStr(String hexStr, Charset charset) {
-        if (StringUtils.isEmpty(hexStr)) {
+        if (StringUtils.isBlank(hexStr)) {
             return hexStr;
         }
-        return StringUtils.str(decodeHex(hexStr), charset);
+        return new String(decodeHex(hexStr), charset);
     }
 
     /**
@@ -181,7 +181,7 @@ public class Hex {
      * @return 字符串
      */
     public static String decodeHexStr(char[] hexData, Charset charset) {
-        return StringUtils.str(decodeHex(hexData), charset);
+        return new String(decodeHex(hexData), charset);
     }
 
     /**

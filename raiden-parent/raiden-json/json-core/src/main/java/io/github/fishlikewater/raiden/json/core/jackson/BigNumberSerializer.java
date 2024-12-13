@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
 import com.fasterxml.jackson.databind.ser.std.NumberSerializer;
 
 import java.io.IOException;
+import java.io.Serial;
 
 /**
  * {@code JacksonConfig}
@@ -34,6 +35,8 @@ import java.io.IOException;
 @JacksonStdImpl
 public class BigNumberSerializer extends NumberSerializer {
 
+    @Serial
+    private static final long serialVersionUID = 7604186500115137617L;
     /**
      * 提供实例
      */

@@ -15,7 +15,6 @@
  */
 package io.github.fishlikewater.raiden.core;
 
-import cn.hutool.core.util.StrUtil;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import io.github.fishlikewater.raiden.core.func.LambdaFunction;
 
@@ -513,7 +512,7 @@ public class LambdaUtils {
             name = name.substring(3);
         }
 
-        if (StrUtil.isNotBlank(name) && !Character.isUpperCase(name.charAt(1))) {
+        if (StringUtils.isNotBlank(name) && !Character.isUpperCase(name.charAt(1))) {
             name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
         }
 

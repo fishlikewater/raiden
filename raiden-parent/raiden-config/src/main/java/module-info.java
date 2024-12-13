@@ -25,7 +25,6 @@ module raiden.config {
     requires static lombok;
     requires raiden.json.core;
     requires com.fasterxml.jackson.core;
-    requires cn.hutool.core;
 
     exports io.github.fishlikewater.raiden.config.ini;
     exports io.github.fishlikewater.raiden.config;

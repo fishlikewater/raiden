@@ -15,8 +15,6 @@
  */
 package io.github.fishlikewater.raiden.core;
 
-import cn.hutool.core.util.StrUtil;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -173,7 +171,7 @@ public class Assert {
      * @see StrUtil#isNotBlank
      */
     public static void hasLength(String text, String message) {
-        if (!StrUtil.isNotBlank(text)) {
+        if (!StringUtils.isNotBlank(text)) {
             throw new IllegalArgumentException(message);
         }
     }
@@ -198,7 +196,7 @@ public class Assert {
      * @since 5.0
      */
     public static void hasLength(String text, Supplier<String> messageSupplier) {
-        if (!StrUtil.isNotBlank(text)) {
+        if (!StringUtils.isNotBlank(text)) {
             throw new IllegalArgumentException(nullSafeGet(messageSupplier));
         }
     }
@@ -226,7 +224,7 @@ public class Assert {
      * @see StrUtil#isNotBlank
      */
     public static void hasText(String text, String message) {
-        if (!StrUtil.isNotBlank(text)) {
+        if (!StringUtils.isNotBlank(text)) {
             throw new IllegalArgumentException(message);
         }
     }
@@ -251,7 +249,7 @@ public class Assert {
      * @since 5.0
      */
     public static void hasText(String text, Supplier<String> messageSupplier) {
-        if (!StrUtil.isNotBlank(text)) {
+        if (!StringUtils.isNotBlank(text)) {
             throw new IllegalArgumentException(nullSafeGet(messageSupplier));
         }
     }
@@ -278,7 +276,7 @@ public class Assert {
      * @throws IllegalArgumentException if the text contains the substring
      */
     public static void doesNotContain(String textToSearch, String substring, String message) {
-        if (StrUtil.isNotBlank(textToSearch) && StrUtil.isNotBlank(substring) &&
+        if (StringUtils.isNotBlank(textToSearch) && StringUtils.isNotBlank(substring) &&
                 textToSearch.contains(substring)) {
             throw new IllegalArgumentException(message);
         }
@@ -302,7 +300,7 @@ public class Assert {
      * @since 5.0
      */
     public static void doesNotContain(String textToSearch, String substring, Supplier<String> messageSupplier) {
-        if (StrUtil.isNotBlank(textToSearch) && StrUtil.isNotBlank(substring) &&
+        if (StringUtils.isNotBlank(textToSearch) && StringUtils.isNotBlank(substring) &&
                 textToSearch.contains(substring)) {
             throw new IllegalArgumentException(nullSafeGet(messageSupplier));
         }
@@ -688,7 +686,7 @@ public class Assert {
         String className = (obj != null ? obj.getClass().getName() : "null");
         String result = "";
         boolean defaultMessage = true;
-        if (StrUtil.isNotBlank(msg)) {
+        if (StringUtils.isNotBlank(msg)) {
             if (endsWithSeparator(msg)) {
                 result = StringUtils.format("{} ", msg);
             } else {
@@ -705,7 +703,7 @@ public class Assert {
     private static void assignableCheckFailed(Class<?> superType, Class<?> subType, String msg) {
         String result = "";
         boolean defaultMessage = true;
-        if (StrUtil.isNotBlank(msg)) {
+        if (StringUtils.isNotBlank(msg)) {
             if (endsWithSeparator(msg)) {
                 result = StringUtils.format("{} ", msg);
             } else {

@@ -15,11 +15,11 @@
  */
 package io.github.fishlikewater.raiden.core;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.date.LocalDateTimeUtil;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2024/05/07
  */
 @SuppressWarnings("unused")
-public class DateUtils extends DateUtil {
+public class DateUtils {
 
     /**
      * 毫秒或秒转LocalDateTime
@@ -48,17 +48,18 @@ public class DateUtils extends DateUtil {
             return transferShort(ts);
         }
 
-        return LocalDateTimeUtil.of(ts);
+        return of(ts);
     }
 
     /**
      * LocalDateTime转毫秒
      *
-     * @param time LocalDateTime
+     * @param localDateTime LocalDateTime
      * @return 时间戳
      */
-    public static long transfer(LocalDateTime time) {
-        return LocalDateTimeUtil.toEpochMilli(time);
+    public static long transfer(LocalDateTime localDateTime) {
+        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+        return instant.toEpochMilli();
     }
 
     /**
@@ -76,6 +77,37 @@ public class DateUtils extends DateUtil {
         }
 
         return transfer(ts * CommonConstants.MILLIS_UNIT);
+    }
+
+    /**
+     * epochMilli转LocalDateTime
+     *
+     * @param epochMilli 时间戳
+     * @return LocalDateTime
+     */
+    public static LocalDateTime of(long epochMilli) {
+        return of(Instant.ofEpochMilli(epochMilli));
+    }
+
+    /**
+     * Instant转LocalDateTime
+     *
+     * @param instant Instant
+     * @return LocalDateTime
+     */
+    public static LocalDateTime of(Instant instant) {
+        return of(instant, ZoneId.systemDefault());
+    }
+
+    /**
+     * Instant转LocalDateTime
+     *
+     * @param instant Instant
+     * @param zoneId  时区
+     * @return LocalDateTime
+     */
+    public static LocalDateTime of(Instant instant, ZoneId zoneId) {
+        return null == instant ? null : LocalDateTime.ofInstant(instant, ObjectUtils.defaultIfNullOrEmpty(zoneId, ZoneId.systemDefault()));
     }
 
     public static ChronoUnit convertToChronoUnit(TimeUnit timeUnit) {

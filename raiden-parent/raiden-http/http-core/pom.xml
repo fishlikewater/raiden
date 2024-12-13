@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>io.github.fishlikewater</groupId>
             <artifactId>json-core</artifactId>
         </dependency>

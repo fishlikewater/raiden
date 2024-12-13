@@ -15,8 +15,8 @@
  */
 package io.github.fishlikewater.raiden.generate;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.LocalDateTimeUtil;
-import io.github.fishlikewater.raiden.core.DateUtils;
 import io.github.fishlikewater.raiden.core.RandomUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 
@@ -41,11 +41,11 @@ public class DateTimeGenerate {
 
         @Override
         public String generate() {
-            return DateUtils.format(DateTimeGenerate.tryAcquireDateTime(), "yyyy-MM-dd HH:mm:ss");
+            return DateUtil.format(DateTimeGenerate.tryAcquireDateTime(), "yyyy-MM-dd HH:mm:ss");
         }
 
         public String generate(String format) {
-            return DateUtils.format(DateTimeGenerate.tryAcquireDateTime(), format);
+            return DateUtil.format(DateTimeGenerate.tryAcquireDateTime(), format);
         }
     }
 
@@ -56,11 +56,11 @@ public class DateTimeGenerate {
 
         @Override
         public String generate() {
-            return DateUtils.format(DateTimeGenerate.tryAcquireDateTime(), "yyyy-MM-dd");
+            return DateUtil.format(DateTimeGenerate.tryAcquireDateTime(), "yyyy-MM-dd");
         }
 
         public String generate(String format) {
-            return DateUtils.format(DateTimeGenerate.tryAcquireDateTime(), format);
+            return DateUtil.format(DateTimeGenerate.tryAcquireDateTime(), format);
         }
     }
 
@@ -84,7 +84,7 @@ public class DateTimeGenerate {
             int second = RandomUtils.randomInt(0, 59);
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime localDateTime = now.withHour(hour).withMinute(minute).withSecond(second);
-            return DateUtils.format(localDateTime, format);
+            return DateUtil.format(localDateTime, format);
         }
     }
 
@@ -95,12 +95,12 @@ public class DateTimeGenerate {
 
         @Override
         public Long generate() {
-            return DateUtils.current() - DateTimeGenerate.tryAcquireRandomLong();
+            return DateUtil.current() - DateTimeGenerate.tryAcquireRandomLong();
         }
     }
 
     public static LocalDateTime tryAcquireDateTime() {
-        long current = DateUtils.current();
+        long current = DateUtil.current();
         long randomLong = RandomUtils.randomLong(0, MS);
         current -= randomLong;
         return LocalDateTimeUtil.of(current);

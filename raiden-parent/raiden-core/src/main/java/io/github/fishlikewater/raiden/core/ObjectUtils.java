@@ -44,6 +44,17 @@ public final class ObjectUtils {
     }
 
     /**
+     * 如果对象为空，则返回默认值
+     *
+     * @param target       对象
+     * @param defaultValue 默认值
+     * @return 对象
+     */
+    public static <T> T defaultIfNullOrEmpty(T target, T defaultValue) {
+        return isNullOrEmpty(target) ? defaultValue : target;
+    }
+
+    /**
      * 判断对象是否不为空
      *
      * @param target 对象

@@ -15,8 +15,7 @@
  */
 package io.github.fishlikewater.spring.boot.raiden.core;
 
-import cn.hutool.core.lang.TypeReference;
-import cn.hutool.core.util.ArrayUtil;
+import io.github.fishlikewater.raiden.core.CollectionUtils;
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
@@ -30,13 +29,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -134,22 +130,6 @@ public class SpringUtils implements BeanFactoryPostProcessor, ApplicationContext
      */
     public static <T> T getBean(String name, Class<T> clazz) {
         return getBeanFactory().getBean(name, clazz);
-    }
-
-    /**
-     * 通过类型参考返回带泛型参数的Bean
-     *
-     * @param reference 类型参考，用于持有转换后的泛型类型
-     * @param <T>       Bean类型
-     * @return 带泛型参数的Bean
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T getBean(TypeReference<T> reference) {
-        final ParameterizedType parameterizedType = (ParameterizedType) reference.getType();
-        final Class<T> rawType = (Class<T>) parameterizedType.getRawType();
-        final Class<?>[] genericTypes = Arrays.stream(parameterizedType.getActualTypeArguments()).map(type -> (Class<?>) type).toArray(Class[]::new);
-        final String[] beanNames = getBeanFactory().getBeanNamesForType(ResolvableType.forClassWithGenerics(rawType, genericTypes));
-        return getBean(beanNames[0], rawType);
     }
 
     /**
@@ -254,9 +234,10 @@ public class SpringUtils implements BeanFactoryPostProcessor, ApplicationContext
      *
      * @return 当前的环境配置
      */
+    @SuppressWarnings("all")
     public static String getActiveProfile() {
         final String[] activeProfiles = getActiveProfiles();
-        return ArrayUtil.isNotEmpty(activeProfiles) ? activeProfiles[0] : null;
+        return CollectionUtils.isNotEmpty(activeProfiles) ? activeProfiles[0] : null;
     }
 
     /**

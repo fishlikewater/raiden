@@ -31,6 +31,7 @@ import org.redisson.client.codec.StringCodec;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -95,7 +96,7 @@ public class DelayQueue implements Serializable {
     public <R extends Serializable> void add(DelayTask<R> delay) {
         try {
             delay.setTopic(topic);
-            delay.setPublishTime(DateUtils.current());
+            delay.setPublishTime(DateUtils.transfer(LocalDateTime.now()));
             // 避免序列化方式的差异 统一JSON 序列化
             String dequePayload = JSONUtils.JACKSON.writeValueAsString(delay);
             this.delayedQueue.offer(dequePayload, delay.getDelayTime(), delay.getTimeUnit());
@@ -107,7 +108,7 @@ public class DelayQueue implements Serializable {
     public <R extends Serializable> Future<Void> addAsync(DelayTask<R> delay) {
         try {
             delay.setTopic(topic);
-            delay.setPublishTime(DateUtils.current());
+            delay.setPublishTime(DateUtils.transfer(LocalDateTime.now()));
             // 避免序列化方式的差异 统一JSON 序列化
             String dequePayload = JSONUtils.JACKSON.writeValueAsString(delay);
             return this.delayedQueue.offerAsync(dequePayload, delay.getDelayTime(), delay.getTimeUnit());

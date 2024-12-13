@@ -27,7 +27,6 @@ module raiden.core.spring.boot {
     requires raiden.core;
     requires spring.boot;
     requires spring.expression;
-    requires cn.hutool.core;
     requires spring.boot.autoconfigure;
     requires java.net.http;
     requires spring.web;

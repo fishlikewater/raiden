@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.http.core.client;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.fishlikewater.raiden.core.Assert;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
@@ -233,7 +234,13 @@ public class HttpRequestClient extends AbstractHttpRequestClient {
     }
 
     private void getHttpRequestBody(RequestWrap requestWrap) {
-        String body = Objects.isNull(requestWrap.getBodyObject()) ? "" : JSONUtils.HutoolJSON.toJsonStr(requestWrap.getBodyObject());
+        String body = "";
+        try {
+            body = JSONUtils.JACKSON.writeValueAsString(requestWrap.getBodyObject());
+        } catch (JsonProcessingException e) {
+            log.error("raiden.http: request.body.jackson.serializable.fail");
+            HttpExceptionCheck.INSTANCE.throwUnchecked(e);
+        }
         HttpRequest.BodyPublisher requestBody = HttpRequest.BodyPublishers.ofString(body);
         final HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .method(requestWrap.getHttpMethod().name(), requestBody)

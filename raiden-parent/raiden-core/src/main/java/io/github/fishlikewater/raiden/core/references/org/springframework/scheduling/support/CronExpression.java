@@ -16,8 +16,8 @@
 
 package io.github.fishlikewater.raiden.core.references.org.springframework.scheduling.support;
 
-import cn.hutool.core.util.StrUtil;
 import io.github.fishlikewater.raiden.core.Assert;
+import io.github.fishlikewater.raiden.core.StringUtils;
 
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -34,21 +34,12 @@ import java.util.Arrays;
  *
  * @author Arjen Poutsma
  * @since 5.3
- * @see CronTrigger
  */
 public final class CronExpression {
 
     static final int MAX_ATTEMPTS = 366;
 
-    private static final String[] MACROS = new String[] {
-            "@yearly", "0 0 0 1 1 *",
-            "@annually", "0 0 0 1 1 *",
-            "@monthly", "0 0 0 1 * *",
-            "@weekly", "0 0 0 * * 0",
-            "@daily", "0 0 0 * * *",
-            "@midnight", "0 0 0 * * *",
-            "@hourly", "0 0 * * * *"
-    };
+    private static final String[] MACROS = new String[]{"@yearly", "0 0 0 1 1 *", "@annually", "0 0 0 1 1 *", "@monthly", "0 0 0 1 * *", "@weekly", "0 0 0 * * 0", "@daily", "0 0 0 * * *", "@midnight", "0 0 0 * * *", "@hourly", "0 0 * * * *"};
 
 
     private final CronField[] fields;
@@ -56,14 +47,7 @@ public final class CronExpression {
     private final String expression;
 
 
-    private CronExpression(
-            CronField seconds,
-            CronField minutes,
-            CronField hours,
-            CronField daysOfMonth,
-            CronField months,
-            CronField daysOfWeek,
-            String expression) {
+    private CronExpression(CronField seconds, CronField minutes, CronField hours, CronField daysOfMonth, CronField months, CronField daysOfWeek, String expression) {
 
         // reverse order, to make big changes first
         // to make sure we end up at 0 nanos, we add an extra field
@@ -170,20 +154,20 @@ public final class CronExpression {
      * <li>{@code "@daily"} (or {@code "@midnight"}) to run once a day, i.e. {@code "0 0 0 * * *"},</li>
      * <li>{@code "@hourly"} to run once an hour, i.e. {@code "0 0 * * * *"}.</li>
      * </ul>
+     *
      * @param expression the expression string to parse
      * @return the parsed {@code CronExpression} object
      * @throws IllegalArgumentException in the expression does not conform to
-     * the cron format
+     *                                  the cron format
      */
     public static CronExpression parse(String expression) {
         Assert.hasLength(expression, "Expression string must not be empty");
 
         expression = resolveMacros(expression);
 
-        String[] fields = StrUtil.splitToArray(expression, " ");
+        String[] fields = StringUtils.tokenizeToStringArray(expression, " ", false, false);
         if (fields.length != 6) {
-            throw new IllegalArgumentException(String.format(
-                    "Cron expression must consist of 6 fields (found %d in \"%s\")", fields.length, expression));
+            throw new IllegalArgumentException(String.format("Cron expression must consist of 6 fields (found %d in \"%s\")", fields.length, expression));
         }
         try {
             CronField seconds = CronField.parseSeconds(fields[0]);
@@ -194,8 +178,7 @@ public final class CronExpression {
             CronField daysOfWeek = CronField.parseDaysOfWeek(fields[5]);
 
             return new CronExpression(seconds, minutes, hours, daysOfMonth, months, daysOfWeek, expression);
-        }
-        catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             String msg = ex.getMessage() + " in cron expression \"" + expression + "\"";
             throw new IllegalArgumentException(msg, ex);
         }
@@ -203,6 +186,7 @@ public final class CronExpression {
 
     /**
      * Determine whether the given string represents a valid cron expression.
+     *
      * @param expression the expression to evaluate
      * @return {@code true} if the given expression is a valid cron expression
      * @since 5.3.8
@@ -214,8 +198,7 @@ public final class CronExpression {
         try {
             parse(expression);
             return true;
-        }
-        catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             return false;
         }
     }
@@ -234,8 +217,9 @@ public final class CronExpression {
 
     /**
      * Calculate the next {@link Temporal} that matches this expression.
+     *
      * @param temporal the seed value
-     * @param <T> the type of temporal
+     * @param <T>      the type of temporal
      * @return the next temporal that matches this expression, or {@code null}
      * if no such temporal can be found
      */
@@ -277,14 +261,14 @@ public final class CronExpression {
         }
         if (o instanceof CronExpression other) {
             return Arrays.equals(this.fields, other.fields);
-        }
-        else {
+        } else {
             return false;
         }
     }
 
     /**
      * Return the expression string used to create this {@code CronExpression}.
+     *
      * @return the expression string
      */
     @Override

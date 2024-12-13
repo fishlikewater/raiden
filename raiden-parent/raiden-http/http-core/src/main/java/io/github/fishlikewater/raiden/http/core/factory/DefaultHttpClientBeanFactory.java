@@ -83,8 +83,8 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
             Arrays.stream(heads.value())
                     .map(h -> h.split(HttpConstants.HEAD_SPLIT_SYMBOL, 2))
                     .forEach(s -> {
-                        String key = StringUtils.trim(s[0]);
-                        String value = StringUtils.trim(s[1]);
+                        String key = s[0].trim();
+                        String value = s[1].trim();
                         headMap.put(key, value);
                     });
         }

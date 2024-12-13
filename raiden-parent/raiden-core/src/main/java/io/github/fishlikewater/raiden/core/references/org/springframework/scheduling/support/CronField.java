@@ -16,8 +16,8 @@
 
 package io.github.fishlikewater.raiden.core.references.org.springframework.scheduling.support;
 
-import cn.hutool.core.util.StrUtil;
 import io.github.fishlikewater.raiden.core.Assert;
+import io.github.fishlikewater.raiden.core.StringUtils;
 
 import java.time.DateTimeException;
 import java.time.temporal.ChronoField;
@@ -119,7 +119,7 @@ abstract class CronField {
 
     private static CronField parseList(String value, Type type, BiFunction<String, Type, CronField> parseFieldFunction) {
         Assert.hasLength(value, "Value must not be empty");
-        String[] fields = StrUtil.splitToArray(value, ",");
+        String[] fields = StringUtils.tokenizeToStringArray(value, ",", false, false);
         CronField[] cronFields = new CronField[fields.length];
         for (int i = 0; i < fields.length; i++) {
             cronFields[i] = parseFieldFunction.apply(fields[i], type);
@@ -131,7 +131,7 @@ abstract class CronField {
         value = value.toUpperCase();
         for (int i = 0; i < list.length; i++) {
             String replacement = Integer.toString(i + 1);
-            value = StrUtil.replace(value, list[i], replacement);
+            value = StringUtils.replace(value, list[i], replacement);
         }
         return value;
     }

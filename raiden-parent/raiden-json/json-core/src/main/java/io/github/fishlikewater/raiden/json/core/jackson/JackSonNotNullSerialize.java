@@ -67,7 +67,7 @@ public class JackSonNotNullSerialize extends JsonSerializer<Object> {
             return;
         }
         // 有自定义值
-        if (StringUtils.isNotEmpty(needNotNull.customV())) {
+        if (StringUtils.isNotBlank(needNotNull.customV())) {
             gen.writeObject(needNotNull.customV());
             return;
         }
