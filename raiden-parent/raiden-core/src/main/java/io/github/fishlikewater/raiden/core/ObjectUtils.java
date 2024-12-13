@@ -15,6 +15,10 @@
  */
 package io.github.fishlikewater.raiden.core;
 
+import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -93,6 +97,55 @@ public final class ObjectUtils {
      */
     public static <T> void requireNonNull(T obj) {
         Objects.requireNonNull(obj);
+    }
+
+    /**
+     * 对象转Map
+     *
+     * @param object object
+     * @return return
+     * @throws IllegalAccessException IllegalAccessException
+     */
+    public static Map<String, Object> beanToMap(Object object, boolean ignoreNull) {
+        Map<String, Object> map = new HashMap<>();
+        Field[] fields = object.getClass().getDeclaredFields();
+        try {
+            for (Field field : fields) {
+                field.setAccessible(true);
+                if (ignoreNull && isNullOrEmpty(field.get(object))) {
+                    continue;
+                }
+                map.put(field.getName(), field.get(object));
+            }
+        } catch (IllegalAccessException e) {
+            RaidenExceptionCheck.INSTANCE.throwUnchecked(e);
+        }
+
+        return map;
+    }
+
+    /**
+     * Map转对象
+     *
+     * @param map       待转换的map
+     * @param beanClass 目标对象类型
+     * @return return
+     * @throws Exception Exception
+     */
+    public static <T> T mapToBean(Map<?, ?> map, Class<T> beanClass) throws Exception {
+        T object = beanClass.getConstructor().newInstance();
+        Field[] fields = object.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            int mod = field.getModifiers();
+            if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
+                continue;
+            }
+            field.setAccessible(true);
+            if (map.containsKey(field.getName())) {
+                field.set(object, map.get(field.getName()));
+            }
+        }
+        return object;
     }
 
     private static boolean isCollectionsSupportType(Object target) {

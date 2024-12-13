@@ -15,10 +15,9 @@
  */
 package io.github.fishlikewater.raiden.http.core.factory;
 
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.TypeUtil;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
+import io.github.fishlikewater.raiden.core.TypeUtils;
 import io.github.fishlikewater.raiden.http.core.MethodArgsBean;
 import io.github.fishlikewater.raiden.http.core.annotation.*;
 import io.github.fishlikewater.raiden.http.core.constant.HttpConstants;
@@ -32,10 +31,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -73,12 +69,12 @@ public class DefaultHttpClientBeanFactory implements HttpClientBeanFactory {
         String path = argsBean.getUrl();
         String serverName = httpServer.serverName();
         final Class<?> returnType = method.getReturnType();
-        final Type returnType1 = TypeUtil.getReturnType(method);
-        final Type typeArgument = TypeUtil.getTypeArgument(returnType1);
+        final Type returnType1 = TypeUtils.getReturnType(method);
+        final Type typeArgument = TypeUtils.getGenericType(returnType1);
         Parameter[] parameters = method.getParameters();
 
         Heads heads = method.getAnnotation(Heads.class);
-        Map<String, String> headMap = MapUtil.newHashMap();
+        Map<String, String> headMap = new HashMap<>(8);
         if (Objects.nonNull(heads)) {
             Arrays.stream(heads.value())
                     .map(h -> h.split(HttpConstants.HEAD_SPLIT_SYMBOL, 2))

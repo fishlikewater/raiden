@@ -15,8 +15,6 @@
  */
 package io.github.fishlikewater.raiden.http.core.convert;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.io.FileUtil;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.http.core.MultipartData;
@@ -107,7 +105,7 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
         for (int i = 0; i < paths.size(); i++) {
             final byte[] bytes = fileParams.get(i);
             submissionPublisher.submit(copy2(bytes, bytes.length));
-            final File file = FileUtil.file(paths.get(i).toFile());
+            final File file = paths.get(i).toFile();
             try (FileInputStream fileInputStream = new FileInputStream(file)) {
                 int readCount;
                 byte[] readByte = new byte[HttpConstants.DEFAULT_READ_LIMIT];
@@ -135,7 +133,7 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
         }
         for (int i = 0; i < paths.size(); i++) {
             try {
-                final File file = FileUtil.file(paths.get(i).toFile());
+                final File file = paths.get(i).toFile();
                 String fileData = StringUtils.format("{}--{}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{}\"\r\nContent-Type: application/octet-stream\r\n\r\n", i > 0 ? "\r\n" : "", boundary, file.getName());
                 final byte[] bytes = fileData.getBytes();
                 fileParams.add(bytes);
@@ -159,7 +157,7 @@ public class MultiFileBodyProvider implements HttpRequest.BodyPublisher {
     private void handleParam(Object paramObj) {
         StringBuilder paramData = new StringBuilder();
         if (Objects.nonNull(paramObj)) {
-            Map<String, Object> paramMap = BeanUtil.beanToMap(paramObj);
+            Map<String, Object> paramMap = ObjectUtils.beanToMap(paramObj, true);
             paramMap.forEach((k, v) -> {
                 paramData.append("--").append(boundary).append("\r\n");
                 paramData.append("Content-Disposition: form-data; name=\"").append(k).append("\"\r\n\r\n").append(v).append("\r\n");

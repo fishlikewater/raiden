@@ -15,10 +15,9 @@
  */
 package io.github.fishlikewater.raiden.http.core.proxy;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.text.StrFormatter;
-import cn.hutool.core.util.TypeUtil;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
+import io.github.fishlikewater.raiden.core.StringUtils;
+import io.github.fishlikewater.raiden.core.TypeUtils;
 import io.github.fishlikewater.raiden.http.core.*;
 import io.github.fishlikewater.raiden.http.core.annotation.Body;
 import io.github.fishlikewater.raiden.http.core.annotation.Heads;
@@ -76,7 +75,7 @@ public interface InterfaceProxy {
                 .circuitBreakerConfigName(methodArgsBean.getCircuitBreakerConfigName())
                 .httpMethod(httpMethod)
                 .returnType(returnType)
-                .typeArgumentClass(TypeUtil.getClass(typeArgument))
+                .typeArgumentClass(TypeUtils.getClass(typeArgument))
                 .form(form)
                 .sync(methodArgsBean.isSync())
                 .url(url)
@@ -144,7 +143,7 @@ public interface InterfaceProxy {
             }
         }
         if (!paramPath.isEmpty()) {
-            String url = StrFormatter.format(requestWrap.getUrl(), paramPath, true);
+            String url = StringUtils.format(requestWrap.getUrl(), paramPath, true);
             requestWrap.setUrl(url);
         }
         requestWrap.setParamMap(paramMap);
@@ -163,7 +162,7 @@ public interface InterfaceProxy {
         if (arg instanceof String || arg instanceof Number) {
             paramMap.put(param.value(), arg.toString());
         } else {
-            Map<String, Object> map = BeanUtil.beanToMap(arg, true, true);
+            Map<String, Object> map = ObjectUtils.beanToMap(arg, true);
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 paramMap.put(entry.getKey(), entry.getValue().toString());
             }

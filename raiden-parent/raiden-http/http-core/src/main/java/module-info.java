@@ -30,7 +30,6 @@ module raiden.http.core {
     requires io.github.resilience4j.core;
     requires sentinel.core;
     requires com.fasterxml.jackson.core;
-    requires cn.hutool.core;
 
     exports io.github.fishlikewater.raiden.http.core;
     exports io.github.fishlikewater.raiden.http.core.enums;

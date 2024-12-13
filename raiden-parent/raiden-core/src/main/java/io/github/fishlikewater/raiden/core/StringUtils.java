@@ -332,4 +332,32 @@ public final class StringUtils {
     public static boolean startWithIgnoreCase(String algorithm, String pbe) {
         return algorithm.toUpperCase().startsWith(pbe.toUpperCase());
     }
+
+    /**
+     * 格式化文本，使用 {varName} 占位<br>
+     * map = {a: "aValue", b: "bValue"}; format("{a} and {b}", map);    ---->    aValue and bValue
+     *
+     * @param template 文本模板，被替换的部分用 {key} 表示
+     * @param map      参数值对
+     * @return 格式化后的文本
+     */
+    public static String format(CharSequence template, Map<?, ?> map, boolean ignoreNull) {
+        if (null == template) {
+            return null;
+        }
+        if (null == map || map.isEmpty()) {
+            return template.toString();
+        }
+
+        String template2 = template.toString();
+        String value;
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            value = entry.getValue().toString();
+            if (null == value && ignoreNull) {
+                continue;
+            }
+            template2 = replace(template2, "{" + entry.getKey() + "}", value);
+        }
+        return template2;
+    }
 }
