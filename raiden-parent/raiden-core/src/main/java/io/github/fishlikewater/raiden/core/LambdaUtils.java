@@ -318,7 +318,7 @@ public class LambdaUtils {
             return CollectionUtils.newList();
         }
         return Stream.of(collections)
-                .flatMap(Collection<T>::stream)
+                .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .distinct()
                 .collect(Collectors.toList());
@@ -338,7 +338,7 @@ public class LambdaUtils {
                 .distinct()
                 .toList()
                 .stream()
-                .flatMap(Collection<T>::stream)
+                .flatMap(Collection::stream)
                 .filter(collections[0]::contains)
                 .collect(Collectors.toList());
     }
