@@ -15,8 +15,8 @@
  */
 package io.github.fishlikewater;
 
-import cn.hutool.core.thread.NamedThreadFactory;
 import io.github.fishlikewater.raiden.core.Composite;
+import io.github.fishlikewater.raiden.core.NamedThreadFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class CompositeTest implements Composite {
                 0,
                 TimeUnit.MINUTES,
                 new LinkedBlockingQueue<>(),
-                new NamedThreadFactory("test", true));
+                new NamedThreadFactory("test"));
     }
 
     @Test

@@ -15,9 +15,9 @@
  */
 package io.github.fishlikewater;
 
-import cn.hutool.core.util.StrUtil;
 import io.github.fishlikewater.raiden.core.Assert;
 import io.github.fishlikewater.raiden.core.LambdaUtils;
+import io.github.fishlikewater.raiden.core.StringUtils;
 import org.junit.Test;
 
 /**
@@ -32,7 +32,7 @@ public class LambdaTest {
     @Test
     public void testLambda() {
         String resolve = LambdaUtils.resolve(TestBean::name);
-        Assert.isTrue(StrUtil.isNotBlank(resolve), "");
+        Assert.isTrue(StringUtils.isNotBlank(resolve), "");
         Assert.isTrue(resolve.equals("name"), "");
     }
 }
