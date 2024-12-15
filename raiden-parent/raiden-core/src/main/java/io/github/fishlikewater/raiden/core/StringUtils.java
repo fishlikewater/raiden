@@ -310,6 +310,24 @@ public final class StringUtils {
     }
 
     /**
+     * 判断字符串是否以指定字符串结尾，忽略大小写
+     *
+     * @param str   字符串
+     * @param match 匹配字符串
+     * @return 结果
+     */
+    public static boolean endWithIgnoreCase(String str, String match) {
+        if (null == str) {
+            return false;
+        }
+        if (str.length() < match.length()) {
+            return false;
+        }
+        int strOffset = str.length() - match.length();
+        return str.regionMatches(true, strOffset, match, 0, match.length());
+    }
+
+    /**
      * 判断字符串是否以指定字符串开头
      *
      * @param currentValue 当前值
@@ -325,12 +343,18 @@ public final class StringUtils {
     /**
      * 判断字符串是否以指定字符串开头，忽略大小写
      *
-     * @param algorithm 算法
-     * @param pbe       pbe
+     * @param str   字符串
+     * @param match 匹配字符串
      * @return 结果
      */
-    public static boolean startWithIgnoreCase(String algorithm, String pbe) {
-        return algorithm.toUpperCase().startsWith(pbe.toUpperCase());
+    public static boolean startWithIgnoreCase(String str, String match) {
+        if (null == str) {
+            return false;
+        }
+        if (str.length() < match.length()) {
+            return false;
+        }
+        return str.regionMatches(true, 0, match, 0, match.length());
     }
 
     /**
