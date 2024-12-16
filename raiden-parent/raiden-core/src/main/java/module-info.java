@@ -23,7 +23,6 @@
 module raiden.core {
     requires static lombok;
     requires transitive org.slf4j;
-    requires jakarta.annotation;
     requires java.desktop;
 
     exports io.github.fishlikewater.raiden.core;

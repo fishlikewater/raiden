@@ -16,7 +16,6 @@
 package io.github.fishlikewater.raiden.core;
 
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
-import jakarta.annotation.Nullable;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
 
@@ -197,7 +196,7 @@ public final class StringUtils {
      * @return the resulting {@code String} array
      */
     @SuppressWarnings("all")
-    public static String[] toStringArray(@Nullable Collection<String> collection) {
+    public static String[] toStringArray(Collection<String> collection) {
         return (CollectionUtils.isNotEmpty(collection) ? collection.toArray(EMPTY_STRING_ARRAY) : EMPTY_STRING_ARRAY);
     }
 
