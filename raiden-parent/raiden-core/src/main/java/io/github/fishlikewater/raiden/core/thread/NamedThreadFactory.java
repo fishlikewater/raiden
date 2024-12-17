@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.core;
+package io.github.fishlikewater.raiden.core.thread;
 
+import io.github.fishlikewater.raiden.core.StringUtils;
 import lombok.NonNull;
 
 import java.util.concurrent.ThreadFactory;

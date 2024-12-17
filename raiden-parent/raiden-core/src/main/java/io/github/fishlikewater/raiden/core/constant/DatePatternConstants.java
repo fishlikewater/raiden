@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.core;
+package io.github.fishlikewater.raiden.core.constant;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * @since 2024/12/13
  */
 @SuppressWarnings("all")
-public class DatePattern {
+public class DatePatternConstants {
 
     /**
      * 标准日期时间正则，每个字段支持单个数字或2个数字，包括：
@@ -107,7 +107,7 @@ public class DatePattern {
     public static final String CHINESE_DATE_TIME_PATTERN = "yyyy年MM月dd日HH时mm分ss秒";
     public static final DateTimeFormatter CHINESE_DATE_TIME_FORMATTER = createFormatter(CHINESE_DATE_TIME_PATTERN);
 
-    //-------------------------------------------------------------------------------------------------------------------------------- Pure
+    // ---------------------------------------------------------------- Pure
     /**
      * 标准日期格式：yyyyMMdd
      */
@@ -132,7 +132,8 @@ public class DatePattern {
     public static final String PURE_DATETIME_MS_PATTERN = "yyyyMMddHHmmssSSS";
     public static final DateTimeFormatter PURE_DATETIME_MS_FORMATTER = createFormatter(PURE_DATETIME_MS_PATTERN);
 
-    //-------------------------------------------------------------------------------------------------------------------------------- Others
+    // ---------------------------------------------------------------- Others
+
     /**
      * HTTP头中日期时间格式：EEE, dd MMM yyyy HH:mm:ss z
      */
@@ -157,11 +158,10 @@ public class DatePattern {
     public static final String UTC_MS_WITH_XXX_OFFSET_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
     /**
-     * 创建并为 {@link DateTimeFormatter} 赋予默认时区和位置信息，默认值为系统默认值。
+     * 予默认时区和位置信息，默认值为系统默认值。
      *
      * @param pattern 日期格式
      * @return {@link DateTimeFormatter}
-     * @since 5.7.5
      */
     public static DateTimeFormatter createFormatter(String pattern) {
         return DateTimeFormatter.ofPattern(pattern, Locale.getDefault())

@@ -32,4 +32,6 @@ module raiden.core {
     exports io.github.fishlikewater.raiden.core.constant;
     exports io.github.fishlikewater.raiden.core.exception;
     exports io.github.fishlikewater.raiden.core.references.org.springframework.scheduling.support;
+    exports io.github.fishlikewater.raiden.core.thread;
+    exports io.github.fishlikewater.raiden.core.id;
 }

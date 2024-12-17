@@ -16,7 +16,7 @@
 package io.github.fishlikewater.raiden.generate;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
-import io.github.fishlikewater.raiden.core.Snowflake;
+import io.github.fishlikewater.raiden.core.id.Snowflake;
 
 /**
  * {@code IdGenerate}

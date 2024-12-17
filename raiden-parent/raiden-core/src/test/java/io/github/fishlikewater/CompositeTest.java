@@ -16,7 +16,7 @@
 package io.github.fishlikewater;
 
 import io.github.fishlikewater.raiden.core.Composite;
-import io.github.fishlikewater.raiden.core.NamedThreadFactory;
+import io.github.fishlikewater.raiden.core.thread.NamedThreadFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

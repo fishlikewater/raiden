@@ -15,7 +15,7 @@
  */
 package io.github.fishlikewater;
 
-import io.github.fishlikewater.raiden.core.Snowflake;
+import io.github.fishlikewater.raiden.core.id.Snowflake;
 import org.junit.Test;
 
 /**
