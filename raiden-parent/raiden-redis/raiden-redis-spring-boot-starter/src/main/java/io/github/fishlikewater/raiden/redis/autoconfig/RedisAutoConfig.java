@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.redis.autoconfig;
 
 import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheAspect;
 import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheInvalidateAspect;
+import io.github.fishlikewater.raiden.redis.core.RedisUtils;
 import io.github.fishlikewater.raiden.redis.core.RedissonUtils;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayQueue;
 import org.redisson.api.RedissonClient;
@@ -41,7 +42,9 @@ public class RedisAutoConfig {
     @Bean
     @ConditionalOnProperty(prefix = "raiden.redis", name = "enabled", havingValue = "true")
     public RedissonClient redissonClient(RedisProperties properties) {
-        return RedissonUtils.redissonClient(properties);
+        RedissonClient redissonClient = RedissonUtils.redissonClient(properties);
+        RedisUtils.init(redissonClient);
+        return redissonClient;
     }
 
     // ---------------------------------------------------------------- delay

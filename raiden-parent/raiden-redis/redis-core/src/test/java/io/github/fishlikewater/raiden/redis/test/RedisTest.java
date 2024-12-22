@@ -18,6 +18,7 @@ package io.github.fishlikewater.raiden.redis.test;
 import io.github.fishlikewater.raiden.core.RandomUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.redis.core.DelayQueueUtils;
+import io.github.fishlikewater.raiden.redis.core.RedisUtils;
 import io.github.fishlikewater.raiden.redis.core.RedissonPatternCfg;
 import io.github.fishlikewater.raiden.redis.core.RedissonUtils;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayQueue;
@@ -64,6 +65,24 @@ public class RedisTest {
         } finally {
             lock.unlock();
         }
+    }
+
+    @Test
+    public void testRedis2() {
+        final RedissonClient redissonClient = getRedissonClient();
+        RedisUtils.init(redissonClient);
+        RedisUtils.setAtomicValue("com:github:fishlikewater:redis:test:atomic", 1);
+        RedisUtils.incrAtomicValue("com:github:fishlikewater:redis:test:atomic");
+    }
+
+    @Test
+    public void testRedis3() throws InterruptedException {
+        final RedissonClient redissonClient = getRedissonClient();
+        RedisUtils.init(redissonClient);
+        RedisUtils.subscribe("com:github:fishlikewater:redis:top", String.class, System.out::println);
+        RedisUtils.publish("com:github:fishlikewater:redis:top", "123456");
+
+        Thread.sleep(5_000L);
     }
 
     @Test
