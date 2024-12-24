@@ -309,6 +309,26 @@ public final class StringUtils {
     }
 
     /**
+     * 判断字符串是否以指定任一字符串结尾
+     *
+     * @param currentValue 当前值
+     * @param endValues    结尾值
+     * @return 结果
+     */
+    public static boolean endsWithAny(String currentValue, String... endValues) {
+        if (StringUtils.isNotBlank(currentValue) || ObjectUtils.isNullOrEmpty(endValues)) {
+            return false;
+        }
+        for (String endValue : endValues) {
+            if (StringUtils.endWith(currentValue, endValue)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * 判断字符串是否以指定字符串结尾，忽略大小写
      *
      * @param str   字符串
@@ -337,6 +357,26 @@ public final class StringUtils {
         return StringUtils.isNotBlank(currentValue)
                 && StringUtils.isNotBlank(startValue)
                 && currentValue.startsWith(startValue);
+    }
+
+    /**
+     * 判断字符串是否以指定任一字符串开头
+     *
+     * @param currentValue 当前值
+     * @param startValues  开始值
+     * @return 结果
+     */
+    public static boolean startWithAny(String currentValue, String... startValues) {
+        if (StringUtils.isNotBlank(currentValue) || ObjectUtils.isNullOrEmpty(startValues)) {
+            return false;
+        }
+        for (String startValue : startValues) {
+            if (StringUtils.startWith(currentValue, startValue)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
