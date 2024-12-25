@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.core;
 
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
+import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -207,16 +208,25 @@ public class Hex {
         final byte[] out = new byte[length >> 1];
         int j = 0;
         for (int i = 0; i < length; i++) {
-            final byte height = (byte) (encode.charAt(i) & 0x0f);
+            final byte height = (byte) (toDigit(encode.charAt(i)) & 0x0f);
             i++;
             if (i >= length) {
                 out[j] = (byte) ((0x0F & height) << 4);
             } else {
-                final byte lower = (byte) (encode.charAt(i) & 0x0f);
+                final byte lower = (byte) (toDigit(encode.charAt(i)) & 0x0f);
                 out[j] = (byte) (height << 4 | lower);
             }
             j++;
         }
         return out;
+    }
+
+    private static int toDigit(char ch) {
+        int digit = Character.digit(ch, 16);
+        if (digit < 0) {
+            return RaidenExceptionCheck.INSTANCE.throwUnchecked("Illegal hexadecimal character {} at index {}", ch, 16);
+        } else {
+            return digit;
+        }
     }
 }
