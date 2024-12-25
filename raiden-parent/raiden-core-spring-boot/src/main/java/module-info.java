@@ -31,6 +31,8 @@ module raiden.core.spring.boot {
     requires java.net.http;
     requires spring.web;
     requires org.apache.tomcat.embed.core;
+    requires spring.webmvc;
+    requires com.fasterxml.jackson.databind;
 
     exports io.github.fishlikewater.spring.boot.raiden.core;
     exports io.github.fishlikewater.spring.boot.raiden.core.engine;
