@@ -90,13 +90,12 @@ public class SymmetricCrypto {
     public void init(String algorithm, SecretKey key) {
         CryptoExceptionCheck.INSTANCE.isNotNull(algorithm, "algorithm must be not null !");
         this.secretKey = key;
-        this.cipher = RaidenCryptoUtils.createCipher(algorithm);
-
-        // jak 不支持ZeroPadding 将其转换为NoPadding 并设置标志自定义处理
+        // jdk 不支持ZeroPadding 将其转换为NoPadding 并设置标志自定义处理
         if (algorithm.contains(Padding.ZeroPadding.name())) {
             algorithm = StringUtils.replace(algorithm, Padding.ZeroPadding.name(), Padding.NoPadding.name());
             this.isZeroPadding = true;
         }
+        this.cipher = RaidenCryptoUtils.createCipher(algorithm);
     }
 
     /**
