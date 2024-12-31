@@ -24,6 +24,7 @@ import io.github.fishlikewater.nacos.model.ConfigBinder;
 import io.github.fishlikewater.nacos.model.ConfigMeta;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
@@ -44,14 +45,17 @@ public class DefaultDynamicNacosConfigListener extends AbstractDynamicNacosConfi
 
     private final ConfigMeta configMeta;
 
+    private final ApplicationContext applicationContext;
+
     private final ConfigurableEnvironment environment;
 
     private final BeanFactory beanFactory;
 
-    public DefaultDynamicNacosConfigListener(ConfigMeta configMeta, ConfigurableEnvironment environment, BeanFactory beanFactory) {
+    public DefaultDynamicNacosConfigListener(ConfigMeta configMeta, ApplicationContext applicationContext) {
         this.configMeta = configMeta;
-        this.environment = environment;
-        this.beanFactory = beanFactory;
+        this.applicationContext = applicationContext;
+        this.environment = (ConfigurableEnvironment) applicationContext.getEnvironment();
+        this.beanFactory = applicationContext.getAutowireCapableBeanFactory();
     }
 
     @Override
@@ -59,7 +63,7 @@ public class DefaultDynamicNacosConfigListener extends AbstractDynamicNacosConfi
         log.info("Dynamic.nacos: on.nacos.refresh.listener.received.config.changed.event");
         NacosContextRefresher refresher = this.beanFactory.getBean(NacosContextRefresher.class);
         PropertiesBinder binder = this.beanFactory.getBean(PropertiesBinder.class);
-        this.preRefresh(event);
+        this.preRefresh(event, configMeta, applicationContext);
         Set<String> set = new HashSet<>();
 
         Collection<ConfigChangeItem> changeItems = event.getChangeItems();
@@ -74,7 +78,7 @@ public class DefaultDynamicNacosConfigListener extends AbstractDynamicNacosConfi
         for (String name : set) {
             refresher.refresh(name);
         }
-        this.postRefresh(event);
+        this.postRefresh(event, configMeta, applicationContext);
     }
 
     @Override

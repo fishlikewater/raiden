@@ -17,8 +17,12 @@ package io.github.fishlikewater.nacos.listener;
 
 import com.alibaba.nacos.api.config.ConfigChangeEvent;
 import com.alibaba.nacos.client.config.listener.impl.AbstractConfigChangeListener;
+import io.github.fishlikewater.nacos.event.NacosRefreshFinishEvent;
+import io.github.fishlikewater.nacos.model.ConfigMeta;
+import io.github.fishlikewater.nacos.model.RefreshMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 
 public abstract class AbstractDynamicNacosConfigListener extends AbstractConfigChangeListener {
@@ -27,11 +31,13 @@ public abstract class AbstractDynamicNacosConfigListener extends AbstractConfigC
 
     // ----------------------------------------------------------------
 
-    public void preRefresh(ConfigChangeEvent event) {
+    public void preRefresh(ConfigChangeEvent event, ConfigMeta configMeta, ApplicationContext applicationContext) {
         // do nothing
     }
 
-    public void postRefresh(ConfigChangeEvent event) {
-        // do nothing
+    public void postRefresh(ConfigChangeEvent event, ConfigMeta configMeta, ApplicationContext applicationContext) {
+        RefreshMeta refreshMeta = new RefreshMeta(configMeta.getGroupId(), configMeta.getDataId());
+        NacosRefreshFinishEvent refreshFinishEvent = new NacosRefreshFinishEvent(refreshMeta);
+        applicationContext.publishEvent(refreshFinishEvent);
     }
 }

@@ -26,11 +26,9 @@ import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.*;
 
@@ -46,19 +44,13 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
 
     protected final Set<ConfigMeta> configMetas = new HashSet<>();
 
-    private ConfigurableEnvironment environment;
-
     private ApplicationContext applicationContext;
-
-    private BeanFactory beanFactory;
 
     public abstract List<ConfigMeta> getConfigMeta();
 
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        this.environment = (ConfigurableEnvironment) applicationContext.getEnvironment();
-        this.beanFactory = applicationContext.getAutowireCapableBeanFactory();
     }
 
     public void register() {
@@ -68,7 +60,7 @@ public abstract class AbstractNacosConfigRegister implements NacosConfigRegister
         }
         for (ConfigMeta meta : configMeta) {
             if (meta.isRefresh()) {
-                DefaultDynamicNacosConfigListener listener = new DefaultDynamicNacosConfigListener(meta, environment, beanFactory);
+                DefaultDynamicNacosConfigListener listener = new DefaultDynamicNacosConfigListener(meta, applicationContext);
                 this.register(meta, listener);
             }
             this.registerConfigMeta(meta);
