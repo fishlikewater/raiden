@@ -13,20 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.timer.autoconfigure;
+package io.github.fishlikewater.nacos.listener;
 
-import io.github.fishlikewater.raiden.timer.core.config.TimerConfig;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import com.alibaba.nacos.api.config.ConfigChangeItem;
+
+import java.util.Collection;
 
 /**
- * {@code TimerConfigProperties}
- * 参数配置定义
+ * {@code NacosRefreshListener}
+ * 单独dateId刷新监听器
  *
  * @author zhangxiang
- * @version 1.0.0
- * @since 2024/04/07
+ * @version 1.1.1
+ * @since 2025/01/02
  */
-@ConfigurationProperties("raiden.timer")
-public class TimerConfigProperties extends TimerConfig {
+public interface NacosRefreshListener {
 
+    /**
+     * 支持监听的groupId 与 dataId
+     *
+     * @return groupId + ":" + dataId
+     */
+    String support();
+
+    /**
+     * 监听处理
+     *
+     * @param changeItems 监听到的变更内容
+     */
+    void handle(Collection<ConfigChangeItem> changeItems);
 }

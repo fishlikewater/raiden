@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 zhangxiang (fishlikewater@126.com)
+ * Copyright (c) 2025 zhangxiang (fishlikewater@126.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import io.github.fishlikewater.nacos.bind.PropertiesBinder;
 import io.github.fishlikewater.nacos.context.NacosContextRefresher;
 import io.github.fishlikewater.nacos.model.ConfigBinder;
 import io.github.fishlikewater.nacos.model.ConfigMeta;
+import io.github.fishlikewater.raiden.core.LambdaUtils;
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -29,9 +31,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * {@code DefaultDynamicNacosConfigListener}
@@ -51,11 +51,20 @@ public class DefaultDynamicNacosConfigListener extends AbstractDynamicNacosConfi
 
     private final BeanFactory beanFactory;
 
+    private final List<NacosRefreshListener> listeners;
+
     public DefaultDynamicNacosConfigListener(ConfigMeta configMeta, ApplicationContext applicationContext) {
         this.configMeta = configMeta;
         this.applicationContext = applicationContext;
         this.environment = (ConfigurableEnvironment) applicationContext.getEnvironment();
         this.beanFactory = applicationContext.getAutowireCapableBeanFactory();
+        Map<String, NacosRefreshListener> ofType = applicationContext.getBeansOfType(NacosRefreshListener.class);
+        if (ofType.isEmpty()) {
+            this.listeners = null;
+            return;
+        }
+        String support = StringUtils.format("{}:{}", configMeta.getGroupId(), configMeta.getDataId());
+        this.listeners = LambdaUtils.filter(ofType.values(), listener -> listener.support().equals(support));
     }
 
     @Override
@@ -79,6 +88,12 @@ public class DefaultDynamicNacosConfigListener extends AbstractDynamicNacosConfi
             refresher.refresh(name);
         }
         this.postRefresh(event, configMeta, applicationContext);
+
+        if (ObjectUtils.isNotNullOrEmpty(this.listeners)) {
+            for (NacosRefreshListener listener : this.listeners) {
+                listener.handle(changeItems);
+            }
+        }
     }
 
     @Override
