@@ -15,6 +15,8 @@
  */
 package io.github.fishlikewater.raiden.core.tree;
 
+import io.github.fishlikewater.raiden.core.LambdaUtils;
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import io.github.fishlikewater.raiden.core.references.org.springframework.util.AntPathMatcher;
@@ -23,6 +25,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -66,43 +69,41 @@ public class PathTree implements Serializable {
         PathTreeNode node = root;
         String symbolPath = CommonConstants.Symbol.SYMBOL_PATH;
         String[] paths = uri.split(symbolPath);
-        StringBuilder definedUrl = new StringBuilder(symbolPath);
-        StringBuilder url = new StringBuilder(symbolPath);
+        StringBuilder definedUrl = new StringBuilder();
+        if (uri.startsWith(symbolPath)) {
+            definedUrl.append(symbolPath);
+        }
         for (String path : paths) {
             if (StringUtils.isBlank(path)) {
                 continue;
             }
-            url.append(path).append(symbolPath);
             if (node.children.containsKey(path)) {
                 definedUrl.append(path).append(symbolPath);
                 node = node.children.get(path);
             } else {
                 Map<String, PathTreeNode> children = node.children;
-                node = this.getPathTreeNode(children, definedUrl, symbolPath, url, node);
-            }
-        }
-        String pattenPath = definedUrl.toString();
-        return pattenPath.substring(0, pattenPath.length() - 1);
-    }
-
-    private PathTreeNode getPathTreeNode(Map<String, PathTreeNode> children,
-                                         StringBuilder definedUrl,
-                                         String symbolPath,
-                                         StringBuilder url,
-                                         PathTreeNode node) {
-        for (Map.Entry<String, PathTreeNode> treeNodeEntry : children.entrySet()) {
-            String childPath = treeNodeEntry.getKey();
-            String s = definedUrl + childPath + symbolPath;
-            if (!treeNodeEntry.getValue().isEnd()) {
-                continue;
-            }
-
-            if (pathMatcher.match(s, url.toString())) {
-                definedUrl.append(childPath).append(symbolPath);
-                node = node.children.get(childPath);
+                boolean matchEndNode = this.matchEndNode(children, definedUrl, uri);
+                if (!matchEndNode) {
+                    return null;
+                }
                 break;
             }
         }
-        return node;
+        return definedUrl.deleteCharAt(definedUrl.length() - 1).toString();
+    }
+
+    private boolean matchEndNode(Map<String, PathTreeNode> children,
+                                 StringBuilder definedUrl,
+                                 String url) {
+        Collection<PathTreeNode> values = children.values();
+        PathTreeNode treeNode = LambdaUtils.findFirst(values, value -> value.isEnd() && value.getPath().contains("*"));
+        if (ObjectUtils.isNotNullOrEmpty(treeNode)) {
+            String s = definedUrl.toString() + treeNode.getPath();
+            if (pathMatcher.match(s, url)) {
+                definedUrl.append(treeNode.getPath()).append(CommonConstants.Symbol.SYMBOL_PATH);
+                return true;
+            }
+        }
+        return false;
     }
 }
