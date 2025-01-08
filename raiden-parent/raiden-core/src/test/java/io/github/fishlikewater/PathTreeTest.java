@@ -38,5 +38,7 @@ public class PathTreeTest {
 
         String path = pathTree.searchPath("app/banner/aa");
         Assert.isTrue(path.equals("app/banner/**"), "");
+        pathTree.clear();
+        System.out.println(pathTree);
     }
 }

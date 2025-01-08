@@ -92,6 +92,10 @@ public class PathTree implements Serializable {
         return definedUrl.deleteCharAt(definedUrl.length() - 1).toString();
     }
 
+    public void clear() {
+        root.children.clear();
+    }
+
     private boolean matchEndNode(Map<String, PathTreeNode> children,
                                  StringBuilder definedUrl,
                                  String url) {
