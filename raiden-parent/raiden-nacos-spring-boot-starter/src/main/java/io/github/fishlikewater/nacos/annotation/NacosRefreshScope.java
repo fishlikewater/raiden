@@ -18,6 +18,7 @@ package io.github.fishlikewater.nacos.annotation;
 import io.github.fishlikewater.nacos.constant.Constants;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
 
@@ -35,5 +36,6 @@ import java.lang.annotation.*;
 @Scope(value = Constants.NACOS_REFRESH_SCOPE)
 public @interface NacosRefreshScope {
 
+    @AliasFor(annotation = Scope.class, attribute = "proxyMode")
     ScopedProxyMode proxyMode() default ScopedProxyMode.TARGET_CLASS;
 }
