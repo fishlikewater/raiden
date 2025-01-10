@@ -215,7 +215,6 @@ public class LambdaUtils {
     public static <T> T findAny(Collection<T> collection, Predicate<T> predicate) {
         return collection
                 .stream()
-                .parallel()
                 .filter(predicate)
                 .findAny()
                 .orElse(null);
@@ -233,7 +232,6 @@ public class LambdaUtils {
     public static <T> T findAny(Collection<T> collection, Predicate<T> predicate, T defaultValue) {
         return collection
                 .stream()
-                .parallel()
                 .filter(predicate)
                 .findAny()
                 .orElse(defaultValue);
