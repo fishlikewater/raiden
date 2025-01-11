@@ -16,7 +16,7 @@
     </modules>
 
     <properties>
-        <revision>1.1.1</revision>
+        <revision>1.1.2</revision>
         <spring.boot.processor.version>3.2.5</spring.boot.processor.version>
         <lombok.version>1.18.30</lombok.version>
         <maven.compiler.compilerVersion>21</maven.compiler.compilerVersion>
