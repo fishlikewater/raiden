@@ -21,9 +21,11 @@ import io.github.fishlikewater.raiden.crypto.exception.CryptoExceptionCheck;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKeyFactory;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
+import java.math.BigInteger;
+import java.security.*;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECPoint;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * {@code RaidenCryptoUtils}
@@ -126,5 +128,67 @@ public final class RaidenCryptoUtils {
             return algorithm.substring(0, slashIndex);
         }
         return algorithm;
+    }
+
+    /**
+     * SM2 X509压缩格式公钥->转非压缩格式
+     *
+     * @param key X509压缩格式
+     * @return 非压缩格式
+     */
+    public static byte[] sm2X509ConvertToUncompressedFormat(byte[] key) {
+        // 创建X509EncodedKeySpec对象
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(key);
+
+        try {
+            // 使用KeyFactory生成PublicKey对象
+            KeyFactory keyFactory = KeyFactory.getInstance("EC", provider);
+            PublicKey publicKey = keyFactory.generatePublic(spec);
+            return convertToUncompressedFormat(publicKey);
+        } catch (Exception e) {
+            return CryptoExceptionCheck.INSTANCE.throwUnchecked(e);
+        }
+    }
+
+    /**
+     * 将SM2公钥转换为非压缩格式的字节数组。
+     *
+     * @param publicKey SM2公钥对象
+     * @return 非压缩格式的公钥字节数组
+     * @throws IllegalArgumentException 如果提供的不是有效的SM2公钥
+     */
+    private static byte[] convertToUncompressedFormat(PublicKey publicKey) {
+        if (!(publicKey instanceof ECPublicKey ecPublicKey)) {
+            return CryptoExceptionCheck.INSTANCE.throwUnchecked("The provided public key is not an EC public key.");
+        }
+
+        ECPoint w = ecPublicKey.getW();
+        BigInteger x = w.getAffineX();
+        BigInteger y = w.getAffineY();
+
+        // 确保坐标编码为固定长度，这取决于所使用的椭圆曲线（对于SM2通常是256位/32字节）
+        int keySize = 32;
+
+        // 移除可能存在的前导零并填充到指定长度
+        byte[] xBytes = trimAndPad(x.toByteArray(), keySize);
+        byte[] yBytes = trimAndPad(y.toByteArray(), keySize);
+
+        // 组合成非压缩格式: 04 || x || y
+        byte[] uncompressed = new byte[1 + xBytes.length + yBytes.length];
+        uncompressed[0] = 0x04;
+        System.arraycopy(xBytes, 0, uncompressed, 1, xBytes.length);
+        System.arraycopy(yBytes, 0, uncompressed, 1 + xBytes.length, yBytes.length);
+
+        return uncompressed;
+    }
+
+    private static byte[] trimAndPad(byte[] bytes, int length) {
+        // 移除前导零
+        int start = bytes[0] == 0 ? 1 : 0;
+        // 填充到指定长度
+        byte[] result = new byte[length];
+        int copyLength = Math.min(bytes.length - start, length);
+        System.arraycopy(bytes, start, result, length - copyLength, copyLength);
+        return result;
     }
 }
