@@ -19,6 +19,7 @@ import cn.hutool.crypto.KeyUtil;
 import cn.hutool.crypto.SmUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.SM2;
+import io.github.fishlikewater.raiden.core.Hex;
 import org.bouncycastle.crypto.engines.SM2Engine;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
@@ -61,6 +62,7 @@ public class SM2Test {
         // 转换为 Base64
         String uncompressedKeyBase64 = Base64.getEncoder().encodeToString(uncompressed);
         System.out.println("非压缩公钥(Base64): " + uncompressedKeyBase64);
+        System.out.println("非压缩公钥(HEX): " + Hex.encodeHexStr(uncompressed));
     }
 
 
