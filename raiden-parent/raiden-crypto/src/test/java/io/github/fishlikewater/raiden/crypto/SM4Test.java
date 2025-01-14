@@ -15,6 +15,8 @@
  */
 package io.github.fishlikewater.raiden.crypto;
 
+import cn.hutool.crypto.Mode;
+import cn.hutool.crypto.Padding;
 import io.github.fishlikewater.raiden.core.Hex;
 import io.github.fishlikewater.raiden.crypto.symmetric.SM4;
 import io.github.fishlikewater.raiden.crypto.symmetric.SymmetricAlgorithm;
@@ -22,6 +24,7 @@ import io.github.fishlikewater.raiden.crypto.symmetric.SymmetricUtils;
 import org.junit.Test;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 
 /**
  * SM4Test
@@ -41,5 +44,13 @@ public class SM4Test {
         String hexStr = Hex.encodeHexStr(decrypt);
         System.out.println(hexStr);
         System.out.println(new String(sm4.decrypt(decrypt)));
+    }
+
+    @Test
+    public void test2() {
+        byte[] key = "1234567890123456".getBytes(StandardCharsets.UTF_8);
+        cn.hutool.crypto.symmetric.SM4 sm4 = new cn.hutool.crypto.symmetric.SM4(Mode.ECB, Padding.PKCS5Padding, key);
+        String s = sm4.decryptStr("994d4b9e2d8ea5ceb27657e19cb39489f6a7628e1a894c4c7c7433741a97f4b4f3294494f41fa3e6f87b72a26bfc97be");
+        System.out.println(s);
     }
 }

@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.crypto;
 
+import cn.hutool.core.util.HexUtil;
 import cn.hutool.crypto.KeyUtil;
 import cn.hutool.crypto.SmUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
@@ -54,7 +55,7 @@ public class SM2Test {
         for (Provider provider : Security.getProviders()) {
             System.out.println(provider.getName() + " - " + provider.getInfo());
         }
-        String publicKeyBase64 = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEQb1chkBOEGMGCmsQC0DRmpldWlkCcrMRTp/qcarpDVNb1zIbLXN1hsfq11B9UyBYR3RCw6CvLsRa7+PF3zjSVQ==";
+        String publicKeyBase64 = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEf+EIeAOy1t0nhgF7b2kw0XLRQpPuhxQCwyFJ4bRz54N7wcj0N+1MdYumhgBTmztp9eqD773BNF8kjLldz8WQ9Q==";
         // 解码Base64字符串为字节数组
         byte[] encoded = Base64.getDecoder().decode(publicKeyBase64);
 
@@ -73,7 +74,12 @@ public class SM2Test {
         SM2 sm2 = SmUtil.sm2(privateKey, publicKey);
         sm2.setMode(SM2Engine.Mode.C1C3C2);
         sm2.usePlainEncoding();
-        String encodeStr = "BHJKjL2FnH+vIRIKT+uUSn+EKRgliromEilsGFtRffb8G1Zmbv6Io+0iPzYFOy7u2u81r6/5FbmTvltp2qjCyc9cjtoNpdKH4VYOZfqPd/yttPOSnyF1U9ixE6jRsKxsWnCy1DFii0wzgWgAGOensno=";
+        String s = sm2.encryptBase64("123456789012347", KeyType.PublicKey);
+        System.out.println(HexUtil.encodeHexStr(Base64.getDecoder().decode(s)));
+        String s1 = sm2.decryptStr(s, KeyType.PrivateKey);
+        System.out.println(s1);
+
+        String encodeStr = "BIl54b5//H860zyB6RO85hIJodQ8HJ7aX/Gtm5MpETLPuTrZb4hSvCCVdYd6EMxGsY9QbZggLqmYJ3TbEOQMc5uuxqEdHzQ/C6FBminYdrR+4HYJP3/ajKII4XaKZlvF3xuB6fv9F1n7hgvnl3m+pY/T1sxjVeo1buvNPvxFHcgKrcU=";
         String decryptStr = sm2.decryptStr(encodeStr, KeyType.PrivateKey);
         System.out.println(decryptStr);
     }
