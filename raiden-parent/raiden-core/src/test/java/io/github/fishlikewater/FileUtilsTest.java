@@ -22,6 +22,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * {@code FileUtilsTest}
@@ -34,9 +37,67 @@ public class FileUtilsTest {
 
     @Test
     public void testFileUtils() {
-        String fileName = "E:\\test\\test.jpg";
-        InputStream inputStream = FileUtils.getInputStream(new File(fileName));
-        FileMagicNumberEnum read = FileUtils.read("test.jpg", inputStream);
+        File file = FileUtils.file("test.png");
+        InputStream inputStream = FileUtils.readFile(file);
+        FileMagicNumberEnum read = FileUtils.readMagicNum(inputStream);
         Assert.assertNotNull(read);
+    }
+
+    @Test
+    public void readMagic() {
+        File file = FileUtils.file("test.png");
+        FileMagicNumberEnum read = FileUtils.readMagicNum(file);
+        Assert.assertNotNull(read);
+    }
+
+    @Test
+    public void readFile() {
+        File file = FileUtils.file("classpath:test.txt");
+        String readFileUtf8 = FileUtils.readFileUtf8(file);
+        Assert.assertEquals(readFileUtf8, "123");
+    }
+
+    @Test
+    public void getFileSuffix() {
+        String fileSuffix = FileUtils.getFileSuffix("test.txt");
+        Assert.assertEquals(fileSuffix, "txt");
+    }
+
+    @Test
+    public void getFileName() {
+        String fileName = FileUtils.getFileName("test.txt");
+        Assert.assertEquals(fileName, "test");
+    }
+
+    @Test
+    public void readFile2() {
+        byte[] bytes = FileUtils.readFile("classpath:test.txt");
+        Assert.assertEquals(new String(bytes, StandardCharsets.UTF_8), "123");
+    }
+
+    @Test
+    public void readLines() {
+        File file = FileUtils.file("test.txt");
+        List<String> lines = FileUtils.readLinesUtf8(file);
+        Assert.assertEquals(lines.getFirst(), "123");
+    }
+
+    @Test
+    public void readLines2() {
+        File file = FileUtils.file("test.txt");
+        List<String> lines = FileUtils.readLines(file, StandardCharsets.ISO_8859_1);
+        Assert.assertEquals(lines.getFirst(), "123");
+    }
+
+    @Test
+    public void readLine() {
+        File file = FileUtils.file("test.txt");
+        FileUtils.readLine(file, System.out::println);
+    }
+
+    @Test
+    public void readLine2() {
+        File file = FileUtils.file("test.txt");
+        FileUtils.readLine(file, Charset.forName("gbk"), System.out::println);
     }
 }

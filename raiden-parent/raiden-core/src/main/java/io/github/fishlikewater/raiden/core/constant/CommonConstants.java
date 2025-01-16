@@ -32,6 +32,7 @@ public interface CommonConstants {
     String SET_METHOD_START_WITH = "set";
     String HEX_PREFIX = "0x";
     String HEX_PREFIX_UPPERCASE = "0X";
+    String CLASS_PATH = "classpath:";
 
     // ---------------------------------------------------------------- NUMBER
 

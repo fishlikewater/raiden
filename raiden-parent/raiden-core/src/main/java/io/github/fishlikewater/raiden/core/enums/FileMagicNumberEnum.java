@@ -19,10 +19,6 @@ import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * {@code FileMagicNumberEnum}
  * 文件类型及魔数
@@ -67,25 +63,12 @@ public enum FileMagicNumberEnum {
         this.suffix = suffix;
     }
 
-    public static FileMagicNumberEnum codeOf(String header, String... suffix) {
+    public static FileMagicNumberEnum codeOf(String header) {
         if (ObjectUtils.isNullOrEmpty(header)) {
             return null;
         }
 
-        List<String> suffixes = Arrays.asList(suffix);
-
-        List<FileMagicNumberEnum> magics = new ArrayList<>();
-        if (ObjectUtils.isNotNullOrEmpty(suffixes)) {
-            for (FileMagicNumberEnum magic : values()) {
-                if (suffixes.contains(magic.suffix())) {
-                    magics.add(magic);
-                }
-            }
-        }
-
-        magics = ObjectUtils.isNotNullOrEmpty(magics) ? magics : Arrays.asList(values());
-
-        for (FileMagicNumberEnum magic : magics) {
+        for (FileMagicNumberEnum magic : values()) {
             if (header.toUpperCase().startsWith(magic.code())) {
                 return magic;
             }
