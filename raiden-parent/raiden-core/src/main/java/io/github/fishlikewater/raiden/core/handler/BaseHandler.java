@@ -41,6 +41,14 @@ public abstract class BaseHandler<T> {
      */
     public abstract void doHandle(T t, ChainContext context);
 
+    public final void handle(T t, ChainContext context) {
+        this.doHandle(t, context);
+        if (this.chain != null && !isStopped()) {
+            this.chain.handle(t, context);
+        }
+        this.close();
+    }
+
     public void stop() {
         if (this.stopped.compareAndSet(0, 1)) {
             log.warn("handler.active.stop");
@@ -51,45 +59,11 @@ public abstract class BaseHandler<T> {
         this.chain = null;
     }
 
-    private boolean isStopped() {
-        return this.stopped.get() == 1;
-    }
-
-    private void next(BaseHandler<T> handler) {
+    protected void next(BaseHandler<T> handler) {
         this.chain = handler;
     }
 
-    public final void handle(T t, ChainContext context) {
-        this.doHandle(t, context);
-        if (this.chain != null && !isStopped()) {
-            this.chain.handle(t, context);
-        }
-        this.close();
-    }
-
-    public static class Builder<T> {
-
-        private BaseHandler<T> head;
-
-        private BaseHandler<T> tail;
-
-        public Builder<T> addHandler(BaseHandler<T> handler) {
-            if (this.head == null) {
-                this.head = this.tail = handler;
-                return this;
-            }
-            this.tail.next(handler);
-            this.tail = handler;
-
-            return this;
-        }
-
-        public void start(T t) {
-            ChainContext context = ChainContext.getInstance();
-            if (this.head != null) {
-                this.head.handle(t, context);
-            }
-            context.clear();
-        }
+    private boolean isStopped() {
+        return this.stopped.get() == 1;
     }
 }

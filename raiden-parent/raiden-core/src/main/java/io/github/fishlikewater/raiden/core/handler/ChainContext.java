@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.core.handler;
 
+import java.io.Closeable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -26,7 +27,7 @@ import java.util.function.Function;
  * @version 1.1.2
  * @since 2025/1/17
  **/
-public class ChainContext {
+public class ChainContext implements Closeable {
 
     private final Map<String, Object> context = new HashMap<>(8);
 
@@ -57,5 +58,10 @@ public class ChainContext {
     public ChainContext removeProperty(String key) {
         context.remove(key);
         return this;
+    }
+
+    @Override
+    public void close() {
+        context.clear();
     }
 }

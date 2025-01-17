@@ -17,6 +17,7 @@ package io.github.fishlikewater;
 
 import io.github.fishlikewater.raiden.core.handler.BaseHandler;
 import io.github.fishlikewater.raiden.core.handler.ChainContext;
+import io.github.fishlikewater.raiden.core.handler.Pipeline;
 import org.junit.Test;
 
 /**
@@ -30,25 +31,26 @@ public class BaseHandlerTest {
 
     @Test
     public void test() {
-        BaseHandler.Builder<String> builder = new BaseHandler.Builder<>();
+        Pipeline<String> pipeline = new Pipeline<>();
 
-        BaseHandler.Builder<String> handler = builder.addHandler(new BaseHandler<>() {
-            @Override
-            public void doHandle(String string, ChainContext context) {
-                context.addProperty("key", "hello world");
-                System.out.println(string);
-            }
-        });
+        pipeline
+                .addHandler(new BaseHandler<>() {
+                    @Override
+                    public void doHandle(String string, ChainContext context) {
+                        context.addProperty("key", "hello world");
+                        System.out.println(string);
+                    }
+                })
 
-        builder.addHandler(new BaseHandler<>() {
-            @Override
-            public void doHandle(String string, ChainContext context) {
-                System.out.println(string);
-                System.out.println(context.getProperty("key"));
-                this.stop();
-            }
-        });
+                .addHandler(new BaseHandler<>() {
+                    @Override
+                    public void doHandle(String string, ChainContext context) {
+                        System.out.println(string);
+                        System.out.println(context.getProperty("key"));
+                        this.stop();
+                    }
+                });
 
-        builder.start("hello");
+        pipeline.start("hello");
     }
 }
