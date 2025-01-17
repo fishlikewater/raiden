@@ -66,43 +66,16 @@ public class Result<T> implements Serializable {
     // ----------------------------------------------------------------
 
     public static <T> Result<T> of(String code, String message) {
-        return Result.<T>builder()
-                .code(code)
-                .message(message)
-                .build();
+        return of(code, null, message);
     }
 
     public static <T> Result<T> of(String code, T data) {
-        return Result.<T>builder()
-                .code(code)
-                .result(data)
-                .build();
+        return of(code, data, null);
     }
 
-    public static <T> Result<T> of(String code, T data, String message) {
-        return Result.<T>builder()
-                .code(code)
-                .message(message)
-                .result(data)
-                .build();
-    }
-
-    // ----------------------------------------------------------------
 
     public static <T> Result<T> of(T data) {
-        return Result.<T>builder()
-                .code(StatusEnum.OK.code())
-                .message(StatusEnum.OK.message())
-                .result(data)
-                .build();
-    }
-
-    public static <T> Result<T> of(StatusEnum statusEnum, T data) {
-        return Result.<T>builder()
-                .code(statusEnum.code())
-                .message(statusEnum.message())
-                .result(data)
-                .build();
+        return of(StatusEnum.OK, data);
     }
 
     // ----------------------------------------------------------------
@@ -121,5 +94,23 @@ public class Result<T> implements Serializable {
 
     public static <T> Result<T> fail(T data) {
         return of(StatusEnum.INNER_ERROR, data);
+    }
+
+    // ----------------------------------------------------------------
+
+    public static <T> Result<T> of(String code, T data, String message) {
+        return Result.<T>builder()
+                .code(code)
+                .message(message)
+                .result(data)
+                .build();
+    }
+
+    public static <T> Result<T> of(StatusEnum statusEnum, T data) {
+        return Result.<T>builder()
+                .code(statusEnum.code())
+                .message(statusEnum.message())
+                .result(data)
+                .build();
     }
 }
