@@ -72,36 +72,54 @@ public class Result<T> implements Serializable {
                 .build();
     }
 
-    public static <T> Result<T> of(String code, T result) {
+    public static <T> Result<T> of(String code, T data) {
         return Result.<T>builder()
                 .code(code)
-                .result(result)
+                .result(data)
                 .build();
     }
 
-    public static <T> Result<T> of(String code, T result, String message) {
+    public static <T> Result<T> of(String code, T data, String message) {
         return Result.<T>builder()
                 .code(code)
                 .message(message)
-                .result(result)
+                .result(data)
                 .build();
     }
 
     // ----------------------------------------------------------------
 
-    public static <T> Result<T> of(T result) {
+    public static <T> Result<T> of(T data) {
         return Result.<T>builder()
                 .code(StatusEnum.OK.code())
                 .message(StatusEnum.OK.message())
-                .result(result)
+                .result(data)
                 .build();
     }
 
-    public static <T> Result<T> of(StatusEnum statusEnum, T result) {
+    public static <T> Result<T> of(StatusEnum statusEnum, T data) {
         return Result.<T>builder()
                 .code(statusEnum.code())
                 .message(statusEnum.message())
-                .result(result)
+                .result(data)
                 .build();
+    }
+
+    // ----------------------------------------------------------------
+
+    public static Result<Void> ok() {
+        return ok(null);
+    }
+
+    public static <T> Result<T> ok(T data) {
+        return of(data);
+    }
+
+    public static Result<Void> fail() {
+        return fail(null);
+    }
+
+    public static <T> Result<T> fail(T data) {
+        return of(StatusEnum.INNER_ERROR, data);
     }
 }
