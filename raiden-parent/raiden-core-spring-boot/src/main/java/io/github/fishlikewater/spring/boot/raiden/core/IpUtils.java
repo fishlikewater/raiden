@@ -20,7 +20,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 
 /**
@@ -88,24 +87,5 @@ public class IpUtils {
      */
     public static boolean isNull(String ip) {
         return ip == null || ip.isEmpty() || UNKNOWN.equalsIgnoreCase(ip);
-    }
-
-    /**
-     * 获取mac地址
-     */
-    public static String getMacAddress() throws Exception {
-        // 取mac地址
-        byte[] macAddressBytes = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
-        // 下面代码是把mac地址拼装成String
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < macAddressBytes.length; i++) {
-            if (i != 0) {
-                sb.append(CommonConstants.Symbol.SYMBOL_DASH);
-            }
-            // mac[i] & 0xFF 是为了把byte转化为正整数
-            String s = Integer.toHexString(macAddressBytes[i] & 0xFF);
-            sb.append(s.length() == 1 ? 0 + s : s);
-        }
-        return sb.toString().trim().toUpperCase();
     }
 }

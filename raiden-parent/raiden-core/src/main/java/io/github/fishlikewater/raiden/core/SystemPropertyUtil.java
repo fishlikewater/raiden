@@ -15,6 +15,13 @@
  */
 package io.github.fishlikewater.raiden.core;
 
+import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
 /**
  * {@code SystemPropertyUtil}
  * 系统属性获取工具类
@@ -87,5 +94,55 @@ public class SystemPropertyUtil {
      */
     public static String getProperty(String key) {
         return System.getProperty(key);
+    }
+
+    /**
+     * 获取IP地址
+     */
+    public static String getIpAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            return RaidenExceptionCheck.INSTANCE.throwUnchecked(e);
+        }
+    }
+
+    /**
+     * 获取网络接口
+     *
+     * @return 网络接口
+     */
+    public static NetworkInterface getNetworkInterface() {
+        try {
+            return NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
+        } catch (UnknownHostException | SocketException e) {
+            return RaidenExceptionCheck.INSTANCE.throwUnchecked(e);
+        }
+    }
+
+    /**
+     * 获取mac地址
+     *
+     * @param splitSymbol 分隔符
+     * @return mac地址
+     */
+    public static String getMacAddress(String splitSymbol) {
+        try {
+            // 取mac地址
+            byte[] macAddressBytes = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
+            // 下面代码是把mac地址拼装成String
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < macAddressBytes.length; i++) {
+                if (i != 0) {
+                    sb.append(splitSymbol);
+                }
+                // mac[i] & 0xFF 是为了把byte转化为正整数
+                String s = Integer.toHexString(macAddressBytes[i] & 0xFF);
+                sb.append(s.length() == 1 ? 0 + s : s);
+            }
+            return sb.toString().trim().toUpperCase();
+        } catch (UnknownHostException | SocketException e) {
+            return RaidenExceptionCheck.INSTANCE.throwUnchecked(e);
+        }
     }
 }

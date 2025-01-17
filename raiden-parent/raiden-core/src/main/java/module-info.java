@@ -24,6 +24,7 @@ module raiden.core {
     requires static lombok;
     requires transitive org.slf4j;
     requires java.desktop;
+    requires java.management;
 
     exports io.github.fishlikewater.raiden.core;
     exports io.github.fishlikewater.raiden.core.enums;

@@ -32,4 +32,10 @@ public class SnowflakeTest {
         final Snowflake snowflake = new Snowflake(2L, 2L);
         System.out.println(snowflake.nextId());
     }
+
+    @Test
+    public void testSnowflake2() {
+        final Snowflake snowflake = new Snowflake();
+        System.out.println(snowflake.nextId());
+    }
 }

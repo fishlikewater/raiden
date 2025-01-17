@@ -16,6 +16,7 @@
 package io.github.fishlikewater;
 
 import io.github.fishlikewater.raiden.core.SystemPropertyUtil;
+import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import org.junit.Test;
 
 /**
@@ -51,5 +52,25 @@ public class SystemPropertyUtilTest {
     @Test
     public void testJavaVendor() {
         System.out.println(SystemPropertyUtil.getJavaVendor());
+    }
+
+    @Test
+    public void testOsName() {
+        System.out.println(SystemPropertyUtil.getOsName());
+    }
+
+    @Test
+    public void testMacAddress() {
+        System.out.println(SystemPropertyUtil.getMacAddress(CommonConstants.Symbol.SYMBOL_COLON));
+    }
+
+    @Test
+    public void testIpAddress() {
+        System.out.println(SystemPropertyUtil.getIpAddress());
+    }
+
+    @Test
+    public void testNetworkInterface() {
+        System.out.println(SystemPropertyUtil.getNetworkInterface());
     }
 }

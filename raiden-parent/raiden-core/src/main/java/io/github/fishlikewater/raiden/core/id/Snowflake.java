@@ -15,7 +15,13 @@
  */
 package io.github.fishlikewater.raiden.core.id;
 
+import io.github.fishlikewater.raiden.core.CollectionUtils;
+import io.github.fishlikewater.raiden.core.Hex;
 import io.github.fishlikewater.raiden.core.StringUtils;
+import io.github.fishlikewater.raiden.core.SystemPropertyUtil;
+import lombok.extern.slf4j.Slf4j;
+
+import java.lang.management.ManagementFactory;
 
 /**
  * {@code Snowflake}
@@ -38,6 +44,7 @@ import io.github.fishlikewater.raiden.core.StringUtils;
  * @version 1.0.0
  * @since 2024/05/07
  */
+@Slf4j
 public class Snowflake {
     /**
      * 开始时间截 (2022-01-07)
@@ -108,6 +115,11 @@ public class Snowflake {
      * 上次生成ID的时间截
      */
     private long lastTimestamp = -1L;
+
+    public Snowflake() {
+        this.dataCenterId = this.getDataCenterId();
+        this.workerId = this.getWorkerId(dataCenterId);
+    }
 
     /**
      * 构造函数
@@ -190,5 +202,39 @@ public class Snowflake {
     protected long timeGen() {
         //获取当前时间
         return System.currentTimeMillis();
+    }
+
+    /**
+     * 根据机器的 MAC 地址计算余数作为工作机器 ID。
+     */
+    protected long getWorkerId(long dataCenterId) {
+        StringBuilder mpId = new StringBuilder();
+        mpId.append(dataCenterId);
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        if (StringUtils.isNotBlank(name)) {
+            // GET jvmPid
+            mpId.append(name.split("@")[0]);
+        }
+        // MAC + PID 的 hashCode 获取16个低位
+        return (mpId.toString().hashCode() & 0xffff) % (MAX_WORKER_ID + 1);
+    }
+
+    /**
+     * 根据网卡 MAC 地址计算余数作为数据中心 ID。
+     */
+    protected long getDataCenterId() {
+        long id = 1L;
+        try {
+            String macAddress = SystemPropertyUtil.getMacAddress("");
+            byte[] mac = Hex.decodeHex(macAddress);
+            if (CollectionUtils.isEmpty(mac)) {
+                return id;
+            }
+            id = ((0x000000FF & (long) mac[mac.length - 2]) | (0x0000FF00 & (((long) mac[mac.length - 1]) << 8))) >> 6;
+            id = id % (MAX_DATA_CENTER_ID + 1);
+        } catch (Exception e) {
+            log.error(e.toString(), e);
+        }
+        return id;
     }
 }
