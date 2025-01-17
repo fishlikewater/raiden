@@ -39,7 +39,7 @@ public abstract class BaseHandler<T> {
      *
      * @param t 待处理数据
      */
-    public abstract void doHandle(T t);
+    public abstract void doHandle(T t, ChainContext context);
 
     public void stop() {
         if (this.stopped.compareAndSet(0, 1)) {
@@ -59,11 +59,12 @@ public abstract class BaseHandler<T> {
         this.chain = handler;
     }
 
-    public final void handle(T t) {
-        this.doHandle(t);
+    public final void handle(T t, ChainContext context) {
+        this.doHandle(t, context);
         if (this.chain != null && !isStopped()) {
-            this.chain.handle(t);
+            this.chain.handle(t, context);
         }
+        this.close();
     }
 
     public static class Builder<T> {
@@ -83,8 +84,12 @@ public abstract class BaseHandler<T> {
             return this;
         }
 
-        public BaseHandler<T> build() {
-            return this.head;
+        public void start(T t) {
+            ChainContext context = ChainContext.getInstance();
+            if (this.head != null) {
+                this.head.handle(t, context);
+            }
+            context.clear();
         }
     }
 }
