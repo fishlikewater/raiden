@@ -62,6 +62,23 @@ public class ConditionUtils {
             return this;
         }
 
+        public void isFalse(Runnable runnable) {
+            if (!this.result && (this.status == Status.INIT || this.status == Status.IS_EXECUTE)) {
+                runnable.run();
+            }
+        }
+
+        public Condition isFalse(Supplier<Boolean> supplier) {
+            if (!this.result && (this.status == Status.INIT || this.status == Status.IS_EXECUTE)) {
+                this.status = Status.IS_EXECUTE;
+                this.result = supplier.get();
+            } else if (this.status != Status.INIT) {
+                this.status = Status.NO_EXECUTE;
+            }
+
+            return this;
+        }
+
         public Condition orElse(Supplier<Boolean> supplier) {
             if (this.status == Status.NO_EXECUTE || this.status == Status.INIT) {
                 this.result = supplier.get();

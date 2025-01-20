@@ -68,4 +68,22 @@ public class ConditionUtilsTest {
                 })
                 .isTrue(() -> System.out.println("11111"));
     }
+
+    @Test
+    @SuppressWarnings("all")
+    public void testConditionUtils3() {
+        String name = "fishlikewater";
+        ConditionUtils.Condition condition = ConditionUtils.of(() -> name.startsWith("zfish"));
+        System.out.println(condition.and(() -> false).or(() -> true));
+        condition = condition
+                .isTrue(() -> {
+                    System.out.println("istrue");
+                    return false;
+                })
+                .orElse(() -> {
+                    System.out.println("orElse");
+                    return false;
+                });
+        condition.isFalse(() -> {System.out.println("isfalse");});
+    }
 }
