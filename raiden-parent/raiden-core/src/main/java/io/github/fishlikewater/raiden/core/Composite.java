@@ -51,7 +51,15 @@ public interface Composite {
      */
     default void parallelAny(List<Runnable> tasks, Executor executor) {
         List<CompletableFuture<Void>> futures = this.getCompletableFutures(tasks, executor);
-        CompletableFuture.anyOf(futures.toArray(new CompletableFuture[0])).join();
+        CompletableFuture<Object> anyOf = CompletableFuture.anyOf(futures.toArray(new CompletableFuture[0]));
+        anyOf.thenAccept(result -> {
+            // 取消其他未完成的任务
+            futures.forEach(future -> {
+                if (!future.isDone()) {
+                    future.cancel(true);
+                }
+            });
+        }).join();
     }
 
     /**
@@ -64,7 +72,17 @@ public interface Composite {
     @SuppressWarnings("unchecked")
     default <T> T parallelAnyCallable(List<Supplier<T>> tasks, Executor executor) {
         List<CompletableFuture<T>> futures = this.getCompletableFuturesCallable(tasks, executor);
-        return (T) CompletableFuture.anyOf(futures.toArray(new CompletableFuture[0])).join();
+        CompletableFuture<Object> anyOf = CompletableFuture.anyOf(futures.toArray(new CompletableFuture[0]));
+        anyOf.thenAccept(result -> {
+            // 取消其他未完成的任务
+            futures.forEach(future -> {
+                if (!future.isDone()) {
+                    future.cancel(true);
+                }
+            });
+        }).join();
+
+        return (T) anyOf.join();
     }
 
     /**

@@ -65,13 +65,15 @@ public class CompositeTest implements Composite {
     @Test
     public void testParallelAny() {
         List<Runnable> list = new ArrayList<>();
-        list.add(() -> {
-            System.out.println("1");
-        });
-        list.add(() -> {
-            System.out.println("2");
-        });
+
+        for (int i = 0; i < 100; i++) {
+            int finalI = i;
+            list.add(() -> {
+                System.out.println(finalI);
+            });
+        }
         this.parallelAny(list, threadPoolExecutor);
+        System.out.println("end");
     }
 
     @Test
@@ -85,12 +87,8 @@ public class CompositeTest implements Composite {
             }
             return "1";
         });
-        list.add(() -> {
-            return "2";
-        });
-        list.add(() -> {
-            return "3";
-        });
+        list.add(() -> "2");
+        list.add(() -> "3");
         String string = this.parallelAnyCallable(list, threadPoolExecutor);
         System.out.println(string);
     }
@@ -99,6 +97,13 @@ public class CompositeTest implements Composite {
     public void test() {
         for (int i = 0; i < 3; i++) {
             this.testParallelAnyCallable();
+        }
+    }
+
+    @Test
+    public void test2() {
+        for (int i = 0; i < 3; i++) {
+            this.testParallelAny();
         }
     }
 
