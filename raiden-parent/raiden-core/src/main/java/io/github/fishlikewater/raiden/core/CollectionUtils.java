@@ -70,13 +70,15 @@ public final class CollectionUtils {
             list.sort(comparator);
             return list;
         }
-        if (collection instanceof SortedSet<T> sortedSet) {
-            return sortedSet
+
+        try {
+            return collection
                     .stream()
                     .sorted(comparator)
                     .toList();
+        } catch (Exception e) {
+            return RaidenExceptionCheck.INSTANCE.throwUnchecked("not support!!!");
         }
-        return RaidenExceptionCheck.INSTANCE.throwUnchecked("not support!!!");
     }
 
     /**
@@ -109,9 +111,6 @@ public final class CollectionUtils {
             }
             case Map<?, ?> map -> {
                 return map.isEmpty();
-            }
-            case Object[] objects -> {
-                return objects.length == 0;
             }
             case Iterator<?> iterator -> {
                 return !iterator.hasNext();

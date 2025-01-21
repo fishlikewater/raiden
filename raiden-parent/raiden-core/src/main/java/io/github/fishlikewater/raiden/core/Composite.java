@@ -39,7 +39,7 @@ public interface Composite {
      * @param executor 执行器
      */
     default void parallel(List<Runnable> tasks, Executor executor) {
-        List<CompletableFuture<?>> futures = this.getCompletableFutures(tasks, executor);
+        List<CompletableFuture<Void>> futures = this.getCompletableFutures(tasks, executor);
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
 
@@ -50,7 +50,7 @@ public interface Composite {
      * @param executor 执行器
      */
     default void parallelAny(List<Runnable> tasks, Executor executor) {
-        List<CompletableFuture<?>> futures = this.getCompletableFutures(tasks, executor);
+        List<CompletableFuture<Void>> futures = this.getCompletableFutures(tasks, executor);
         CompletableFuture.anyOf(futures.toArray(new CompletableFuture[0])).join();
     }
 
@@ -74,7 +74,7 @@ public interface Composite {
      * @param executor 执行器\
      * @return 任务结果列表
      */
-    default List<CompletableFuture<?>> getCompletableFutures(List<Runnable> tasks, Executor executor) {
+    default List<CompletableFuture<Void>> getCompletableFutures(List<Runnable> tasks, Executor executor) {
         if (ObjectUtils.isNullOrEmpty(tasks)) {
             return null;
         }
@@ -96,10 +96,10 @@ public interface Composite {
      */
     default <T> List<CompletableFuture<T>> getCompletableFuturesCallable(List<Supplier<T>> tasks, Executor executor) {
         if (ObjectUtils.isNullOrEmpty(tasks)) {
-            return null;
+            RaidenExceptionCheck.INSTANCE.throwUnchecked("Tasks.is.not.properly.initialized.");
         }
 
-        if (executor == null) {
+        if (ObjectUtils.isNullOrEmpty(executor)) {
             RaidenExceptionCheck.INSTANCE.throwUnchecked("Executor.is.not.properly.initialized.");
         }
         return LambdaUtils.toList(
