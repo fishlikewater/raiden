@@ -32,25 +32,36 @@ public class BaseHandlerTest {
     @Test
     public void test() {
         Pipeline<String> pipeline = new Pipeline<>();
-
         pipeline
-                .addHandler(new BaseHandler<>() {
-                    @Override
-                    public void doHandle(String string, ChainContext context) {
-                        context.addProperty("key", "hello world");
-                        System.out.println(string);
-                    }
-                })
-
-                .addHandler(new BaseHandler<>() {
-                    @Override
-                    public void doHandle(String string, ChainContext context) {
-                        System.out.println(string);
-                        System.out.println(context.getProperty("key"));
-                        this.stop();
-                    }
-                });
+                .addHandler(new TestHandler1())
+                .addHandler(new TestHandler2())
+                .addFirstHandler(new TestHandler3())
+                .addLastHandler(new TestHandler3());
 
         pipeline.start("hello");
+    }
+
+    public static class TestHandler1 extends BaseHandler<String> {
+        @Override
+        public void doHandle(String string, ChainContext context) {
+            System.out.println(string);
+            context.addProperty("key", "hello world");
+        }
+    }
+
+    public static class TestHandler2 extends BaseHandler<String> {
+        @Override
+        public void doHandle(String string, ChainContext context) {
+            System.out.println(string);
+            System.out.println(context.getProperty("key"));
+            this.stop();
+        }
+    }
+
+    public static class TestHandler3 extends BaseHandler<String> {
+        @Override
+        public void doHandle(String string, ChainContext context) {
+            System.out.println("3333");
+        }
     }
 }

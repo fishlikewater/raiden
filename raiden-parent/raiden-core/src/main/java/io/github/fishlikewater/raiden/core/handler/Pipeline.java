@@ -39,6 +39,28 @@ public class Pipeline<T> {
         return this;
     }
 
+    public Pipeline<T> addFirstHandler(BaseHandler<T> handler) {
+        if (this.head == null) {
+            this.head = this.tail = handler;
+            return this;
+        }
+        handler.next(this.head);
+        this.head = handler;
+
+        return this;
+    }
+
+    public Pipeline<T> addLastHandler(BaseHandler<T> handler) {
+        if (this.head == null) {
+            this.head = this.tail = handler;
+            return this;
+        }
+        this.tail.next(handler);
+        this.tail = handler;
+
+        return this;
+    }
+
     public void start(T t) {
         try (ChainContext context = ChainContext.getInstance()) {
             if (this.head != null) {
