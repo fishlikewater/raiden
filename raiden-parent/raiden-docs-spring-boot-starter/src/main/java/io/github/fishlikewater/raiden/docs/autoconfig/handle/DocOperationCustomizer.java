@@ -53,6 +53,11 @@ public class DocOperationCustomizer implements GlobalOperationCustomizer {
             return operation;
         }
 
+        DocTag classDocTag = handlerMethod.getBeanType().getDeclaredAnnotation(DocTag.class);
+        DocTag docTag = handlerMethod.getMethod().getDeclaredAnnotation(DocTag.class);
+
+        this.addTags(operation, classDocTag, docTag);
+
         String url = attributes.getRequest().getRequestURI();
         DocProperties.GroupConfig group = this.tryAcquireGroup(url);
         if (ObjectUtils.isNullOrEmpty(group)) {
@@ -68,11 +73,6 @@ public class DocOperationCustomizer implements GlobalOperationCustomizer {
         if (ObjectUtils.isNullOrEmpty(extensions)) {
             operation.setExtensions(new HashMap<>());
         }
-
-        DocTag classDocTag = handlerMethod.getBeanType().getDeclaredAnnotation(DocTag.class);
-        DocTag docTag = handlerMethod.getMethod().getDeclaredAnnotation(DocTag.class);
-
-        this.addTags(operation, classDocTag, docTag);
 
         if (ObjectUtils.isNotNullOrEmpty(classDocTag)) {
             String[] classTags = classDocTag.value();
