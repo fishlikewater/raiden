@@ -51,14 +51,7 @@ public class Pipeline<T> {
     }
 
     public Pipeline<T> addLastHandler(BaseHandler<T> handler) {
-        if (this.head == null) {
-            this.head = this.tail = handler;
-            return this;
-        }
-        this.tail.next(handler);
-        this.tail = handler;
-
-        return this;
+        return this.addHandler(handler);
     }
 
     public void start(T t) {
