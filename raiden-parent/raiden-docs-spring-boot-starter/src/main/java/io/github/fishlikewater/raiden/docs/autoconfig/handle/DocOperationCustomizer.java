@@ -29,7 +29,9 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.util.UriUtils;
 
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -62,7 +64,16 @@ public class DocOperationCustomizer implements GlobalOperationCustomizer {
             return operation;
         }
 
+        Map<String, Object> extensions = operation.getExtensions();
+        if (ObjectUtils.isNullOrEmpty(extensions)) {
+            operation.setExtensions(new HashMap<>());
+        }
+
         DocTag classDocTag = handlerMethod.getBeanType().getDeclaredAnnotation(DocTag.class);
+        DocTag docTag = handlerMethod.getMethod().getDeclaredAnnotation(DocTag.class);
+
+        this.addTags(operation, classDocTag, docTag);
+
         if (ObjectUtils.isNotNullOrEmpty(classDocTag)) {
             String[] classTags = classDocTag.value();
             for (String classTag : classTags) {
@@ -72,7 +83,6 @@ public class DocOperationCustomizer implements GlobalOperationCustomizer {
             }
         }
 
-        DocTag docTag = handlerMethod.getMethod().getDeclaredAnnotation(DocTag.class);
         if (ObjectUtils.isNotNullOrEmpty(docTag)) {
             String[] methodTags = docTag.value();
             for (String methodTag : methodTags) {
@@ -83,6 +93,25 @@ public class DocOperationCustomizer implements GlobalOperationCustomizer {
         }
 
         return null;
+    }
+
+    private void addTags(Operation operation, DocTag classDocTag, DocTag docTag) {
+        if (ObjectUtils.isNotNullOrEmpty(classDocTag)) {
+            String[] classTags = classDocTag.value();
+            operation.getExtensions().put("docTag", classTags);
+        }
+        if (ObjectUtils.isNotNullOrEmpty(docTag)) {
+            String[] arr = (String[]) operation.getExtensions().get("docTag");
+            String[] methodTags = docTag.value();
+            if (ObjectUtils.isNotNullOrEmpty(arr)) {
+                String[] mergedArray = new String[arr.length + methodTags.length];
+                System.arraycopy(arr, 0, mergedArray, 0, arr.length);
+                System.arraycopy(methodTags, 0, mergedArray, arr.length, methodTags.length);
+                operation.getExtensions().put("docTag", mergedArray);
+            } else {
+                operation.getExtensions().put("docTag", methodTags);
+            }
+        }
     }
 
     private DocProperties.GroupConfig tryAcquireGroup(String url) {
