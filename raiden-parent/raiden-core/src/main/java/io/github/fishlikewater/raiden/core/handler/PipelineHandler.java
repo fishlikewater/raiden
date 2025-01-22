@@ -17,8 +17,6 @@ package io.github.fishlikewater.raiden.core.handler;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * {@code PipelineHandler}
  *
@@ -31,8 +29,6 @@ public abstract class PipelineHandler<T> {
 
     private PipelineHandler<T> chain;
 
-    private final AtomicInteger stopped = new AtomicInteger(0);
-
     /**
      * 执行
      *
@@ -41,17 +37,12 @@ public abstract class PipelineHandler<T> {
     public abstract void doHandle(T t, PipelineContext context);
 
     public final void handle(T t, PipelineContext context) {
+        context.setCurrentHandler(this);
         this.doHandle(t, context);
-        if (this.chain != null && !isStopped()) {
+        if (this.chain != null && !context.isStopped()) {
             this.chain.handle(t, context);
         }
         this.close();
-    }
-
-    public void stop() {
-        if (this.stopped.compareAndSet(0, 1)) {
-            log.warn("handler.active.stop");
-        }
     }
 
     public void close() {
@@ -60,9 +51,5 @@ public abstract class PipelineHandler<T> {
 
     protected void next(PipelineHandler<T> handler) {
         this.chain = handler;
-    }
-
-    private boolean isStopped() {
-        return this.stopped.get() == 1;
     }
 }

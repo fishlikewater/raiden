@@ -15,9 +15,14 @@
  */
 package io.github.fishlikewater.raiden.core.handler;
 
+import io.github.fishlikewater.raiden.core.constant.CommonConstants;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.Closeable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 /**
@@ -27,9 +32,14 @@ import java.util.function.Function;
  * @version 1.1.2
  * @since 2025/1/17
  **/
+@Slf4j
 public class PipelineContext implements Closeable {
 
     private final Map<String, Object> context = new HashMap<>(8);
+
+    private final AtomicInteger stopped = new AtomicInteger(0);
+
+    private PipelineHandler<?> currentHandler;
 
     public static PipelineContext getInstance() {
         return new PipelineContext();
@@ -59,8 +69,28 @@ public class PipelineContext implements Closeable {
         context.remove(key);
     }
 
+    public void stop() {
+        if (this.stopped.compareAndSet(0, 1)) {
+            String currentHandleName = Objects.isNull(this.currentHandler) ? "" : this.currentHandler.getClass().getName();
+            log.warn("{}.trigger.stop", currentHandleName);
+        }
+    }
+
     @Override
     public void close() {
         this.clear();
+    }
+
+    /**
+     * 判断是否终止
+     *
+     * @return 是否终止
+     */
+    protected boolean isStopped() {
+        return this.stopped.get() == CommonConstants.INT_ONE;
+    }
+
+    protected void setCurrentHandler(PipelineHandler<?> handler) {
+        this.currentHandler = handler;
     }
 }

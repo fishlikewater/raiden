@@ -36,9 +36,11 @@ public class PipelineHandlerTest {
                 .addHandler(new TestHandler1())
                 .addHandler(new TestHandler2())
                 .addFirstHandler(new TestHandler3())
-                .addLastHandler(new TestHandler3());
+                .addLastHandler(new TestHandler3())
+                .addFirstHandler(new TestHandler1());
 
         pipeline.start("hello");
+        System.out.println("end");
     }
 
     public static class TestHandler1 extends PipelineHandler<String> {
@@ -56,7 +58,7 @@ public class PipelineHandlerTest {
             System.out.println(string);
             System.out.println(context.getProperty("key"));
             context.removeProperty("name");
-            this.stop();
+            context.stop();
         }
     }
 
