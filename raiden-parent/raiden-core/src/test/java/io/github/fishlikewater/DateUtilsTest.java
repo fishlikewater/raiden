@@ -36,6 +36,6 @@ public class DateUtilsTest {
 
     @Test
     public void testFormat() {
-        System.out.println(DateUtils.of("2025-01-22 14:06:00", DatePatternConstants.NORM_DATETIME_FORMATTER));
+        System.out.println(DateUtils.toLocalDateTime("2025-01-22 14:06:00", DatePatternConstants.NORM_DATETIME_FORMATTER));
     }
 }
