@@ -104,7 +104,6 @@ public final class ObjectUtils {
      *
      * @param object object
      * @return return
-     * @throws IllegalAccessException IllegalAccessException
      */
     public static Map<String, Object> beanToMap(Object object, boolean ignoreNull) {
         Map<String, Object> map = new HashMap<>();

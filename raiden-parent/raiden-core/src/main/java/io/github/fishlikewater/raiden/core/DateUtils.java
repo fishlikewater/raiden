@@ -16,10 +16,13 @@
 package io.github.fishlikewater.raiden.core;
 
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
+import io.github.fishlikewater.raiden.core.constant.DatePatternConstants;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +36,24 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings("unused")
 public class DateUtils {
+
+    /**
+     * 获取当前时间
+     *
+     * @return LocalDateTime
+     */
+    public static LocalDateTime nowTime() {
+        return LocalDateTime.now();
+    }
+
+    /**
+     * 获取当前日期
+     *
+     * @return LocalDate
+     */
+    public static LocalDate nowDay() {
+        return LocalDate.now();
+    }
 
     /**
      * 毫秒或秒转LocalDateTime
@@ -108,6 +129,50 @@ public class DateUtils {
      */
     public static LocalDateTime of(Instant instant, ZoneId zoneId) {
         return null == instant ? null : LocalDateTime.ofInstant(instant, ObjectUtils.defaultIfNullOrEmpty(zoneId, ZoneId.systemDefault()));
+    }
+
+    /**
+     * 时间字符串转LocalDateTime
+     *
+     * @param dataStr 时间字符串
+     * @param format  时间格式
+     * @return LocalDateTime
+     */
+    public static LocalDateTime toLocalDateTime(String dataStr, String format) {
+        return LocalDateTime.parse(dataStr, DatePatternConstants.createFormatter(format));
+    }
+
+    /**
+     * 时间字符串转LocalDateTime
+     *
+     * @param dataStr 时间字符串
+     * @param format  时间格式
+     * @return LocalDateTime
+     */
+    public static LocalDateTime toLocalDateTime(String dataStr, DateTimeFormatter format) {
+        return LocalDateTime.parse(dataStr, format);
+    }
+
+    /**
+     * 时间字符串转LocalDate
+     *
+     * @param dataStr 时间字符串
+     * @param format  时间格式
+     * @return LocalDate
+     */
+    public static LocalDate toLocalDate(String dataStr, String format) {
+        return LocalDate.parse(dataStr, DatePatternConstants.createFormatter(format));
+    }
+
+    /**
+     * 时间字符串转LocalDate
+     *
+     * @param dataStr 时间字符串
+     * @param format  时间格式
+     * @return LocalDate
+     */
+    public static LocalDate toLocalDate(String dataStr, DateTimeFormatter format) {
+        return LocalDate.parse(dataStr, format);
     }
 
     public static ChronoUnit convertToChronoUnit(TimeUnit timeUnit) {

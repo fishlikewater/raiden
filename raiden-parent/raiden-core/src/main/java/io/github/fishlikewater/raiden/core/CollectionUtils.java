@@ -15,8 +15,6 @@
  */
 package io.github.fishlikewater.raiden.core;
 
-import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
-
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -66,19 +64,7 @@ public final class CollectionUtils {
     }
 
     public static <T> List<T> sort(Collection<T> collection, Comparator<T> comparator) {
-        if (collection instanceof List<T> list) {
-            list.sort(comparator);
-            return list;
-        }
-
-        try {
-            return collection
-                    .stream()
-                    .sorted(comparator)
-                    .toList();
-        } catch (Exception e) {
-            return RaidenExceptionCheck.INSTANCE.throwUnchecked("not support!!!");
-        }
+        return LambdaUtils.sort(collection, comparator);
     }
 
     /**

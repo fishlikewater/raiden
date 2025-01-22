@@ -15,10 +15,7 @@
  */
 package io.github.fishlikewater.raiden.core;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * {@code GeoHash}
@@ -212,11 +209,11 @@ public class GeoHash {
      *
      * @param lat 纬度
      * @param lon 经度
-     * @return {@code ArrayList<String>}
+     * @return {@code List<String>}
      */
     @SuppressWarnings("all")
-    public ArrayList<String> getAroundGeoHash(double lat, double lon) {
-        ArrayList<String> list = new ArrayList<>();
+    public List<String> getAroundGeoHash(double lat, double lon) {
+        List<String> list = new ArrayList<>();
         double upLat = lat + minLat;
         double downLat = lat - minLat;
 

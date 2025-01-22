@@ -268,7 +268,10 @@ public class LambdaUtils {
      * @return 排序后的集合
      */
     public static <T> List<T> sort(Collection<T> collection, Comparator<T> comparator) {
-        return CollectionUtils.sort(collection, comparator);
+        return collection
+                .stream()
+                .sorted(comparator)
+                .toList();
     }
 
     /**
