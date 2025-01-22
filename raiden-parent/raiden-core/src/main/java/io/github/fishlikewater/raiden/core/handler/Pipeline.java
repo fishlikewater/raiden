@@ -16,7 +16,7 @@
 package io.github.fishlikewater.raiden.core.handler;
 
 /**
- * Pipeline
+ * {@code Pipeline}
  *
  * @author zhangxiang
  * @version 1.1.2
@@ -24,11 +24,11 @@ package io.github.fishlikewater.raiden.core.handler;
  **/
 public class Pipeline<T> {
 
-    private BaseHandler<T> head;
+    private PipelineHandler<T> head;
 
-    private BaseHandler<T> tail;
+    private PipelineHandler<T> tail;
 
-    public Pipeline<T> addHandler(BaseHandler<T> handler) {
+    public Pipeline<T> addHandler(PipelineHandler<T> handler) {
         if (this.head == null) {
             this.head = this.tail = handler;
             return this;
@@ -39,7 +39,7 @@ public class Pipeline<T> {
         return this;
     }
 
-    public Pipeline<T> addFirstHandler(BaseHandler<T> handler) {
+    public Pipeline<T> addFirstHandler(PipelineHandler<T> handler) {
         if (this.head == null) {
             this.head = this.tail = handler;
             return this;
@@ -50,12 +50,12 @@ public class Pipeline<T> {
         return this;
     }
 
-    public Pipeline<T> addLastHandler(BaseHandler<T> handler) {
+    public Pipeline<T> addLastHandler(PipelineHandler<T> handler) {
         return this.addHandler(handler);
     }
 
     public void start(T t) {
-        try (ChainContext context = ChainContext.getInstance()) {
+        try (PipelineContext context = PipelineContext.getInstance()) {
             if (this.head != null) {
                 this.head.handle(t, context);
             }

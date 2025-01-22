@@ -15,9 +15,9 @@
  */
 package io.github.fishlikewater;
 
-import io.github.fishlikewater.raiden.core.handler.BaseHandler;
-import io.github.fishlikewater.raiden.core.handler.ChainContext;
 import io.github.fishlikewater.raiden.core.handler.Pipeline;
+import io.github.fishlikewater.raiden.core.handler.PipelineContext;
+import io.github.fishlikewater.raiden.core.handler.PipelineHandler;
 import org.junit.Test;
 
 /**
@@ -27,7 +27,7 @@ import org.junit.Test;
  * @version 1.1.2
  * @since 2025/1/17
  **/
-public class BaseHandlerTest {
+public class PipelineHandlerTest {
 
     @Test
     public void test() {
@@ -41,26 +41,28 @@ public class BaseHandlerTest {
         pipeline.start("hello");
     }
 
-    public static class TestHandler1 extends BaseHandler<String> {
+    public static class TestHandler1 extends PipelineHandler<String> {
         @Override
-        public void doHandle(String string, ChainContext context) {
+        public void doHandle(String string, PipelineContext context) {
             System.out.println(string);
-            context.addProperty("key", "hello world");
+            context.addProperty("key", "hello world")
+                    .addProperty("name", "zs");
         }
     }
 
-    public static class TestHandler2 extends BaseHandler<String> {
+    public static class TestHandler2 extends PipelineHandler<String> {
         @Override
-        public void doHandle(String string, ChainContext context) {
+        public void doHandle(String string, PipelineContext context) {
             System.out.println(string);
             System.out.println(context.getProperty("key"));
+            context.removeProperty("name");
             this.stop();
         }
     }
 
-    public static class TestHandler3 extends BaseHandler<String> {
+    public static class TestHandler3 extends PipelineHandler<String> {
         @Override
-        public void doHandle(String string, ChainContext context) {
+        public void doHandle(String string, PipelineContext context) {
             System.out.println("3333");
         }
     }

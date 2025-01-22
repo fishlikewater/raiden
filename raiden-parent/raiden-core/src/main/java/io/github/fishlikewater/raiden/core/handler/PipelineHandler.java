@@ -20,17 +20,16 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * <p>
- * {@code Result}
+ * {@code PipelineHandler}
  *
  * @author fishlikewater@126.com
  * @version 1.0.5
  * @since 2024年08月22日 22:15
  **/
 @Slf4j
-public abstract class BaseHandler<T> {
+public abstract class PipelineHandler<T> {
 
-    private BaseHandler<T> chain;
+    private PipelineHandler<T> chain;
 
     private final AtomicInteger stopped = new AtomicInteger(0);
 
@@ -39,9 +38,9 @@ public abstract class BaseHandler<T> {
      *
      * @param t 待处理数据
      */
-    public abstract void doHandle(T t, ChainContext context);
+    public abstract void doHandle(T t, PipelineContext context);
 
-    public final void handle(T t, ChainContext context) {
+    public final void handle(T t, PipelineContext context) {
         this.doHandle(t, context);
         if (this.chain != null && !isStopped()) {
             this.chain.handle(t, context);
@@ -59,7 +58,7 @@ public abstract class BaseHandler<T> {
         this.chain = null;
     }
 
-    protected void next(BaseHandler<T> handler) {
+    protected void next(PipelineHandler<T> handler) {
         this.chain = handler;
     }
 

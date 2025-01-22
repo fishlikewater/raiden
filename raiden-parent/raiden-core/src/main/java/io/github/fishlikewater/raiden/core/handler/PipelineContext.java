@@ -21,24 +21,24 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * ChainContext
+ * {@code PipelineContext}
  *
  * @author zhangxiang
  * @version 1.1.2
  * @since 2025/1/17
  **/
-public class ChainContext implements Closeable {
+public class PipelineContext implements Closeable {
 
     private final Map<String, Object> context = new HashMap<>(8);
 
-    public static ChainContext getInstance() {
-        return new ChainContext();
+    public static PipelineContext getInstance() {
+        return new PipelineContext();
     }
 
-    private ChainContext() {
+    private PipelineContext() {
     }
 
-    public ChainContext addProperty(String key, Object value) {
+    public PipelineContext addProperty(String key, Object value) {
         context.put(key, value);
         return this;
     }
@@ -55,13 +55,12 @@ public class ChainContext implements Closeable {
         context.clear();
     }
 
-    public ChainContext removeProperty(String key) {
+    public void removeProperty(String key) {
         context.remove(key);
-        return this;
     }
 
     @Override
     public void close() {
-        context.clear();
+        this.clear();
     }
 }
