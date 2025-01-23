@@ -69,11 +69,6 @@ public class DocOperationCustomizer implements GlobalOperationCustomizer {
             return operation;
         }
 
-        Map<String, Object> extensions = operation.getExtensions();
-        if (ObjectUtils.isNullOrEmpty(extensions)) {
-            operation.setExtensions(new HashMap<>());
-        }
-
         if (ObjectUtils.isNotNullOrEmpty(classDocTag)) {
             String[] classTags = classDocTag.value();
             for (String classTag : classTags) {
@@ -96,6 +91,11 @@ public class DocOperationCustomizer implements GlobalOperationCustomizer {
     }
 
     private void addTags(Operation operation, DocTag classDocTag, DocTag docTag) {
+        Map<String, Object> extensions = operation.getExtensions();
+        if (ObjectUtils.isNullOrEmpty(extensions)) {
+            operation.setExtensions(new HashMap<>());
+        }
+
         if (ObjectUtils.isNotNullOrEmpty(classDocTag)) {
             String[] classTags = classDocTag.value();
             operation.getExtensions().put("docTag", classTags);
