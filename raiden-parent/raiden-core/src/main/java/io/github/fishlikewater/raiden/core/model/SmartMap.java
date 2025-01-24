@@ -16,9 +16,11 @@
 package io.github.fishlikewater.raiden.core.model;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
+import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 
 import java.io.Serial;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -29,10 +31,18 @@ import java.util.function.Function;
  * @since 2025/01/24
  */
 @SuppressWarnings("all")
-public class SmartMap<K, V> extends LinkedHashMap<K, V> {
+public class SmartMap<K, V> extends HashMap<K, V> {
 
     @Serial
     private static final long serialVersionUID = 1752898875996629839L;
+
+    public SmartMap() {
+        super();
+    }
+
+    public SmartMap(Map<? extends K, ? extends V> m) {
+        super(m);
+    }
 
     /**
      * 获取SmartMap
@@ -43,7 +53,15 @@ public class SmartMap<K, V> extends LinkedHashMap<K, V> {
      * @return SmartMap
      */
     public <R, T> SmartMap<R, T> getMap(K k) {
-        return (SmartMap<R, T>) get(k);
+        Object value = super.get(k);
+        if (value == null) {
+            return null;
+        }
+
+        if (value instanceof Map map) {
+            return new SmartMap<>(map);
+        }
+        return RaidenExceptionCheck.INSTANCE.throwUnchecked("value for key {} is not a Map", k);
     }
 
     /**
