@@ -18,7 +18,7 @@ package io.github.fishlikewater.raiden.core.model;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 
 import java.io.Serial;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.function.Function;
 
 /**
@@ -29,7 +29,7 @@ import java.util.function.Function;
  * @since 2025/01/24
  */
 @SuppressWarnings("all")
-public class SmartMap<K, V> extends HashMap<K, V> {
+public class SmartMap<K, V> extends LinkedHashMap<K, V> {
 
     @Serial
     private static final long serialVersionUID = 1752898875996629839L;
