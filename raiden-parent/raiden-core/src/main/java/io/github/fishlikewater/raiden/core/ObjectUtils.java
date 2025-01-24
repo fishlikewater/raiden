@@ -129,22 +129,97 @@ public final class ObjectUtils {
      * @param map       待转换的map
      * @param beanClass 目标对象类型
      * @return return
-     * @throws Exception Exception
      */
-    public static <T> T mapToBean(Map<?, ?> map, Class<T> beanClass) throws Exception {
-        T object = beanClass.getConstructor().newInstance();
-        Field[] fields = object.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            int mod = field.getModifiers();
-            if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
-                continue;
+    public static <T> T mapToBean(Map<?, ?> map, Class<T> beanClass) {
+        try {
+            T object = beanClass.getConstructor().newInstance();
+            Field[] fields = object.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                int mod = field.getModifiers();
+                if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
+                    continue;
+                }
+                field.setAccessible(true);
+                if (map.containsKey(field.getName())) {
+                    field.set(object, map.get(field.getName()));
+                }
             }
-            field.setAccessible(true);
-            if (map.containsKey(field.getName())) {
-                field.set(object, map.get(field.getName()));
-            }
+            return object;
+        } catch (Exception e) {
+            return RaidenExceptionCheck.INSTANCE.throwUnchecked(e);
         }
-        return object;
+    }
+
+    /**
+     * 对象转换
+     *
+     * @param target 待转换对象
+     * @param clazz  目标类型
+     * @param <T>    目标类型
+     * @return return
+     */
+    @SuppressWarnings("all")
+    public static <T> T convert(Object target, Class<T> clazz) {
+        if (ObjectUtils.isNullOrEmpty(target)) {
+            return null;
+        }
+
+        if (clazz.isInstance(target)) {
+            return clazz.cast(target);
+        }
+
+        if (String.class.isAssignableFrom(clazz)) {
+            return clazz.cast(target.toString());
+        }
+
+        if (clazz.isPrimitive() || Number.class.isAssignableFrom(clazz)) {
+            return convertPrimitive(target, clazz);
+        }
+
+        if (Boolean.class.isAssignableFrom(clazz)) {
+            return clazz.cast(Boolean.valueOf(target.toString()));
+        }
+
+        if (Character.class.isAssignableFrom(clazz)) {
+            return clazz.cast(target.toString().charAt(0));
+        }
+
+        if (target instanceof Map<?, ?> map) {
+            return mapToBean(map, clazz);
+        }
+
+        return (T) target;
+    }
+
+    /**
+     * 转换基本类型
+     *
+     * @param target 待转换对象
+     * @param clazz  目标类型
+     * @param <T>    目标类型
+     * @return return
+     */
+    @SuppressWarnings("all")
+    private static <T> T convertPrimitive(Object target, Class<T> clazz) {
+        if (clazz.equals(int.class) || clazz.equals(Integer.class)) {
+            return (T) (Integer.valueOf(target.toString()));
+        }
+        if (clazz.equals(long.class) || clazz.equals(Long.class)) {
+            return (T) (Long.valueOf(target.toString()));
+        }
+        if (clazz.equals(float.class) || clazz.equals(Float.class)) {
+            return (T) (Float.valueOf(target.toString()));
+        }
+        if (clazz.equals(double.class) || clazz.equals(Double.class)) {
+            return (T) (Double.valueOf(target.toString()));
+        }
+        if (clazz.equals(byte.class) || clazz.equals(Byte.class)) {
+            return (T) (Byte.valueOf(target.toString()));
+        }
+        if (clazz.equals(short.class) || clazz.equals(Short.class)) {
+            return (T) (Short.valueOf(target.toString()));
+        }
+        return RaidenExceptionCheck.INSTANCE.throwUnchecked("Unsupported primitive type: {}", clazz);
     }
 
     private static boolean isCollectionsSupportType(Object target) {
