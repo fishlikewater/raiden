@@ -138,4 +138,36 @@ public class SmartMap<K, V> extends HashMap<K, V> {
     public String getString(K k, String defaultValue) {
         return ObjectUtils.defaultIfNullOrEmpty(getString(k), defaultValue);
     }
+
+    /**
+     * 获取Boolean
+     *
+     * @param k key
+     * @return Boolean
+     */
+    public Boolean getBoolean(K k) {
+        return ObjectUtils.convert(get(k), Boolean.class);
+    }
+
+    /**
+     * 获取Double
+     *
+     * @param k            key
+     * @param defaultValue 默认值
+     * @return Boolean
+     */
+    public Double getDouble(K k) {
+        return ObjectUtils.convert(get(k), Double.class);
+    }
+
+    /**
+     * 获取Double
+     *
+     * @param k            key
+     * @param defaultValue 默认值
+     * @return Boolean
+     */
+    public Float getFloat(K k) {
+        return ObjectUtils.convert(get(k), Float.class);
+    }
 }
