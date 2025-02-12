@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.config.ini;
 
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -53,24 +54,20 @@ public class Section implements Serializable {
         return fn.apply(pairs.get(key));
     }
 
+    public <T> T get(String key, Class<T> clazz) {
+        return ObjectUtils.convert(pairs.get(key), clazz);
+    }
+
     public String getString(String key) {
         return this.get(key, o -> o.toString());
     }
 
     public int getInteger(String key) {
-        Object o = pairs.get(key);
-        if (o instanceof Number number) {
-            return number.intValue();
-        }
-        return Integer.parseInt(o.toString());
+        return ObjectUtils.convert(pairs.get(key), Integer.class);
     }
 
     public long getLong(String key) {
-        Object o = pairs.get(key);
-        if (o instanceof Number number) {
-            return number.longValue();
-        }
-        return Long.parseLong(o.toString());
+        return ObjectUtils.convert(pairs.get(key), Long.class);
     }
 
     public <T> void set(String key, T value) {

@@ -19,12 +19,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.github.fishlikewater.raiden.config.ini.Ini;
 import io.github.fishlikewater.raiden.config.ini.Section;
+import io.github.fishlikewater.raiden.core.FileUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +44,7 @@ public class ConfigParser {
 
     private static final Pattern SECTION = Pattern.compile("\\[(.*?)]");
 
-    private static final Pattern PROPERTY = Pattern.compile("(\\w+)\\s*=\\s*(.*?)");
+    private static final Pattern PROPERTY = Pattern.compile("(^\\w[\\w.]*)\\s*=\\s*(.*?)");
 
     /**
      * 读取配置文件
@@ -55,7 +55,7 @@ public class ConfigParser {
      */
     public Ini readIni(File file) throws IOException {
         Ini ini = new Ini();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader bufferedReader = FileUtils.getBufferReader(file);) {
             String strLine;
             String currentSection = "";
             String currentKey = "";
