@@ -21,6 +21,7 @@ import io.github.fishlikewater.raiden.config.ini.Ini;
 import io.github.fishlikewater.raiden.config.ini.Section;
 import io.github.fishlikewater.raiden.core.FileUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
+import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
 
 import java.io.BufferedReader;
@@ -44,7 +45,7 @@ public class ConfigParser {
 
     private static final Pattern SECTION = Pattern.compile("\\[(.*?)]");
 
-    private static final Pattern PROPERTY = Pattern.compile("(^\\w[\\w.]*)\\s*=\\s*(.*?)");
+    private static final Pattern PROPERTY = Pattern.compile("(^\\w[\\w.-]*)\\s*=\\s*(.*?)");
 
     /**
      * 读取配置文件
@@ -63,6 +64,17 @@ public class ConfigParser {
             while ((strLine = bufferedReader.readLine()) != null) {
                 boolean isInSection = false;
                 strLine = strLine.trim();
+
+                // 空行
+                if (strLine.isEmpty()) {
+                    continue;
+                }
+
+                //是否为注释
+                if (strLine.startsWith(CommonConstants.Symbol.SYMBOL_EXPRESSION)
+                        || strLine.startsWith(CommonConstants.Symbol.SYMBOL_PATH)) {
+                    continue;
+                }
 
                 // 是否为section
                 Matcher matcher = SECTION.matcher((strLine));
