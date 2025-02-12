@@ -59,6 +59,10 @@ public class Ini implements Serializable {
         return this.getSection(ConfigConstants.DEFAULT_CONFIG_NAME).get(key, clazz);
     }
 
+    public <T> T get(String key, Class<T> clazz, T defaultValue) {
+        return this.getSection(ConfigConstants.DEFAULT_CONFIG_NAME).get(key, clazz, defaultValue);
+    }
+
     public String getString(@NonNull String key) {
         return this.get(key, Object::toString);
     }

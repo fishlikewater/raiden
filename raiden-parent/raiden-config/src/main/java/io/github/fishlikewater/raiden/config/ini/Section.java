@@ -58,6 +58,14 @@ public class Section implements Serializable {
         return ObjectUtils.convert(pairs.get(key), clazz);
     }
 
+    public <T> T get(String key, Class<T> clazz, T defaultValue) {
+        Object o = pairs.get(key);
+        if (ObjectUtils.isNullOrEmpty(o)) {
+            return defaultValue;
+        }
+        return ObjectUtils.convert(o, clazz);
+    }
+
     public String getString(String key) {
         return this.get(key, o -> o.toString());
     }
