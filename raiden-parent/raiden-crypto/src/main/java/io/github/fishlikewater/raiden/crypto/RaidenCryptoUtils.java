@@ -24,8 +24,8 @@ import javax.crypto.SecretKeyFactory;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.interfaces.ECPublicKey;
-import java.security.spec.ECPoint;
-import java.security.spec.X509EncodedKeySpec;
+import java.security.spec.*;
+import java.util.Arrays;
 
 /**
  * {@code RaidenCryptoUtils}
@@ -147,6 +147,43 @@ public final class RaidenCryptoUtils {
             return convertToUncompressedFormat(publicKey);
         } catch (Exception e) {
             return CryptoExceptionCheck.INSTANCE.throwUnchecked(e);
+        }
+    }
+
+    /**
+     * SM2非压缩格式公钥->转X509压缩格式
+     *
+     * @param uncompressedKey 非压缩格式
+     * @return X509压缩格式
+     */
+    public static byte[] sm2UncompressedConvertToX509Format(byte[] uncompressedKey) {
+        if (uncompressedKey == null || uncompressedKey.length != 65 || uncompressedKey[0] != 0x04) {
+            throw new IllegalArgumentException("Invalid uncompressed key format");
+        }
+
+        try {
+            // 提取 x 和 y 坐标
+            int keySize = 32;
+            byte[] xBytes = Arrays.copyOfRange(uncompressedKey, 1, 1 + keySize);
+            byte[] yBytes = Arrays.copyOfRange(uncompressedKey, 1 + keySize, 1 + 2 * keySize);
+
+            // 获取标准 JDK 的 SM2 椭圆曲线参数
+            AlgorithmParameters parameters = AlgorithmParameters.getInstance("EC", provider);
+            parameters.init(new ECGenParameterSpec("sm2p256v1"));
+            ECParameterSpec ecSpec = parameters.getParameterSpec(ECParameterSpec.class);
+
+            // 构造 ECPoint
+            ECPoint ecPoint = new ECPoint(new BigInteger(1, xBytes), new BigInteger(1, yBytes));
+            ECPublicKeySpec keySpec = new ECPublicKeySpec(ecPoint, ecSpec);
+
+            // 生成 ECPublicKey
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
+            PublicKey publicKey = keyFactory.generatePublic(keySpec);
+
+            // 转换为 X.509 格式
+            return publicKey.getEncoded();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert uncompressed key to X509 format", e);
         }
     }
 
