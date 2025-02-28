@@ -1,3 +1,0 @@
-io.github.fishlikewater.nacos.config.NacosRefreshScopeAutoConfigure
-io.github.fishlikewater.nacos.config.NacosContextRefresherAutoConfigure
-io.github.fishlikewater.nacos.config.NacosScopeBeanPostProcessor

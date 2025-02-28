@@ -17,7 +17,6 @@
         <module>raiden-core-spring-boot</module>
         <module>raiden-core</module>
         <module>raiden-timer</module>
-        <module>raiden-docs-spring-boot-starter</module>
         <module>raiden-mapstruct</module>
         <module>raiden-json</module>
         <module>raiden-redis</module>
@@ -25,7 +24,6 @@
         <module>raiden-crypto</module>
         <module>raiden-generate</module>
         <module>raiden-config</module>
-        <module>raiden-nacos-spring-boot-starter</module>
     </modules>
 
     <properties>
