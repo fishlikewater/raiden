@@ -20,6 +20,9 @@ import io.github.fishlikewater.raiden.core.handler.PipelineContext;
 import io.github.fishlikewater.raiden.core.handler.PipelineHandler;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * BaseHandlerTest
  *
@@ -47,7 +50,13 @@ public class PipelineHandlerTest {
         @Override
         public void doHandle(String string, PipelineContext context) {
             System.out.println(string);
+            List<String> list = new ArrayList<>();
+            list.add("1111");
+            list.add("2222");
             context.addProperty("key", "hello world")
+                    .addProperty("list", list)
+                    .addProperty("age", 18)
+                    .addProperty("bool", true)
                     .addProperty("name", "zs");
         }
     }
@@ -56,7 +65,13 @@ public class PipelineHandlerTest {
         @Override
         public void doHandle(String string, PipelineContext context) {
             System.out.println(string);
+            List<String> list = context.getList("list");
             System.out.println(context.getProperty("key"));
+            System.out.println(list);
+            System.out.println(context.getInteger("age"));
+            System.out.println(context.getInt("age"));
+            System.out.println(context.getLong("age"));
+            System.out.println(context.getBoolean("bool"));
             context.removeProperty("name");
             context.stop();
         }

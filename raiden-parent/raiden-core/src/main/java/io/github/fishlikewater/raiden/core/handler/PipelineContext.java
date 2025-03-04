@@ -15,11 +15,13 @@
  */
 package io.github.fishlikewater.raiden.core.handler;
 
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Closeable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,6 +61,39 @@ public class PipelineContext implements Closeable {
 
     public <T> T getProperty(String key, Function<Object, T> function) {
         return function.apply(context.get(key));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getList(String key) {
+        return (List<T>) this.getProperty(key);
+    }
+
+    public String getString(String key, String defaultValue) {
+        return this.getProperty(key, Object::toString);
+    }
+
+    public Integer getInteger(String key) {
+        return this.getProperty(key, obj -> ObjectUtils.convert(obj, Integer.class));
+    }
+
+    public int getInt(String key) {
+        return this.getProperty(key, obj -> ObjectUtils.convert(obj, int.class));
+    }
+
+    public Long getLong(String key) {
+        return this.getProperty(key, obj -> ObjectUtils.convert(obj, Long.class));
+    }
+
+    public Double getDouble(String key) {
+        return this.getProperty(key, obj -> ObjectUtils.convert(obj, Double.class));
+    }
+
+    public Float getFloat(String key) {
+        return this.getProperty(key, obj -> ObjectUtils.convert(obj, Float.class));
+    }
+
+    public Boolean getBoolean(String key) {
+        return this.getProperty(key, obj -> ObjectUtils.convert(obj, Boolean.class));
     }
 
     public void clear() {
