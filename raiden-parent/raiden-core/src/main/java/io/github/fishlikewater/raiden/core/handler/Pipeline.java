@@ -15,6 +15,8 @@
  */
 package io.github.fishlikewater.raiden.core.handler;
 
+import java.util.function.Function;
+
 /**
  * {@code Pipeline}
  *
@@ -59,6 +61,15 @@ public class Pipeline<T> {
             if (this.head != null) {
                 this.head.handle(t, context);
             }
+        }
+    }
+
+    public <K> K start(T t, Function<PipelineContext, K> function) {
+        try (PipelineContext context = PipelineContext.getInstance()) {
+            if (this.head != null) {
+                this.head.handle(t, context);
+            }
+            return function.apply(context);
         }
     }
 }
