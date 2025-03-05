@@ -30,11 +30,11 @@ public class ObjectUtilsTest {
 
     @Test
     public void test() {
-        Integer integer = ObjectUtils.convert("1", Integer.class);
-        Long aLong = ObjectUtils.convert("1", Long.class);
+        int integer = ObjectUtils.convert("1", int.class);
+        long aLong = ObjectUtils.convert("1", Long.class);
         String helloWord = ObjectUtils.convert("hello word", String.class);
-        Assert.assertEquals(helloWord, "hello word");
-        Assert.assertEquals((int) integer, 1);
-        Assert.assertEquals((long) aLong, 1);
+        Assert.assertEquals("hello word", helloWord);
+        Assert.assertEquals(1, integer);
+        Assert.assertEquals(1, aLong);
     }
 }

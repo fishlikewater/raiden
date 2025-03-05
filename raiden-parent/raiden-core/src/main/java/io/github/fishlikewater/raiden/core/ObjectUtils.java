@@ -161,7 +161,7 @@ public final class ObjectUtils {
     @SuppressWarnings("all")
     public static <T> T convert(Object target, Class<T> clazz) {
         if (ObjectUtils.isNullOrEmpty(target)) {
-            return null;
+            return RaidenExceptionCheck.INSTANCE.throwUnchecked("target is null");
         }
 
         if (clazz.isInstance(target)) {

@@ -54,39 +54,39 @@ public class FileUtilsTest {
     public void readFile() {
         File file = FileUtils.file("classpath:test.txt");
         String readFileUtf8 = FileUtils.readFileUtf8(file);
-        Assert.assertEquals(readFileUtf8, "123");
+        Assert.assertEquals("123", readFileUtf8);
     }
 
     @Test
     public void getFileSuffix() {
         String fileSuffix = FileUtils.getFileSuffix("test.txt");
-        Assert.assertEquals(fileSuffix, "txt");
+        Assert.assertEquals("txt", fileSuffix);
     }
 
     @Test
     public void getFileName() {
         String fileName = FileUtils.getFileName("test.txt");
-        Assert.assertEquals(fileName, "test");
+        Assert.assertEquals("test", fileName);
     }
 
     @Test
     public void readFile2() {
         byte[] bytes = FileUtils.readFile("classpath:test.txt");
-        Assert.assertEquals(new String(bytes, StandardCharsets.UTF_8), "123");
+        Assert.assertEquals("123", new String(bytes, StandardCharsets.UTF_8));
     }
 
     @Test
     public void readLines() {
         File file = FileUtils.file("test.txt");
         List<String> lines = FileUtils.readLinesUtf8(file);
-        Assert.assertEquals(lines.getFirst(), "123");
+        Assert.assertEquals("123", lines.getFirst());
     }
 
     @Test
     public void readLines2() {
         File file = FileUtils.file("test.txt");
         List<String> lines = FileUtils.readLines(file, StandardCharsets.ISO_8859_1);
-        Assert.assertEquals(lines.getFirst(), "123");
+        Assert.assertEquals("123", lines.getFirst());
     }
 
     @Test
