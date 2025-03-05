@@ -326,6 +326,28 @@ public class LambdaUtils {
     }
 
     /**
+     * 多个集合差集(以第一个集合为基底)
+     *
+     * @param collections 将要求差集的集合
+     * @param <T>         集合元素类型
+     * @return 合并后的集合
+     */
+    @SafeVarargs
+    public static <T> List<T> difference(Collection<T>... collections) {
+        if (collections == null || collections.length == 0) {
+            return CollectionUtils.newList();
+        }
+        return Stream.of(collections)
+                .skip(1)
+                .distinct()
+                .toList()
+                .stream()
+                .flatMap(Collection::stream)
+                .filter(t -> !(collections[0].contains(t)))
+                .collect(Collectors.toList());
+    }
+
+    /**
      * 求交集
      *
      * @param collections 将要求交集的集合

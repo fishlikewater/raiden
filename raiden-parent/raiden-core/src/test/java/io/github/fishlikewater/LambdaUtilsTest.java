@@ -39,49 +39,49 @@ public class LambdaUtilsTest {
     public void testLambda() {
         List<Integer> integerList = List.of(1, 2, 4, 8);
         List<Integer> list = LambdaUtils.toList(integerList, integer -> integer * 2);
-        Assert.assertEquals((int) list.getFirst(), 2);
+        Assert.assertEquals(2, (int) list.getFirst());
     }
 
     @Test
     public void testLambda2() {
         List<Integer> integerList = List.of(1, 2, 4, 8);
         List<Integer> list = LambdaUtils.toList(integerList, it -> it > 2, integer -> integer * 2);
-        Assert.assertEquals((int) list.getFirst(), 8);
+        Assert.assertEquals(8, (int) list.getFirst());
     }
 
     @Test
     public void testLambdaFilter() {
         List<Integer> integerList = List.of(1, 2, 4, 8);
         List<Integer> list = LambdaUtils.filter(integerList, integer -> integer > 2);
-        Assert.assertEquals((int) list.getFirst(), 4);
+        Assert.assertEquals(4, (int) list.getFirst());
     }
 
     @Test
     public void testLambdaDistinct() {
         List<Integer> integerList = List.of(1, 2, 4, 8, 2);
         List<Integer> list = LambdaUtils.toList(integerList, integer -> integer, true);
-        Assert.assertEquals(list.size(), 4);
+        Assert.assertEquals(4, list.size());
     }
 
     @Test
     public void testLambdaFindFirst() {
         List<Integer> integerList = List.of(1, 2, 4, 8, 2);
         Integer first = LambdaUtils.findFirst(integerList, integer -> integer > 2);
-        Assert.assertEquals((int) first, 4);
+        Assert.assertEquals(4, (int) first);
     }
 
     @Test
     public void testLambdaFindAny() {
         List<Integer> integerList = List.of(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
         Integer first = LambdaUtils.findAny(integerList, integer -> integer > 9);
-        Assert.assertNotEquals((int) first, 1);
+        Assert.assertNotEquals(1, (int) first);
     }
 
     @Test
     public void testLambdaSort() {
         List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
         LambdaUtils.sort(integerList, (o1, o2) -> o2 - o1);
-        Assert.assertEquals((int) integerList.getFirst(), 456);
+        Assert.assertEquals(456, (int) integerList.getFirst());
     }
 
     @Test
@@ -89,14 +89,14 @@ public class LambdaUtilsTest {
         List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
         TreeSet<Integer> treeSet = new TreeSet<>(integerList);
         List<Integer> sort = LambdaUtils.sort(treeSet, (o1, o2) -> o2 - o1);
-        Assert.assertEquals((int) sort.getFirst(), 456);
+        Assert.assertEquals(456, (int) sort.getFirst());
     }
 
     @Test
     public void testLambdaGroupBy() {
         List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
         var groupBy = LambdaUtils.groupBy(integerList, integer -> integer % 2);
-        Assert.assertEquals(groupBy.get(0).size(), 7);
+        Assert.assertEquals(7, groupBy.get(0).size());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class LambdaUtilsTest {
         TestBean ls1 = new TestBean("ls", "2222");
         List<TestBean> integerList = CollectionUtils.ofList(zs, zs1, ls, ls1);
         Map<String, List<String>> groupBy = LambdaUtils.groupBy(integerList, TestBean::getName, TestBean::getAddress);
-        Assert.assertEquals(groupBy.size(), 2);
+        Assert.assertEquals(2, groupBy.size());
     }
 
     @Test
@@ -116,7 +116,7 @@ public class LambdaUtilsTest {
         List<Integer> integerList2 = CollectionUtils.ofList(9, 11, 4, 8, 2, 5, 7);
         List<Integer> combined = LambdaUtils.combined(integerList1, integerList2);
         LambdaUtils.sort(combined, (o1, o2) -> o2 - o1);
-        Assert.assertEquals(combined.size(), 8);
+        Assert.assertEquals(8, combined.size());
     }
 
     @Test
@@ -124,35 +124,35 @@ public class LambdaUtilsTest {
         List<Integer> integerList1 = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7);
         List<Integer> integerList2 = CollectionUtils.ofList(9, 11, 4, 8, 2, 5, 7);
         List<Integer> intersection = LambdaUtils.intersection(integerList1, integerList2);
-        Assert.assertEquals(intersection.size(), 5);
+        Assert.assertEquals(5, intersection.size());
     }
 
     @Test
     public void testLambdaReduceSum() {
         List<Integer> integerList1 = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7);
         long reduce = LambdaUtils.sum(integerList1);
-        Assert.assertEquals(reduce, 29);
+        Assert.assertEquals(29, reduce);
     }
 
     @Test
     public void testLambdaReduceSum1() {
         List<Byte> integerList1 = CollectionUtils.ofList((byte) 1, (byte) 127, (byte) 3);
         int sum = LambdaUtils.sum(integerList1);
-        Assert.assertEquals(sum, 131);
+        Assert.assertEquals(131, sum);
     }
 
     @Test
     public void testLambdaReduceMin() {
         List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
         Integer min = LambdaUtils.min(integerList);
-        Assert.assertEquals((int) min, 1);
+        Assert.assertEquals(1, (int) min);
     }
 
     @Test
     public void testLambdaReduceMax() {
         List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
         Integer max = LambdaUtils.max(integerList);
-        Assert.assertEquals((int) max, 456);
+        Assert.assertEquals(456, (int) max);
     }
 
     @Test
@@ -163,7 +163,7 @@ public class LambdaUtilsTest {
         byteList.add((byte) 2);
         byteList.add((byte) 9);
         Byte max = LambdaUtils.max(byteList);
-        Assert.assertEquals((int) max, 9);
+        Assert.assertEquals(9, (int) max);
     }
 
     @Test
@@ -181,21 +181,29 @@ public class LambdaUtilsTest {
         byteList.add((byte) 2);
         byteList.add((byte) 9);
         Byte min = LambdaUtils.min(byteList);
-        Assert.assertEquals((int) min, 1);
+        Assert.assertEquals(1, (int) min);
     }
 
     @Test
     public void testLambdaAnyMatch() {
         List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
         boolean b = LambdaUtils.anyMatch(integerList, t -> t == 1);
-        Assert.assertEquals(b, Boolean.TRUE);
+        Assert.assertEquals(Boolean.TRUE, b);
     }
 
     @Test
     public void testLambdaAllMatch() {
         List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
         boolean b = LambdaUtils.allMatch(integerList, t -> t <= 456);
-        Assert.assertEquals(b, Boolean.TRUE);
+        Assert.assertEquals(Boolean.TRUE, b);
+    }
+
+    @Test
+    public void testLambdaDifference() {
+        List<Integer> difference1 = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7);
+        List<Integer> difference2 = CollectionUtils.ofList(9, 11, 4, 8, 2, 5, 7);
+        List<Integer> difference = LambdaUtils.difference(difference1, difference2);
+        Assert.assertEquals(2, difference.size());
     }
 
 }
