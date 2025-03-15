@@ -42,6 +42,9 @@ public abstract class PipelineHandler<T> {
         if (this.chain != null && !context.isStopped()) {
             this.chain.handle(t, context);
         }
+        if (context.getPipeline().isReuse()) {
+            return;
+        }
         this.close();
     }
 

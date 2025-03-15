@@ -15,6 +15,9 @@
  */
 package io.github.fishlikewater.raiden.core.handler;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.function.Function;
 
 /**
@@ -29,6 +32,13 @@ public class Pipeline<T> {
     private PipelineHandler<T> head;
 
     private PipelineHandler<T> tail;
+
+    /**
+     * 是否复用
+     */
+    @Setter
+    @Getter
+    private boolean reuse = false;
 
     public Pipeline<T> addHandler(PipelineHandler<T> handler) {
         if (this.head == null) {
@@ -58,6 +68,7 @@ public class Pipeline<T> {
 
     public void start(T t) {
         try (PipelineContext context = PipelineContext.getInstance()) {
+            context.setPipeline(this);
             if (this.head != null) {
                 this.head.handle(t, context);
             }
@@ -66,6 +77,7 @@ public class Pipeline<T> {
 
     public <K> K start(T t, Function<PipelineContext, K> function) {
         try (PipelineContext context = PipelineContext.getInstance()) {
+            context.setPipeline(this);
             if (this.head != null) {
                 this.head.handle(t, context);
             }

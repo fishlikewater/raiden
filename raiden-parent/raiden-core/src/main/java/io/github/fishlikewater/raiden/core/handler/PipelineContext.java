@@ -17,6 +17,8 @@ package io.github.fishlikewater.raiden.core.handler;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Closeable;
@@ -41,7 +43,13 @@ public class PipelineContext implements Closeable {
 
     private final AtomicInteger stopped = new AtomicInteger(0);
 
+    @Getter
+    @Setter
     private PipelineHandler<?> currentHandler;
+
+    @Getter
+    @Setter
+    private Pipeline<?> pipeline;
 
     public static PipelineContext getInstance() {
         return new PipelineContext();
@@ -123,9 +131,5 @@ public class PipelineContext implements Closeable {
      */
     protected boolean isStopped() {
         return this.stopped.get() == CommonConstants.INT_ONE;
-    }
-
-    protected void setCurrentHandler(PipelineHandler<?> handler) {
-        this.currentHandler = handler;
     }
 }

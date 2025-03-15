@@ -35,6 +35,7 @@ public class PipelineHandlerTest {
     @Test
     public void test() {
         Pipeline<String> pipeline = new Pipeline<>();
+        pipeline.setReuse(true);
         pipeline
                 .addHandler(new TestHandler1())
                 .addHandler(new TestHandler2())
@@ -44,6 +45,8 @@ public class PipelineHandlerTest {
 
         pipeline.start("hello");
         System.out.println("end");
+
+        pipeline.start("word");
     }
 
     public static class TestHandler1 extends PipelineHandler<String> {
