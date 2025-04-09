@@ -21,6 +21,7 @@ import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 import io.github.fishlikewater.raiden.core.handler.Pipeline;
 import io.github.fishlikewater.raiden.core.handler.PipelineContext;
 import io.github.fishlikewater.raiden.core.handler.PipelineHandler;
+import lombok.Getter;
 
 import java.util.function.Function;
 
@@ -38,6 +39,7 @@ public class PipelineChainHelper {
     }
 
 
+    @Getter
     public static class PipelineChain<T> {
 
         private final Pipeline<T> pipeline;
@@ -80,5 +82,6 @@ public class PipelineChainHelper {
         public <K> K start(T t, Function<PipelineContext, K> function) {
             return this.pipeline.start(t, function);
         }
+
     }
 }
