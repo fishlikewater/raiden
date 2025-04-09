@@ -30,7 +30,7 @@ import java.net.UnknownHostException;
  * @version 1.1.0
  * @since 2024/12/17
  */
-public class SystemPropertyUtil {
+public class SystemPropertyUtils {
 
     /**
      * 获取可用处理器数量

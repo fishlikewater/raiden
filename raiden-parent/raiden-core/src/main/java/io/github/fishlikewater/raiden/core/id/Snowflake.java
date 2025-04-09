@@ -18,7 +18,7 @@ package io.github.fishlikewater.raiden.core.id;
 import io.github.fishlikewater.raiden.core.CollectionUtils;
 import io.github.fishlikewater.raiden.core.Hex;
 import io.github.fishlikewater.raiden.core.StringUtils;
-import io.github.fishlikewater.raiden.core.SystemPropertyUtil;
+import io.github.fishlikewater.raiden.core.SystemPropertyUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.management.ManagementFactory;
@@ -225,7 +225,7 @@ public class Snowflake {
     protected long getDataCenterId() {
         long id = 1L;
         try {
-            String macAddress = SystemPropertyUtil.getMacAddress("");
+            String macAddress = SystemPropertyUtils.getMacAddress("");
             byte[] mac = Hex.decodeHex(macAddress);
             if (CollectionUtils.isEmpty(mac)) {
                 return id;

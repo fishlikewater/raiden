@@ -15,7 +15,7 @@
  */
 package io.github.fishlikewater;
 
-import io.github.fishlikewater.raiden.core.SystemPropertyUtil;
+import io.github.fishlikewater.raiden.core.SystemPropertyUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import org.junit.Test;
 
@@ -27,50 +27,50 @@ import org.junit.Test;
  * @version 1.1.0
  * @since 2024/12/17
  */
-public class SystemPropertyUtilTest {
+public class SystemPropertyUtilsTest {
 
     @Test
     public void testNumOfCores() {
-        System.out.println(SystemPropertyUtil.getCores());
+        System.out.println(SystemPropertyUtils.getCores());
     }
 
     @Test
     public void testUserHome() {
-        System.out.println(SystemPropertyUtil.getUserHome());
+        System.out.println(SystemPropertyUtils.getUserHome());
     }
 
     @Test
     public void testUserDir() {
-        System.out.println(SystemPropertyUtil.getUserDir());
+        System.out.println(SystemPropertyUtils.getUserDir());
     }
 
     @Test
     public void testJavaVersion() {
-        System.out.println(SystemPropertyUtil.getJavaVersion());
+        System.out.println(SystemPropertyUtils.getJavaVersion());
     }
 
     @Test
     public void testJavaVendor() {
-        System.out.println(SystemPropertyUtil.getJavaVendor());
+        System.out.println(SystemPropertyUtils.getJavaVendor());
     }
 
     @Test
     public void testOsName() {
-        System.out.println(SystemPropertyUtil.getOsName());
+        System.out.println(SystemPropertyUtils.getOsName());
     }
 
     @Test
     public void testMacAddress() {
-        System.out.println(SystemPropertyUtil.getMacAddress(CommonConstants.Symbol.SYMBOL_COLON));
+        System.out.println(SystemPropertyUtils.getMacAddress(CommonConstants.Symbol.SYMBOL_COLON));
     }
 
     @Test
     public void testIpAddress() {
-        System.out.println(SystemPropertyUtil.getIpAddress());
+        System.out.println(SystemPropertyUtils.getIpAddress());
     }
 
     @Test
     public void testNetworkInterface() {
-        System.out.println(SystemPropertyUtil.getNetworkInterface());
+        System.out.println(SystemPropertyUtils.getNetworkInterface());
     }
 }
