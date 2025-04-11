@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.core;
 
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
+import io.github.fishlikewater.raiden.core.model.SmartMap;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -121,6 +122,16 @@ public final class ObjectUtils {
         }
 
         return map;
+    }
+
+    /**
+     * 对象转Map
+     *
+     * @param object object
+     * @return {@code SmartMap}
+     */
+    public static SmartMap<String, Object> beanToSmartMap(Object object, boolean ignoreNull) {
+        return new SmartMap<>(beanToMap(object, ignoreNull));
     }
 
     /**
