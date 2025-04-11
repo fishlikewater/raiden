@@ -64,7 +64,7 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         CryptoHandler cryptoHandler = SpringUtils.getBean(cryptoAnnotation.crypto());
 
         Result<Object> result = (Result<Object>) body;
-        Object data = result.getResult();
+        Object data = result.getData();
         if (null == data) {
             return body;
         }
@@ -86,7 +86,7 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         }
 
         String encrypt = cryptoHandler.encrypt(xx.getBytes(), response);
-        result.setResult(encrypt);
+        result.setData(encrypt);
 
         return result;
     }

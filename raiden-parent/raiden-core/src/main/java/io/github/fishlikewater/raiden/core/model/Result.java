@@ -56,7 +56,7 @@ public class Result<T> implements Serializable {
     /**
      * 返回数据
      */
-    private T result;
+    private T data;
 
     /**
      * 请求唯一编号
@@ -102,7 +102,7 @@ public class Result<T> implements Serializable {
         return Result.<T>builder()
                 .code(code)
                 .message(message)
-                .result(data)
+                .data(data)
                 .build();
     }
 
@@ -110,7 +110,7 @@ public class Result<T> implements Serializable {
         return Result.<T>builder()
                 .code(statusEnum.code())
                 .message(statusEnum.message())
-                .result(data)
+                .data(data)
                 .build();
     }
 }
