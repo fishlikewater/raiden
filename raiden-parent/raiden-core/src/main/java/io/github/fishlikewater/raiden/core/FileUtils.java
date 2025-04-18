@@ -218,7 +218,7 @@ public class FileUtils {
             int ignored = inputStream.read(head, 0, CommonConstants.FILE_HEADER_LENGTH);
             String header = Hex.encodeHexStr(head);
 
-            return FileMagicNumberEnum.codeOf(header);
+            return FileMagicNumberEnum.resolve(header);
         } catch (Exception e) {
             return RaidenExceptionCheck.INSTANCE.throwUnchecked(e);
         }

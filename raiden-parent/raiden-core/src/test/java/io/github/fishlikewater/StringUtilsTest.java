@@ -17,6 +17,8 @@ package io.github.fishlikewater;
 
 import io.github.fishlikewater.raiden.core.Assert;
 import io.github.fishlikewater.raiden.core.StringUtils;
+import io.github.fishlikewater.raiden.core.constant.CommonConstants;
+import io.github.fishlikewater.raiden.core.enums.SortEnum;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -32,16 +34,28 @@ import java.util.Map;
 public class StringUtilsTest {
 
     @Test
-    public void testMapToStr() {
+    public void testMapMapToStr() {
         Map<String, Object> map = new HashMap<>();
         map.put("a", 1);
         map.put("b", 2);
-        String str = StringUtils.toStr(map);
+        String str = StringUtils.mapToStr(map);
         Assert.isTrue(str.equals("a=1&b=2"), "map to str error");
-        String str1 = StringUtils.toStr(map, "|");
+        String str1 = StringUtils.mapToStr(map, "|");
         Assert.isTrue(str1.equals("a=1|b=2"), "map to str error");
 
         String str2 = StringUtils.format("{a} and {b}", map, true);
         Assert.isTrue(str2.equals("1 and 2"), "map to str error");
+    }
+
+    @Test
+    public void testMapSortToStr() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("c", 3);
+        map.put("a", 1);
+        map.put("b", 2);
+        String str = StringUtils.mapSortToStr(map, SortEnum.DESC);
+        String str2 = StringUtils.mapSortToStr(map, CommonConstants.Symbol.SYMBOL_AT, SortEnum.ASC);
+        Assert.isTrue(str.equals("c=3&b=2&a=1"), "map to str error");
+        Assert.isTrue(str2.equals("a=1@b=2@c=3"), "map to str error");
     }
 }

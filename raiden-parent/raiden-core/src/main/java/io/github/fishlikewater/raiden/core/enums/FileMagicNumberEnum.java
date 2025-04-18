@@ -63,7 +63,7 @@ public enum FileMagicNumberEnum {
         this.suffix = suffix;
     }
 
-    public static FileMagicNumberEnum codeOf(String header) {
+    public static FileMagicNumberEnum resolve(String header) {
         if (ObjectUtils.isNullOrEmpty(header)) {
             return null;
         }

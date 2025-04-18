@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.core;
 
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
+import io.github.fishlikewater.raiden.core.enums.SortEnum;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
 
@@ -93,14 +94,14 @@ public final class StringUtils {
      *     Map<String, Object> map = new HashMap<>();
      *     map.put("a", 1);
      *     map.put("b", 2);
-     *     String str = StringUtils.toStr(map); // a=1&b=2
+     *     String str = StringUtils.mapToStr(map); // a=1&b=2
      * </pre>
      *
      * @param map map
      * @return 字符串
      */
-    public static <T> String toStr(Map<String, T> map) {
-        return toStr(map, CommonConstants.Symbol.SYMBOL_AND);
+    public static <T> String mapToStr(Map<String, T> map) {
+        return mapToStr(map, CommonConstants.Symbol.SYMBOL_AND);
     }
 
     /**
@@ -110,14 +111,14 @@ public final class StringUtils {
      *     Map<String, Object> map = new HashMap<>();
      *     map.put("a", 1);
      *     map.put("b", 2);
-     *     String str = StringUtils.toStr(map, "|"); // a=1|b=2
+     *     String str = StringUtils.mapToStr(map, "|"); // a=1|b=2
      * </pre>
      *
      * @param map    map
      * @param symbol 分隔符
      * @return 字符串
      */
-    public static <T> String toStr(Map<String, T> map, String symbol) {
+    public static <T> String mapToStr(Map<String, T> map, String symbol) {
         StringBuilder content = new StringBuilder();
         Set<String> keys = map.keySet();
 
@@ -133,6 +134,48 @@ public final class StringUtils {
         }
         content.delete(0, 1);
         return content.toString();
+    }
+
+    /**
+     * <p>将map按key排序转换为字符串</p>
+     * <p>例:</p>
+     * <pre>
+     *     Map<String, Object> map = new HashMap<>();
+     *     map.put("a", 1);
+     *     map.put("b", 2);
+     *     String str = StringUtils.mapSortToStr(map, true); // a=1|b=2
+     * </pre>
+     *
+     * @param map  map
+     * @param sort 排序方式
+     */
+    public static <T> String mapSortToStr(Map<String, T> map, SortEnum sort) {
+        return mapSortToStr(map, CommonConstants.Symbol.SYMBOL_AND, sort);
+    }
+
+    /**
+     * <p>将map按key排序转换为字符串</p>
+     * <p>例:</p>
+     * <pre>
+     *     Map<String, Object> map = new HashMap<>();
+     *     map.put("a", 1);
+     *     map.put("b", 2);
+     *     String str = StringUtils.mapSortToStr(map, "|", true); // a=1|b=2
+     * </pre>
+     *
+     * @param map    map
+     * @param symbol 分隔符
+     * @param sort   排序方式
+     */
+    public static <T> String mapSortToStr(Map<String, T> map, String symbol, SortEnum sort) {
+        TreeMap<String, T> treeMap;
+        if (sort == SortEnum.ASC) {
+            treeMap = new TreeMap<>(map);
+        } else {
+            treeMap = new TreeMap<>(Comparator.reverseOrder());
+            treeMap.putAll(map);
+        }
+        return mapToStr(treeMap, symbol);
     }
 
     /**
