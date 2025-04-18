@@ -60,7 +60,7 @@ public final class StringUtils {
      *     <li>StringUtils.isNotBlank(null) // false</li>
      *     <li>StringUtils.isNotBlank("") // false</li>
      *     <li>StringUtils.isNotBlank(" ") // false</li>
-     *     <li>StringUtils.isNotBlank(" a") // true</li>
+     *     <li>StringUtils.isNotBlank("a") // true</li>
      * </ol>
      *
      * @param str 字符串
@@ -358,8 +358,8 @@ public final class StringUtils {
      * @param endValues    结尾值
      * @return 结果
      */
-    public static boolean endsWithAny(String currentValue, String... endValues) {
-        if (StringUtils.isNotBlank(currentValue) || ObjectUtils.isNullOrEmpty(endValues)) {
+    public static boolean endWithAny(String currentValue, String... endValues) {
+        if (StringUtils.isBlank(currentValue) || ObjectUtils.isNullOrEmpty(endValues)) {
             return false;
         }
         for (String endValue : endValues) {
@@ -379,7 +379,7 @@ public final class StringUtils {
      * @return 结果
      */
     public static boolean endWithIgnoreCase(String str, String match) {
-        if (null == str) {
+        if (StringUtils.isBlank(str)) {
             return false;
         }
         if (str.length() < match.length()) {
@@ -410,7 +410,7 @@ public final class StringUtils {
      * @return 结果
      */
     public static boolean startWithAny(String currentValue, String... startValues) {
-        if (StringUtils.isNotBlank(currentValue) || ObjectUtils.isNullOrEmpty(startValues)) {
+        if (StringUtils.isBlank(currentValue) || ObjectUtils.isNullOrEmpty(startValues)) {
             return false;
         }
         for (String startValue : startValues) {

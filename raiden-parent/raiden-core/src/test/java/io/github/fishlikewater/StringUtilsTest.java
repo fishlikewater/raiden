@@ -58,4 +58,29 @@ public class StringUtilsTest {
         Assert.isTrue(str.equals("c=3&b=2&a=1"), "map to str error");
         Assert.isTrue(str2.equals("a=1@b=2@c=3"), "map to str error");
     }
+
+    @Test
+    public void testLowerFirst() {
+        String str = "ABC";
+        String lowerFirst = StringUtils.lowerFirst(str);
+        Assert.isTrue(StringUtils.equals(lowerFirst, "aBC"), "lowerFirst with error");
+    }
+
+    @Test
+    public void testEndWithAny() {
+        String str = "abc";
+        Assert.isTrue(StringUtils.endWithAny(str, "c", "b"), "endWithAny with error");
+    }
+
+    @Test
+    public void testStartWithAny() {
+        String str = "abc";
+        Assert.isTrue(StringUtils.startWithAny(str, "a", "b"), "startWithAny with error");
+    }
+
+    @Test
+    public void testEndWithIgnoreCase() {
+        String str = "abc";
+        Assert.isTrue(StringUtils.endWithIgnoreCase(str, "C"), "endWithIgnoreCase with error");
+    }
 }
