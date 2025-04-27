@@ -21,6 +21,7 @@ import io.github.fishlikewater.raiden.core.model.SmartMap;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * {@code ObjectUtils}
@@ -67,6 +68,21 @@ public final class ObjectUtils {
      */
     public static <T> boolean isNotNullOrEmpty(T target) {
         return !isNullOrEmpty(target);
+    }
+
+    /**
+     * 判断对象是否不为空
+     *
+     * @param target 对象
+     * @param fx     函数
+     * @return true:不为空 false:为空
+     */
+    public static <T, R> boolean isNotNullOrEmpty(T target, Function<T, R> fx) {
+        if (!isNullOrEmpty(target)) {
+            return !isNullOrEmpty(fx.apply(target));
+        }
+
+        return false;
     }
 
     /**

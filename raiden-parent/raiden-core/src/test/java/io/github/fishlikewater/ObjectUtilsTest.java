@@ -16,6 +16,7 @@
 package io.github.fishlikewater;
 
 import io.github.fishlikewater.raiden.core.ObjectUtils;
+import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,5 +37,17 @@ public class ObjectUtilsTest {
         Assert.assertEquals("hello word", helloWord);
         Assert.assertEquals(1, integer);
         Assert.assertEquals(1, aLong);
+
+        TestBean testBean = new TestBean();
+        testBean.setName("fishlikewater");
+        boolean notNullOrEmpty = ObjectUtils.isNotNullOrEmpty(testBean, TestBean::getName);
+        Assert.assertTrue(notNullOrEmpty);
+    }
+
+
+    @Data
+    public static class TestBean {
+        private String name;
+        private Integer age;
     }
 }
