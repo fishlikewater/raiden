@@ -50,6 +50,17 @@ public final class ObjectUtils {
     }
 
     /**
+     * 判断对象或函数返回是否为空
+     *
+     * @param target 对象
+     * @param fx     函数
+     * @return true:不为空 false:为空
+     */
+    public static <T, R> boolean isNullOrEmpty(T target, Function<T, R> fx) {
+        return isNullOrEmpty(target) || isNullOrEmpty(fx.apply(target));
+    }
+
+    /**
      * 如果对象为空，则返回默认值
      *
      * @param target       对象

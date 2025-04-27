@@ -41,7 +41,9 @@ public class ObjectUtilsTest {
         TestBean testBean = new TestBean();
         testBean.setName("fishlikewater");
         boolean notNullOrEmpty = ObjectUtils.isNotNullOrEmpty(testBean, TestBean::getName);
+        boolean nullOrEmpty = ObjectUtils.isNullOrEmpty(testBean, TestBean::getAge);
         Assert.assertTrue(notNullOrEmpty);
+        Assert.assertTrue(nullOrEmpty);
     }
 
 
