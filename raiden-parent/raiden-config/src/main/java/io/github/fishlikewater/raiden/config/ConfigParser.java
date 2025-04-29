@@ -54,7 +54,7 @@ public class ConfigParser {
      * @return 配置文件
      * @throws IOException 读取配置文件异常
      */
-    public Ini readIni(File file) throws IOException {
+    public static Ini readIni(File file) throws IOException {
         Ini ini = new Ini();
         try (BufferedReader bufferedReader = FileUtils.getBufferReader(file);) {
             String strLine;
@@ -83,7 +83,7 @@ public class ConfigParser {
                 }
 
                 if (isInSection) {
-                    this.handPreElement(currentSection, currentKey, currentValue, ini);
+                    handPreElement(currentSection, currentKey, currentValue, ini);
                     currentKey = "";
                     currentValue = "";
                     currentSection = strLine.substring(1, strLine.length() - 1);
@@ -95,7 +95,7 @@ public class ConfigParser {
                 // 是否为key
                 Matcher matcherKey = PROPERTY.matcher(strLine);
                 if (matcherKey.matches()) {
-                    this.handPreElement(currentSection, currentKey, currentValue, ini);
+                    handPreElement(currentSection, currentKey, currentValue, ini);
                     currentKey = matcherKey.group(1);
                     currentValue = matcherKey.group(2);
                     if (StringUtils.isNotBlank(currentSection)) {
@@ -115,13 +115,13 @@ public class ConfigParser {
                 }
 
             }
-            this.handPreElement(currentSection, currentKey, currentValue, ini);
+            handPreElement(currentSection, currentKey, currentValue, ini);
         }
         return ini;
     }
 
     @SuppressWarnings("all")
-    private void handPreElement(String oldSection, String currentKey, String currentValue, Ini ini) throws JsonProcessingException {
+    private static void handPreElement(String oldSection, String currentKey, String currentValue, Ini ini) throws JsonProcessingException {
         if (StringUtils.isNotBlank(oldSection)) {
             if (StringUtils.isBlank(currentKey)) {
                 return;
