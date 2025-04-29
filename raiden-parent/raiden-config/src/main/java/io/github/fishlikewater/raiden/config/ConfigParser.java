@@ -23,10 +23,10 @@ import io.github.fishlikewater.raiden.core.FileUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
 import io.github.fishlikewater.raiden.json.core.JSONUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
  * @version 1.0.3
  * @since 2024/07/16
  */
+@Slf4j
 public class ConfigParser {
 
     private static final Pattern SECTION = Pattern.compile("\\[(.*?)]");
@@ -52,11 +53,10 @@ public class ConfigParser {
      *
      * @param file 配置文件
      * @return 配置文件
-     * @throws IOException 读取配置文件异常
      */
-    public static Ini readIni(File file) throws IOException {
+    public static Ini readIni(File file) {
         Ini ini = new Ini();
-        try (BufferedReader bufferedReader = FileUtils.getBufferReader(file);) {
+        try (BufferedReader bufferedReader = FileUtils.getBufferReader(file)) {
             String strLine;
             String currentSection = "";
             String currentKey = "";
@@ -116,6 +116,8 @@ public class ConfigParser {
 
             }
             handPreElement(currentSection, currentKey, currentValue, ini);
+        } catch (Exception e) {
+            log.error("read file error", e);
         }
         return ini;
     }
