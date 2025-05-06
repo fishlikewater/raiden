@@ -56,6 +56,11 @@ public class ScheduleTaskTest {
             }
 
             @Override
+            public String desc() {
+                return "";
+            }
+
+            @Override
             public void run() {
                 System.out.println("这是corn测试");
             }
@@ -74,6 +79,16 @@ public class ScheduleTaskTest {
             }
 
             @Override
+            public String cornExpression() {
+                return null;
+            }
+
+            @Override
+            public String desc() {
+                return "";
+            }
+
+            @Override
             public void run() {
                 System.out.println("这是具体执行逻辑");
             }
@@ -82,6 +97,16 @@ public class ScheduleTaskTest {
             @Override
             public long delayMs() {
                 return 5_000;
+            }
+
+            @Override
+            public String cornExpression() {
+                return null;
+            }
+
+            @Override
+            public String desc() {
+                return "";
             }
 
             @Override
