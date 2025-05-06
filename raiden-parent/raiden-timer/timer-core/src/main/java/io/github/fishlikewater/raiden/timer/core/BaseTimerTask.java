@@ -57,18 +57,14 @@ public abstract class BaseTimerTask implements Runnable {
     }
 
     /**
-     * 设置corn表达式
+     * 设置corn表达式, 如果使用corn表达式, corn表达式不能为空
      */
-    public String cornExpression() {
-        return null;
-    }
+    public abstract String cornExpression();
 
     /**
      * 设置描述
      */
-    public String desc() {
-        return null;
-    }
+    public abstract String desc();
 
     public BaseTimerTask() {
         this.setDesc(this.desc());
