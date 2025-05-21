@@ -50,6 +50,13 @@ public class LambdaUtilsTest {
     }
 
     @Test
+    public void testLambdaToListMap() {
+        List<Integer> integerList = List.of(1, 2, 4, 8);
+        Map<Integer, Integer> map = LambdaUtils.toMap(integerList, it -> it, integer -> integer * 2);
+        Assert.assertEquals(8, (int) map.get(4));
+    }
+
+    @Test
     public void testLambdaFilter() {
         List<Integer> integerList = List.of(1, 2, 4, 8);
         List<Integer> list = LambdaUtils.filter(integerList, integer -> integer > 2);

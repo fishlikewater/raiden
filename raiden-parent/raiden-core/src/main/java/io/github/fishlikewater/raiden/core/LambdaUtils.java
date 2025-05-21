@@ -157,6 +157,39 @@ public class LambdaUtils {
     }
 
     /**
+     * 将集合中的元素映射到新的集合中
+     *
+     * @param collection 集合
+     * @param mapper     映射函数
+     * @param <T>        新集合元素类型
+     * @param <E>        旧集合元素类型
+     * @return 新集合
+     */
+    public static <T, E> Map<T, E> toMap(Collection<E> collection, Function<E, T> mapper) {
+        return collection
+                .stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(mapper, Function.identity()));
+    }
+
+    /**
+     * 将集合中的元素映射到新的集合中
+     *
+     * @param collection  集合
+     * @param keyMapper   映射函数
+     * @param valueMapper 映射函数
+     * @param <T>         新集合元素类型
+     * @param <E>         旧集合元素类型
+     * @return 新集合
+     */
+    public static <T, E, R> Map<T, R> toMap(Collection<E> collection, Function<E, T> keyMapper, Function<E, R> valueMapper) {
+        return collection
+                .stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(keyMapper, valueMapper));
+    }
+
+    /**
      * 找到集合中第一个元素
      *
      * @param collection 集合
