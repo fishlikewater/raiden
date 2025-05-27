@@ -87,8 +87,8 @@ public class LambdaUtilsTest {
     @Test
     public void testLambdaSort() {
         List<Integer> integerList = CollectionUtils.ofList(1, 2, 4, 8, 2, 5, 7, 6, 1, 7, 1, 9, 41, 456, 15, 46, 75, 165);
-        LambdaUtils.sort(integerList, (o1, o2) -> o2 - o1);
-        Assert.assertEquals(456, (int) integerList.getFirst());
+        List<Integer> sort = LambdaUtils.sort(integerList, (o1, o2) -> o2 - o1);
+        Assert.assertEquals(456, (int) sort.getFirst());
     }
 
     @Test

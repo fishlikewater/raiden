@@ -304,7 +304,7 @@ public class LambdaUtils {
         return collection
                 .stream()
                 .sorted(comparator)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     /**
