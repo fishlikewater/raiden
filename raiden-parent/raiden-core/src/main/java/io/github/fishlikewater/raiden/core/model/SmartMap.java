@@ -15,11 +15,13 @@
  */
 package io.github.fishlikewater.raiden.core.model;
 
+import io.github.fishlikewater.raiden.core.LambdaUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 
 import java.io.Serial;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -62,6 +64,26 @@ public class SmartMap<K, V> extends HashMap<K, V> {
             return new SmartMap<>(map);
         }
         return RaidenExceptionCheck.INSTANCE.throwUnchecked("value for key {} is not a Map", k);
+    }
+
+    /**
+     * 获取ListMap
+     *
+     * @param k   key
+     * @param <T> value
+     * @return ListMap
+     */
+    public <R, T> List<SmartMap<R, T>> getListMap(K k) {
+        Object value = super.get(k);
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof List list) {
+            List convert = ObjectUtils.convert(value, List.class);
+            return LambdaUtils.toList(convert, item -> new SmartMap<>((Map<R, T>) item));
+        }
+
+        return RaidenExceptionCheck.INSTANCE.throwUnchecked("value for key {} is not a List", k);
     }
 
     /**
