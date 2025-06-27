@@ -23,7 +23,6 @@ module raiden.config {
     requires raiden.core;
     requires org.slf4j;
     requires static lombok;
-    requires raiden.json.core;
     requires com.fasterxml.jackson.core;
 
     exports io.github.fishlikewater.raiden.config.ini;

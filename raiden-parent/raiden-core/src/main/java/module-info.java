@@ -23,7 +23,8 @@
 module raiden.core {
     requires static lombok;
     requires transitive org.slf4j;
-    requires java.desktop;
+    requires com.fasterxml.jackson.datatype.jsr310;
+    requires com.fasterxml.jackson.databind;
     requires java.management;
 
     exports io.github.fishlikewater.raiden.core;
@@ -36,4 +37,6 @@ module raiden.core {
     exports io.github.fishlikewater.raiden.core.thread;
     exports io.github.fishlikewater.raiden.core.id;
     exports io.github.fishlikewater.raiden.core.handler;
+    exports io.github.fishlikewater.raiden.core.json;
+    exports io.github.fishlikewater.raiden.core.annotation;
 }

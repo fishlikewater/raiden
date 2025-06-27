@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.fishlikewater.raiden.json.core.jackson;
+package io.github.fishlikewater.raiden.core.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import io.github.fishlikewater.raiden.core.StringUtils;
-import io.github.fishlikewater.raiden.json.core.annotation.JackSonSerializeNotNull;
+import io.github.fishlikewater.raiden.core.annotation.JackSonSerializeNotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

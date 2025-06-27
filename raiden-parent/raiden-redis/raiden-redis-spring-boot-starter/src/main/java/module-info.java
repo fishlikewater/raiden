@@ -20,10 +20,6 @@
  * @since 2024/06/24
  */
 module raiden.redis.spring.boot.starter {
-    requires static lombok;
-    requires redisson;
-    requires raiden.core;
-    requires raiden.redis.core;
     requires raiden.core.spring.boot;
     requires spring.context;
     requires spring.boot;
@@ -32,6 +28,9 @@ module raiden.redis.spring.boot.starter {
     requires spring.boot.autoconfigure;
     requires org.aspectj.weaver;
     requires spring.expression;
+    requires raiden.redis.core;
+    requires raiden.core;
+    requires static lombok;
 
     exports io.github.fishlikewater.raiden.redis.autoconfig;
     exports io.github.fishlikewater.raiden.redis.autoconfig.aop;

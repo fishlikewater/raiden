@@ -20,9 +20,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.github.fishlikewater.raiden.config.ini.Ini;
 import io.github.fishlikewater.raiden.config.ini.Section;
 import io.github.fishlikewater.raiden.core.FileUtils;
+import io.github.fishlikewater.raiden.core.JSONUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
-import io.github.fishlikewater.raiden.json.core.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;

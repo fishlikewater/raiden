@@ -24,7 +24,6 @@ module raiden.redis.core {
     requires redisson;
     requires org.slf4j;
     requires raiden.core;
-    requires raiden.json.core;
     requires com.fasterxml.jackson.core;
 
     exports io.github.fishlikewater.raiden.redis.core;

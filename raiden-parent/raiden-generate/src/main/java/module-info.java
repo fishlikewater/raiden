@@ -22,7 +22,6 @@
 module raiden.generate {
     requires static lombok;
     requires raiden.core;
-    requires raiden.json.core;
     requires pinyin4j;
     requires com.fasterxml.jackson.annotation;
     requires cn.hutool.core;
