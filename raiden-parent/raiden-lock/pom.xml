@@ -10,6 +10,7 @@
     </parent>
     <packaging>pom</packaging>
     <artifactId>raiden-lock</artifactId>
+    <name>raiden-lock</name>
     <description>raiden-lock</description>
 
     <modules>

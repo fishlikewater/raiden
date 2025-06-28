@@ -11,6 +11,7 @@
 
     <packaging>pom</packaging>
     <artifactId>raiden-dependency</artifactId>
+    <name>raiden-dependency</name>
     <description>raiden-dependency</description>
 
     <properties>

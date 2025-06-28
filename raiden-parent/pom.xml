@@ -11,6 +11,7 @@
 
     <packaging>pom</packaging>
     <artifactId>raiden-parent</artifactId>
+    <name>raiden-parent</name>
     <description>raiden-parent</description>
 
     <modules>

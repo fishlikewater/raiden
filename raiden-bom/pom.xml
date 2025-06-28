@@ -11,6 +11,7 @@
 
     <packaging>pom</packaging>
     <artifactId>raiden-bom</artifactId>
+    <name>raiden-bom</name>
     <description>raiden-bom</description>
 
     <properties>
