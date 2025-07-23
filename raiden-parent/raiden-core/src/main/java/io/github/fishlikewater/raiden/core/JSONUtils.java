@@ -30,6 +30,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import io.github.fishlikewater.raiden.core.annotation.JackSonSerializeNotNull;
 import io.github.fishlikewater.raiden.core.constant.DatePatternConstants;
 import io.github.fishlikewater.raiden.core.json.BigNumberSerializer;
 import io.github.fishlikewater.raiden.core.json.JackSonNotNullSerialize;
@@ -87,8 +88,14 @@ public final class JSONUtils {
 
     private static class NeedNotNullSerializerModifier extends BeanSerializerModifier {
 
+        private static Class<JackSonSerializeNotNull>[] annotations = new Class[]{JackSonSerializeNotNull.class};
+
         @Override
         public List<BeanPropertyWriter> changeProperties(SerializationConfig config, BeanDescription beanDesc, List<BeanPropertyWriter> beanProperties) {
+            boolean hassed = beanDesc.getClassAnnotations().hasOneOf(annotations);
+            if (!hassed) {
+                return beanProperties;
+            }
             beanProperties.forEach(b -> b.assignNullSerializer(new JackSonNotNullSerialize(b)));
             return beanProperties;
         }
