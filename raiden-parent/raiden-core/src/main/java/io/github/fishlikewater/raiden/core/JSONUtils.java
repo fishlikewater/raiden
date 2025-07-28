@@ -79,7 +79,6 @@ public final class JSONUtils {
         //支持结尾逗号
         JACKSON.configure(JsonReadFeature.ALLOW_TRAILING_COMMA.mappedFeature(), true);
 
-
         JACKSON.registerModule(new JavaTimeModule());
     }
 
