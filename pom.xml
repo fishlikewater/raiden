@@ -196,6 +196,7 @@
                         <exclude>**/*.xml</exclude>
                         <exclude>**/raiden/core/Assert.java</exclude>
                         <exclude>**/references/**/**.java</exclude>
+                        <exclude>**/references/**.java</exclude>
                     </excludes>
                     <strictCheck>true</strictCheck>
                     <mapping>
