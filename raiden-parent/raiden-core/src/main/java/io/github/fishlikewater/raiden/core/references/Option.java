@@ -253,7 +253,7 @@ public abstract class Option<T> {
 
         @Override
         public void ifEmpty(Runnable runnable) {
-            // do nothing
+            throw new IllegalStateException("Option is not empty");
         }
 
         @Override
@@ -345,7 +345,7 @@ public abstract class Option<T> {
 
         @Override
         public void ifPresent(Consumer<? super T> consumer) {
-            // do nothing
+            throw new IllegalStateException("Option is empty");
         }
 
         @Override
