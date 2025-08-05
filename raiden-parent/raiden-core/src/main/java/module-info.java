@@ -40,4 +40,5 @@ module raiden.core {
     exports io.github.fishlikewater.raiden.core.json;
     exports io.github.fishlikewater.raiden.core.annotation;
     exports io.github.fishlikewater.raiden.core.references;
+    exports io.github.fishlikewater.raiden.core.future;
 }
