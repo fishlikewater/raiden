@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.core.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.fishlikewater.raiden.core.CollectionUtils;
@@ -133,6 +134,23 @@ public class JacksonUtils extends ObjectMapper {
         try {
             return this.readValue(text, this.getTypeFactory().constructCollectionType(List.class, clazz));
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 将JSON格式的树节点转换为指定类型的对象
+     *
+     * @param node  JSON格式的树节点
+     * @param clazz 要转换的目标对象类型
+     * @param <T>   目标对象的泛型类型
+     * @return 转换后的对象
+     * @throws RuntimeException 如果转换过程中发生JSON处理异常，则抛出运行时异常
+     */
+    public <T> T treeParseToValue(TreeNode node, Class<T> clazz) {
+        try {
+            return this.treeToValue(node, clazz);
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
