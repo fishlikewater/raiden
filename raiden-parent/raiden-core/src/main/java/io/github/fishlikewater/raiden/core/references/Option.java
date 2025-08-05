@@ -252,9 +252,7 @@ public abstract class Option<T> {
         }
 
         @Override
-        public void ifEmpty(Runnable runnable) {
-            throw new IllegalStateException("Option is not empty");
-        }
+        public void ifEmpty(Runnable runnable) {}
 
         @Override
         public <R> R match(Function<? super T, ? extends R> someCase, Supplier<? extends R> noneCase) {
@@ -344,9 +342,7 @@ public abstract class Option<T> {
         }
 
         @Override
-        public void ifPresent(Consumer<? super T> consumer) {
-            throw new IllegalStateException("Option is empty");
-        }
+        public void ifPresent(Consumer<? super T> consumer) {}
 
         @Override
         public void ifEmpty(Runnable runnable) {
