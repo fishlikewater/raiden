@@ -462,13 +462,9 @@ public class RobustFuture<V> implements Future<V> {
 
         // 将监听器队列置为 null，防止后续添加的监听器在此轮通知中被调用
         if (LISTENER_UPDATER.compareAndSet(this, listeners, null)) {
-            // 在一个独立的线程中执行所有监听器 (避免阻塞当前线程)
-            // 这里使用 ForkJoinPool.commonPool() 作为示例，生产环境可能需要更精细的线程池管理
-            CompletableFuture.runAsync(() -> {
-                for (FutureListener<V> listener : listeners) {
-                    notifyListenerNow(listener);
-                }
-            });
+            for (FutureListener<V> listener : listeners) {
+                notifyListenerNow(listener);
+            }
         }
     }
 
