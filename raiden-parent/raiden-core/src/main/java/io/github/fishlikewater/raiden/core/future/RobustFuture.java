@@ -195,6 +195,17 @@ public class RobustFuture<V> implements Future<V> {
     }
 
     /**
+     * 模拟 Netty 的 complete() 方法，设置 Future 的完成状态。
+     * 如果 Future 已经完成 (成功、失败或取消)，则此操作将失败。
+     */
+    public void complete() {
+        if (STATE_UPDATER.compareAndSet(this, STATE_UNCOMPLETED, STATE_SUCCESS)) {
+            latch.countDown();
+            notifyListeners();
+        }
+    }
+
+    /**
      * 设置此 Future 的失败原因。
      * 如果 Future 已经完成 (成功、失败或取消)，则此操作将失败。
      *

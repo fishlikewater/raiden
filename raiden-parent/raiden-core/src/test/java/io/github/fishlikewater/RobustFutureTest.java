@@ -43,7 +43,7 @@ public class RobustFutureTest {
         future.setSuccess("hello world");
         assert "HELLO WORLD".equals(thenApply.get());
 
-        RobustFuture<String> future2 = new RobustFuture<>();
+        RobustFuture<Void> future2 = new RobustFuture<>();
         RobustFuture<String> stringRobustFuture = future2.thenCompose(s -> {
             RobustFuture<String> robustFuture = new RobustFuture<>();
             robustFuture.addListener(f -> {
@@ -54,7 +54,7 @@ public class RobustFutureTest {
             robustFuture.setSuccess("java");
             return robustFuture;
         });
-        future2.setSuccess("hello world");
+        future2.complete();
         String string1 = stringRobustFuture.get();
         assert "java".equals(string1);
     }
