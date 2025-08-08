@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.core.future;
 
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.*;
@@ -50,6 +51,8 @@ public class RobustFuture<V> implements Future<V> {
 
     private static final AtomicReferenceFieldUpdater<RobustFuture, Object> RESULT_UPDATER = AtomicReferenceFieldUpdater.newUpdater(RobustFuture.class, Object.class, "result");
 
+    private static final AtomicReferenceFieldUpdater<RobustFuture, CauseHolder> CAUSE_UPDATER = AtomicReferenceFieldUpdater.newUpdater(RobustFuture.class, CauseHolder.class, "cause");
+
     private static final AtomicReferenceFieldUpdater<RobustFuture, ConcurrentLinkedQueue> LISTENER_UPDATER = AtomicReferenceFieldUpdater.newUpdater(RobustFuture.class, ConcurrentLinkedQueue.class, "listeners");
 
     // ------------------------------------------------------------------------  成员变量
@@ -57,10 +60,18 @@ public class RobustFuture<V> implements Future<V> {
     private volatile int state = STATE_UNCOMPLETED;
 
     /**
-     * 存储成功结果或失败异常 (包装在 CauseHolder 中)
+     * 存储成功结果
      */
-    private volatile Object result;
+    private volatile V result;
 
+    /**
+     * 存储失败原因
+     */
+    private volatile CauseHolder cause;
+
+    /**
+     * 存储 FutureListener 队列 (用于异步通知)
+     */
     private volatile ConcurrentLinkedQueue<FutureListener<V>> listeners;
 
     /**
@@ -73,10 +84,19 @@ public class RobustFuture<V> implements Future<V> {
      */
     private final AtomicBoolean cancelled = new AtomicBoolean(false);
 
+    /**
+     * 线程池
+     */
+    private ExecutorService executor;
+
     // ------------------------------------------------------------------------ 构造函数
 
     public RobustFuture() {
         // 默认构造函数
+    }
+
+    public RobustFuture(ExecutorService executor) {
+        this.executor = executor;
     }
 
     // ------------------------------------------------------------------------ 接口实现
@@ -96,10 +116,6 @@ public class RobustFuture<V> implements Future<V> {
             return false;
         }
         if (STATE_UPDATER.compareAndSet(this, STATE_UNCOMPLETED, STATE_CANCELLED)) {
-            // 唤醒所有等待的线程
-            latch.countDown();
-            // 通知监听器
-            notifyListeners();
             return true;
         }
         // 竞态条件：可能在设置 cancelled 后，状态已被其他线程改变
@@ -186,7 +202,7 @@ public class RobustFuture<V> implements Future<V> {
      */
     public boolean setFailure(Throwable cause) {
         if (STATE_UPDATER.compareAndSet(this, STATE_UNCOMPLETED, STATE_FAILURE)) {
-            RESULT_UPDATER.set(this, new CauseHolder(cause));
+            CAUSE_UPDATER.set(this, new CauseHolder(cause));
             latch.countDown();
             notifyListeners();
             return true;
@@ -281,19 +297,13 @@ public class RobustFuture<V> implements Future<V> {
     public boolean awaitUninterruptibly(long timeout, TimeUnit unit) {
         long startTime = System.nanoTime();
         long remainingNanos = unit.toNanos(timeout);
-
         boolean interrupted = false;
+
         try {
             while (!isDone() && remainingNanos > 0) {
                 try {
                     // 使用 CountDownLatch 的 await 带超时
-                    boolean success = latch.await(remainingNanos, TimeUnit.NANOSECONDS);
-                    if (success) {
-                        return true;
-                    } else {
-                        // 超时
-                        return false;
-                    }
+                    return latch.await(remainingNanos, TimeUnit.NANOSECONDS);
                 } catch (InterruptedException e) {
                     interrupted = true;
                     // 重新计算剩余时间
@@ -347,7 +357,7 @@ public class RobustFuture<V> implements Future<V> {
      */
     public Throwable cause() {
         if (state == STATE_FAILURE) {
-            return ((CauseHolder) result).cause;
+            return cause.cause;
         }
         return null;
     }
@@ -475,15 +485,26 @@ public class RobustFuture<V> implements Future<V> {
      * @param listener 要通知的监听器
      */
     private void notifyListenerNow(FutureListener<V> listener) {
-        CompletableFuture.runAsync(() -> {
-            try {
-                listener.operationComplete(this);
-            } catch (Throwable t) {
-                // 防止监听器内部异常影响其他监听器
-                // 可以考虑记录日志
-                log.error("Listener failed", t);
-            }
-        });
+        if (ObjectUtils.isNullOrEmpty(this.executor)) {
+            CompletableFuture.runAsync(() -> {executor(listener);});
+        } else {
+            CompletableFuture.runAsync(() -> {executor(listener);}, this.executor);
+        }
+    }
+
+    /**
+     * 执行监听器。
+     *
+     * @param listener 要执行的监听器
+     */
+    private void executor(FutureListener<V> listener) {
+        try {
+            listener.operationComplete(this);
+        } catch (Throwable t) {
+            // 防止监听器内部异常影响其他监听器
+            // 可以考虑记录日志
+            log.error("Listener failed", t);
+        }
     }
 
     // ---------------------------------------------------------------- 内部类

@@ -18,6 +18,8 @@ package io.github.fishlikewater;
 import io.github.fishlikewater.raiden.core.future.RobustFuture;
 import org.junit.Test;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * {@code RobustFutureTest}
  *
@@ -27,14 +29,19 @@ import org.junit.Test;
 public class RobustFutureTest {
 
     @Test
-    public void test() throws InterruptedException {
+    public void test() throws InterruptedException, ExecutionException {
         RobustFuture<String> future = new RobustFuture<>();
         future.addListener(f -> {
             if (f.isSuccess()) {
                 System.out.println(f.getNow());
             }
+            if (!f.isSuccess()) {
+                System.out.println(f.cause().getMessage());
+            }
         });
+        RobustFuture<String> thenApply = future.thenApply(String::toUpperCase);
         future.setSuccess("hello world");
-        //Thread.sleep(1000);
+        String string = thenApply.get();
+        assert "HELLO WORLD".equals(string);
     }
 }
