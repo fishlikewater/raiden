@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.core.future;
 
+import io.github.fishlikewater.raiden.core.LambdaUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,7 +52,7 @@ public class RobustFuture<V> implements Future<V> {
 
     private static final AtomicReferenceFieldUpdater<RobustFuture, Object> RESULT_UPDATER = AtomicReferenceFieldUpdater.newUpdater(RobustFuture.class, Object.class, "result");
 
-    private static final AtomicReferenceFieldUpdater<RobustFuture, CauseHolder> CAUSE_UPDATER = AtomicReferenceFieldUpdater.newUpdater(RobustFuture.class, CauseHolder.class, "cause");
+    private static final AtomicReferenceFieldUpdater<RobustFuture, Throwable> CAUSE_UPDATER = AtomicReferenceFieldUpdater.newUpdater(RobustFuture.class, Throwable.class, "cause");
 
     private static final AtomicReferenceFieldUpdater<RobustFuture, ConcurrentLinkedQueue> LISTENER_UPDATER = AtomicReferenceFieldUpdater.newUpdater(RobustFuture.class, ConcurrentLinkedQueue.class, "listeners");
 
@@ -67,7 +68,7 @@ public class RobustFuture<V> implements Future<V> {
     /**
      * 存储失败原因
      */
-    private volatile CauseHolder cause;
+    private volatile Throwable cause;
 
     /**
      * 存储 FutureListener 队列 (用于异步通知)
@@ -202,7 +203,7 @@ public class RobustFuture<V> implements Future<V> {
      */
     public boolean setFailure(Throwable cause) {
         if (STATE_UPDATER.compareAndSet(this, STATE_UNCOMPLETED, STATE_FAILURE)) {
-            CAUSE_UPDATER.set(this, new CauseHolder(cause));
+            CAUSE_UPDATER.set(this, cause);
             latch.countDown();
             notifyListeners();
             return true;
@@ -302,7 +303,6 @@ public class RobustFuture<V> implements Future<V> {
         try {
             while (!isDone() && remainingNanos > 0) {
                 try {
-                    // 使用 CountDownLatch 的 await 带超时
                     return latch.await(remainingNanos, TimeUnit.NANOSECONDS);
                 } catch (InterruptedException e) {
                     interrupted = true;
@@ -331,7 +331,6 @@ public class RobustFuture<V> implements Future<V> {
             case STATE_SUCCESS:
                 return (V) result;
             case STATE_FAILURE:
-                Throwable cause = ((CauseHolder) result).cause;
                 throw new RuntimeException(cause);
             case STATE_CANCELLED:
             case STATE_UNCOMPLETED:
@@ -357,7 +356,7 @@ public class RobustFuture<V> implements Future<V> {
      */
     public Throwable cause() {
         if (state == STATE_FAILURE) {
-            return cause.cause;
+            return cause;
         }
         return null;
     }
@@ -429,30 +428,26 @@ public class RobustFuture<V> implements Future<V> {
     public <U> RobustFuture<U> thenCompose(Function<? super V, ? extends RobustFuture<U>> fn) {
         RobustFuture<U> newFuture = new RobustFuture<>();
         this.addListener(future -> {
-            try {
-                if (future.isSuccess()) {
+            if (future.isSuccess()) {
+                try {
                     RobustFuture<U> nextFuture = fn.apply(future.getNow());
                     // 监听返回的 Future，将其状态传递给 newFuture
                     nextFuture.addListener(f -> {
-                        try {
-                            if (f.isSuccess()) {
-                                newFuture.setSuccess(f.get());
-                            } else if (f.cause() != null) {
-                                newFuture.setFailure(f.cause());
-                            } else if (f.isCancelled()) {
-                                newFuture.cancel(false);
-                            }
-                        } catch (Exception e) {
-                            newFuture.setFailure(e);
+                        if (f.isSuccess()) {
+                            newFuture.setSuccess(f.get());
+                        } else if (f.cause() != null) {
+                            newFuture.setFailure(f.cause());
+                        } else if (f.isCancelled()) {
+                            newFuture.cancel(false);
                         }
                     });
-                } else if (future.cause() != null) {
-                    newFuture.setFailure(future.cause());
-                } else if (future.isCancelled()) {
-                    newFuture.cancel(false);
+                } catch (Exception e) {
+                    newFuture.setFailure(e);
                 }
-            } catch (Throwable t) {
-                newFuture.setFailure(t);
+            } else if (future.cause() != null) {
+                newFuture.setFailure(future.cause());
+            } else if (future.isCancelled()) {
+                newFuture.cancel(false);
             }
         });
         return newFuture;
@@ -462,7 +457,6 @@ public class RobustFuture<V> implements Future<V> {
 
     /**
      * 通知所有注册的监听器。在 Future 完成时调用。
-     * 在一个独立的线程池中执行，避免阻塞 I/O 线程 (模拟 Netty EventLoop)。
      */
     private void notifyListeners() {
         ConcurrentLinkedQueue<FutureListener<V>> listeners = this.listeners;
@@ -472,9 +466,7 @@ public class RobustFuture<V> implements Future<V> {
 
         // 将监听器队列置为 null，防止后续添加的监听器在此轮通知中被调用
         if (LISTENER_UPDATER.compareAndSet(this, listeners, null)) {
-            for (FutureListener<V> listener : listeners) {
-                notifyListenerNow(listener);
-            }
+            LambdaUtils.handle(listeners, listener -> executor(listener));
         }
     }
 
@@ -504,19 +496,6 @@ public class RobustFuture<V> implements Future<V> {
             // 防止监听器内部异常影响其他监听器
             // 可以考虑记录日志
             log.error("Listener failed", t);
-        }
-    }
-
-    // ---------------------------------------------------------------- 内部类
-
-    /**
-     * 包装失败原因的异常，避免与成功结果 null 冲突。
-     */
-    private static final class CauseHolder {
-        final Throwable cause;
-
-        CauseHolder(Throwable cause) {
-            this.cause = cause;
         }
     }
 }

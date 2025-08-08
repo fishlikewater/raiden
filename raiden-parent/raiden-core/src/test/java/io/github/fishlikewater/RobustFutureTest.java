@@ -41,7 +41,21 @@ public class RobustFutureTest {
         });
         RobustFuture<String> thenApply = future.thenApply(String::toUpperCase);
         future.setSuccess("hello world");
-        String string = thenApply.get();
-        assert "HELLO WORLD".equals(string);
+        assert "HELLO WORLD".equals(thenApply.get());
+
+        RobustFuture<String> future2 = new RobustFuture<>();
+        RobustFuture<String> stringRobustFuture = future2.thenCompose(s -> {
+            RobustFuture<String> robustFuture = new RobustFuture<>();
+            robustFuture.addListener(f -> {
+                if (f.isSuccess()) {
+                    System.out.println(f.getNow());
+                }
+            });
+            robustFuture.setSuccess("java");
+            return robustFuture;
+        });
+        future2.setSuccess("hello world");
+        String string1 = stringRobustFuture.get();
+        assert "java".equals(string1);
     }
 }
