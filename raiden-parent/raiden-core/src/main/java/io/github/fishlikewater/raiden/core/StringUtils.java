@@ -155,7 +155,7 @@ public final class StringUtils {
                 content.append(valueFunc.apply(value));
             }
         }
-        content.delete(0, 1);
+        content.delete(0, symbol.length());
         return content.toString();
     }
 
