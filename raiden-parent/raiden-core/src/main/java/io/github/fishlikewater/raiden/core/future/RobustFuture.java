@@ -337,12 +337,12 @@ public class RobustFuture<V> implements Future<V> {
      * @return 结果，如果 Future 成功完成；如果失败则抛出异常；如果未完成或已取消则返回 null
      */
     @SuppressWarnings("unchecked")
-    public V getNow() {
+    public V getNow() throws ExecutionException {
         switch (state) {
             case STATE_SUCCESS:
                 return (V) result;
             case STATE_FAILURE:
-                throw new RuntimeException(cause);
+                throw new ExecutionException(cause);
             case STATE_CANCELLED:
             case STATE_UNCOMPLETED:
             default:
