@@ -477,7 +477,7 @@ public class RobustFuture<V> implements Future<V> {
 
         // 将监听器队列置为 null，防止后续添加的监听器在此轮通知中被调用
         if (LISTENER_UPDATER.compareAndSet(this, listeners, null)) {
-            LambdaUtils.handle(listeners, listener -> executor(listener));
+            LambdaUtils.handle(listeners, this::notifyListenerNow);
         }
     }
 
