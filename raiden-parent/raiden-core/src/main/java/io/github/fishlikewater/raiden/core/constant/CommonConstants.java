@@ -68,5 +68,6 @@ public interface CommonConstants {
         String SYMBOL_LEFT_BRACKET_ANGLE = "<";
         String SYMBOL_RIGHT_BRACKET_ANGLE = ">";
         String SYMBOL_EXPRESSION = "#";
+        String URL_PARAMETER_SPLIT = "?";
     }
 }

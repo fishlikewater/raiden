@@ -20,6 +20,7 @@ import io.github.fishlikewater.raiden.core.enums.SortEnum;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -504,8 +505,33 @@ public final class StringUtils {
             if (null == value && ignoreNull) {
                 continue;
             }
-            template2 = replace(template2, "{" + entry.getKey() + "}", value);
+            template2 = replace(template2, CommonConstants.Symbol.SYMBOL_LEFT_BRACKET + entry.getKey() + CommonConstants.Symbol.SYMBOL_RIGHT_BRACKET, value);
         }
         return template2;
+    }
+
+    /**
+     * 拼接URL参数
+     *
+     * @param url URL
+     * @param map 参数
+     * @return 拼接后的URL
+     */
+    public static String urlJoinParam(String url, Map<String, String> map) {
+        if (Objects.isNull(map) || map.isEmpty()) {
+            return url;
+        }
+        StringBuilder newUrl = new StringBuilder(url);
+        if (!url.contains(CommonConstants.Symbol.URL_PARAMETER_SPLIT)) {
+            newUrl.append(CommonConstants.Symbol.URL_PARAMETER_SPLIT);
+        }
+        for (Map.Entry<String, String> item : map.entrySet()) {
+            char c = newUrl.charAt(newUrl.length() - 1);
+            String param = StringUtils.format("{}{}={}",
+                    c == '?' ? "" : CommonConstants.Symbol.SYMBOL_AND, item.getKey().trim(),
+                    URLEncoder.encode(item.getValue().trim(), StandardCharsets.UTF_8));
+            newUrl.append(param);
+        }
+        return newUrl.toString();
     }
 }
