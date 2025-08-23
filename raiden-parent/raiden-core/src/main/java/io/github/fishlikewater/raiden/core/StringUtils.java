@@ -139,6 +139,25 @@ public final class StringUtils {
      * @param valueFunc 值转换函数
      */
     public static <T, V> String mapToStr(Map<String, T> map, String symbol, Function<T, V> valueFunc) {
+        return mapToStr(map, symbol, CommonConstants.Symbol.SYMBOL_EQUAL, valueFunc);
+    }
+
+    /**
+     * <p>将map转换为字符串 默认使用 symbol 分隔符</p>
+     * <p>例:</p>
+     * <pre>
+     *     Map<String, Object> map = new HashMap<>();
+     *     map.put("a", 1);
+     *     map.put("b", 2);
+     *     String str = StringUtils.mapToStr(map, "|", "", value -> value.toString(), "=", "|"); // a1|b2
+     * </pre>
+     *
+     * @param map           map
+     * @param separator     分隔符
+     * @param linkSeparator key value 连接符
+     * @param valueFunc     值转换函数
+     */
+    public static <T, V> String mapToStr(Map<String, T> map, String separator, String linkSeparator, Function<T, V> valueFunc) {
         StringBuilder content = new StringBuilder();
         Set<String> keys = map.keySet();
 
@@ -147,16 +166,27 @@ public final class StringUtils {
             if (ObjectUtils.isNullOrEmpty(key) || ObjectUtils.isNullOrEmpty(value)) {
                 continue;
             }
-            content.append(symbol)
-                    .append(key)
-                    .append("=");
+
+            if (StringUtils.isNotBlank(separator)) {
+                content.append(separator);
+            }
+
+            content.append(key);
+
+            if (StringUtils.isNotBlank(linkSeparator)) {
+                content.append(linkSeparator);
+            }
+
             if (ObjectUtils.isNullOrEmpty(valueFunc)) {
                 content.append(value);
             } else {
                 content.append(valueFunc.apply(value));
             }
         }
-        content.delete(0, symbol.length());
+        if (StringUtils.isNotBlank(separator)) {
+            content.delete(0, separator.length());
+        }
+
         return content.toString();
     }
 
@@ -211,6 +241,26 @@ public final class StringUtils {
      * @param valueFunc 值转换函数
      */
     public static <T, V> String mapSortToStr(Map<String, T> map, String symbol, SortEnum sort, Function<T, V> valueFunc) {
+        return mapSortToStr(map, symbol, CommonConstants.Symbol.SYMBOL_EQUAL, sort, valueFunc);
+    }
+
+    /**
+     * <p>将map按key排序转换为字符串</p>
+     * <p>例:</p>
+     * <pre>
+     *     Map<String, Object> map = new HashMap<>();
+     *     map.put("a", 1);
+     *     map.put("b", 2);
+     *     String str = StringUtils.mapSortToStr(map, "|", "", SortEnum.ASC,  value -> value.toString()); // a1|b2
+     * </pre>
+     *
+     * @param map           map
+     * @param separator     分隔符
+     * @param linkSeparator key value 连接符
+     * @param sort          排序方式
+     * @param valueFunc     值转换函数
+     */
+    public static <T, V> String mapSortToStr(Map<String, T> map, String separator, String linkSeparator, SortEnum sort, Function<T, V> valueFunc) {
         TreeMap<String, T> treeMap;
         if (sort == SortEnum.ASC) {
             treeMap = new TreeMap<>(map);
@@ -218,7 +268,7 @@ public final class StringUtils {
             treeMap = new TreeMap<>(Comparator.reverseOrder());
             treeMap.putAll(map);
         }
-        return mapToStr(treeMap, symbol, valueFunc);
+        return mapToStr(treeMap, separator, linkSeparator, valueFunc);
     }
 
     /**

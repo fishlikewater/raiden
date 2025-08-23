@@ -55,8 +55,12 @@ public class StringUtilsTest {
         map.put("b", 2);
         String str = StringUtils.mapSortToStr(map, SortEnum.DESC);
         String str2 = StringUtils.mapSortToStr(map, CommonConstants.Symbol.SYMBOL_AT, SortEnum.ASC);
+        String str3 = StringUtils.mapSortToStr(map, CommonConstants.Symbol.SYMBOL_AT, "", SortEnum.ASC, v -> v);
+        String str4 = StringUtils.mapSortToStr(map, "", "", SortEnum.ASC, v -> v);
         Assert.isTrue(str.equals("c=3&b=2&a=1"), "map to str error");
         Assert.isTrue(str2.equals("a=1@b=2@c=3"), "map to str error");
+        Assert.isTrue(str3.equals("a1@b2@c3"), "map to str error");
+        Assert.isTrue(str4.equals("a1b2c3"), "map to str error");
     }
 
     @Test
@@ -82,5 +86,12 @@ public class StringUtilsTest {
     public void testEndWithIgnoreCase() {
         String str = "abc";
         Assert.isTrue(StringUtils.endWithIgnoreCase(str, "C"), "endWithIgnoreCase with error");
+    }
+
+    @Test
+    public void testUrlJoinParam() {
+        String url = "https://www.baidu.com";
+        String url1 = StringUtils.urlJoinParam(url, Map.of("a", "1"));
+        Assert.isTrue(StringUtils.equals(url1, "https://www.baidu.com?a=1"), "urlJoinParam with error");
     }
 }
