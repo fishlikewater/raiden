@@ -45,11 +45,12 @@ public abstract class TypeReference<T> implements Comparable<TypeReference<T>> {
     @Override
     public int compareTo(@NonNull TypeReference<T> o) {return 0;}
 
-    public Class<?> getRawType() {
+    @SuppressWarnings("unchecked")
+    public Class<T> getRawType() {
         if (type instanceof Class<?>) {
-            return (Class<?>) type;
+            return (Class<T>) type;
         } else if (type instanceof ParameterizedType) {
-            return (Class<?>) ((ParameterizedType) type).getRawType();
+            return (Class<T>) ((ParameterizedType) type).getRawType();
         }
         throw new IllegalArgumentException("not support：" + type);
     }
