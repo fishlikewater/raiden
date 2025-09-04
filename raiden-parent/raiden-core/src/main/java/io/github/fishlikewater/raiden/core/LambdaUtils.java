@@ -70,6 +70,24 @@ public class LambdaUtils {
     }
 
     /**
+     * 对集合进行映射处理
+     *
+     * @param map  集合
+     * @param func 映射函数
+     * @param <T>  集合元素类型
+     * @param <K>  映射键类型
+     * @param <V>  映射值类型
+     * @return 映射后的Map
+     */
+    public static <T, K, V> Map<K, T> handleMap(Map<K, V> map, Function<V, T> func) {
+        Map<K, T> returnMap = new HashMap<>((int) ((map.size() / 0.75f) + 1));
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            returnMap.put(entry.getKey(), func.apply(entry.getValue()));
+        }
+        return returnMap;
+    }
+
+    /**
      * 过滤
      *
      * @param collection 待过滤集合
