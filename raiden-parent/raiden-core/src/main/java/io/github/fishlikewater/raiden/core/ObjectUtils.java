@@ -138,6 +138,9 @@ public final class ObjectUtils {
         Field[] fields = object.getClass().getDeclaredFields();
         try {
             for (Field field : fields) {
+                if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
                 field.setAccessible(true);
                 if (ignoreNull && isNullOrEmpty(field.get(object))) {
                     continue;
