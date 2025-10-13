@@ -337,6 +337,31 @@ public final class StringUtils {
     }
 
     /**
+     * 将字符串切分为List
+     *
+     * @param str 字符串
+     * @return 切分后的List
+     */
+    public static List<String> splitList(String str) {
+        return splitList(str, CommonConstants.Symbol.SYMBOL_COMMA);
+    }
+
+    /**
+     * 将字符串切分为List
+     *
+     * @param str       字符串
+     * @param separator 分隔符
+     * @return 切分后的List
+     */
+    public static List<String> splitList(String str, String separator) {
+        if (str == null) {
+            return Collections.emptyList();
+        }
+        String[] array = tokenizeToStringArray(str, separator, true, true);
+        return Arrays.asList(array);
+    }
+
+    /**
      * 清理空白字符
      *
      * @param str 被清理的字符串
