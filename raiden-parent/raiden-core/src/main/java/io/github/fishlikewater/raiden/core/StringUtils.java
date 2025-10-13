@@ -614,6 +614,16 @@ public final class StringUtils {
      * 集合转字符串
      *
      * @param collection 集合
+     * @return 集合转字符串
+     */
+    public static String join(Collection<String> collection) {
+        return join(collection, CommonConstants.Symbol.SYMBOL_COMMA);
+    }
+
+    /**
+     * 集合转字符串
+     *
+     * @param collection 集合
      * @param separator  分隔符
      * @return 字符串
      */
