@@ -38,5 +38,7 @@ public @interface CacheInvalidate {
 
     String hashKey() default "";
 
+    boolean allEntries() default false;
+
     DataTypeEnum type() default DataTypeEnum.GENERAL;
 }

@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.redis.autoconfig.aop;
 
+import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.redis.autoconfig.RedisProperties;
 import io.github.fishlikewater.raiden.redis.core.annotation.CacheInvalidate;
 import io.github.fishlikewater.raiden.redis.core.enums.DataTypeEnum;
@@ -76,6 +77,11 @@ public class CacheInvalidateAspect extends AbstractCacheAspect {
     }
 
     private Object handleGeneral(ProceedingJoinPoint pjp, CacheInvalidate cacheInvalidate) throws Throwable {
+        boolean allEntries = cacheInvalidate.allEntries();
+        if (allEntries) {
+            redissonClient.getKeys().deleteByPattern(StringUtils.format("{}:{}", cacheInvalidate.prefix(), "*"));
+            return pjp.proceed();
+        }
         String cacheKey = this.populateCacheKey(cacheInvalidate.key(), cacheInvalidate.prefix(), pjp);
         RBucket<Object> bucket = redissonClient.getBucket(cacheKey);
         if (bucket.isExists()) {
@@ -84,11 +90,16 @@ public class CacheInvalidateAspect extends AbstractCacheAspect {
         return pjp.proceed();
     }
 
-    private Object cleanHash(ProceedingJoinPoint pjp, CacheInvalidate cache) throws Throwable {
+    private Object cleanHash(ProceedingJoinPoint pjp, CacheInvalidate cacheInvalidate) throws Throwable {
         EvaluationContext context = this.getContext(pjp);
-        String cacheKey = this.populateHashKey(cache.key(), context);
-        String hashKey = this.populateCacheKey(cache.hashKey(), null, pjp);
+        String cacheKey = this.populateCacheKey(cacheInvalidate.key(), cacheInvalidate.prefix(), context);
+        boolean allEntries = cacheInvalidate.allEntries();
         RMapCache<String, Object> map = redissonClient.getMapCache(cacheKey);
+        if (allEntries) {
+            map.delete();
+            return pjp.proceed();
+        }
+        String hashKey = this.populateHashKey(cacheInvalidate.hashKey(), context);
         if (map.isExists()) {
             map.remove(hashKey);
         }
