@@ -31,6 +31,7 @@ module raiden.redis.spring.boot.starter {
     requires raiden.redis.core;
     requires raiden.core;
     requires static lombok;
+    requires redisson;
 
     exports io.github.fishlikewater.raiden.redis.autoconfig;
     exports io.github.fishlikewater.raiden.redis.autoconfig.aop;
