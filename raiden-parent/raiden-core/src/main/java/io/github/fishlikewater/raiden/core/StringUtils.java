@@ -609,4 +609,23 @@ public final class StringUtils {
         }
         return newUrl.toString();
     }
+
+    /**
+     * 集合转字符串
+     *
+     * @param collection 集合
+     * @param separator  分隔符
+     * @return 字符串
+     */
+    public static String join(Collection<String> collection, String separator) {
+        if (collection == null || collection.isEmpty()) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String item : collection) {
+            sb.append(item).append(separator);
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
 }
