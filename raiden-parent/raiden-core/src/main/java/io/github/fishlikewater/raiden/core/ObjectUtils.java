@@ -16,6 +16,7 @@
 package io.github.fishlikewater.raiden.core;
 
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
+import io.github.fishlikewater.raiden.core.func.LambdaFunction;
 import io.github.fishlikewater.raiden.core.model.SmartMap;
 
 import java.lang.reflect.Field;
@@ -231,6 +232,21 @@ public final class ObjectUtils {
 
         return (T) target;
     }
+
+    /**
+     * 获取对象属性
+     *
+     * @param target 待获取对象
+     * @param lambda 函数
+     * @param <T>    目标对象类型
+     * @param <R>    目标属性类型
+     * @return return
+     */
+    public static <T, R> T notNullGetter(R target, LambdaFunction<R, T> lambda, T defaultValue) {
+        return ObjectUtils.isNullOrEmpty(target) ? defaultValue : lambda.apply(target);
+    }
+
+    // ----------------------------------------------------------------
 
     /**
      * 转换基本类型
