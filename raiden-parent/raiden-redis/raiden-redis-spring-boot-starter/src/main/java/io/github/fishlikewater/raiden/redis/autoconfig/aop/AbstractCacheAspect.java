@@ -148,6 +148,21 @@ public abstract class AbstractCacheAspect implements CacheComposite {
     }
 
     /**
+     * 判断条件
+     *
+     * @param condition 条件
+     * @param pjp       切点
+     * @return true/false
+     */
+    protected boolean determineCondition(String condition, ProceedingJoinPoint pjp) {
+        if (StringUtils.isBlank(condition)) {
+            return false;
+        }
+        EvaluationContext context = this.getContext(pjp);
+        return !ExpressionUtils.getExpressionValue(context, condition, Boolean.class);
+    }
+
+    /**
      * 缓存对象
      *
      * @param pjp      切点

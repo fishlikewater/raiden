@@ -83,7 +83,11 @@ public class CachePutAspect extends AbstractCacheAspect {
      * @param pjp      切点
      * @return Object
      */
+    @SuppressWarnings("all")
     private Object handleCachePut(CachePut cachePut, ProceedingJoinPoint pjp) throws Throwable {
+        if (this.determineCondition(cachePut.condition(), pjp)) {
+            return pjp.proceed();
+        }
         // 获取缓存key
         DataTypeEnum type = cachePut.type();
         if (Objects.requireNonNull(type) == DataTypeEnum.HASH) {

@@ -133,6 +133,14 @@ public class SpringUtils implements BeanFactoryPostProcessor, ApplicationContext
     }
 
     /**
+     * 获取aop代理对象
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T getAopProxy(T invoker) {
+        return (T) getBean(invoker.getClass());
+    }
+
+    /**
      * 获取指定类型对应的所有Bean，包括子类
      *
      * @param <T>  Bean类型

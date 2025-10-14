@@ -68,7 +68,18 @@ public class CacheAspect extends AbstractCacheAspect {
         return this.handleCache(cache, pjp);
     }
 
+    /**
+     * 处理缓存
+     *
+     * @param cache 缓存注解
+     * @param pjp   切点
+     * @return Object
+     */
+    @SuppressWarnings("all")
     private Object handleCache(Cache cache, ProceedingJoinPoint pjp) throws Throwable {
+        if (this.determineCondition(cache.condition(), pjp)) {
+            return pjp.proceed();
+        }
         // 获取缓存key
         DataTypeEnum type = cache.type();
         if (Objects.requireNonNull(type) == DataTypeEnum.HASH) {
