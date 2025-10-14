@@ -15,9 +15,8 @@
  */
 package io.github.fishlikewater.raiden.redis.autoconfig.aop;
 
-import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.redis.autoconfig.RedisProperties;
-import io.github.fishlikewater.raiden.redis.core.annotation.Cache;
+import io.github.fishlikewater.raiden.redis.core.annotation.CachePut;
 import io.github.fishlikewater.raiden.redis.core.enums.DataTypeEnum;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -35,17 +34,16 @@ import org.springframework.expression.EvaluationContext;
 import java.util.Objects;
 
 /**
- * {@code CacheAspect}
- * 缓存切面
+ * {@code CachePutAspect}
+ * 缓存更新切面
  *
  * @author zhangxiang
- * @version 1.0.3
- * @since 2024/06/24
+ * @since 2025/10/14
  */
 @Aspect
-@Order(1)
+@Order(3)
 @ConditionalOnBean(RedissonClient.class)
-public class CacheAspect extends AbstractCacheAspect {
+public class CachePutAspect extends AbstractCacheAspect {
 
     private final RedissonClient redissonClient;
 
@@ -53,71 +51,19 @@ public class CacheAspect extends AbstractCacheAspect {
 
     private final ParameterNameDiscoverer parameterNameDiscoverer;
 
-    public CacheAspect(RedissonClient redissonClient, RedisProperties redisProperties, ParameterNameDiscoverer parameterNameDiscoverer) {
+    public CachePutAspect(RedissonClient redissonClient, RedisProperties redisProperties, ParameterNameDiscoverer parameterNameDiscoverer) {
         this.redissonClient = redissonClient;
         this.redisProperties = redisProperties;
         this.parameterNameDiscoverer = parameterNameDiscoverer;
     }
 
-    @Pointcut(value = "@annotation(io.github.fishlikewater.raiden.redis.core.annotation.Cache)")
+    @Pointcut(value = "@annotation(io.github.fishlikewater.raiden.redis.core.annotation.CachePut)")
     public void anyMethod() {
     }
 
-    @Around(value = "anyMethod() && @annotation(cache)")
-    public Object aroundAdvice4Method(ProceedingJoinPoint pjp, Cache cache) throws Throwable {
-        return this.handleCache(cache, pjp);
-    }
-
-    private Object handleCache(Cache cache, ProceedingJoinPoint pjp) throws Throwable {
-        // 获取缓存key
-        DataTypeEnum type = cache.type();
-        if (Objects.requireNonNull(type) == DataTypeEnum.HASH) {
-            return this.handleHash(pjp, cache);
-        }
-        return this.handleGeneral(pjp, cache);
-    }
-
-    private Object handleGeneral(ProceedingJoinPoint pjp, Cache cache) throws Throwable {
-        String cacheKey = this.populateCacheKey(cache.key(), cache.prefix(), pjp);
-        RBucket<Object> bucket = redissonClient.getBucket(cacheKey);
-        Object obj = bucket.get();
-        if (ObjectUtils.isNotNullOrEmpty(obj)) {
-            return obj;
-        }
-
-        RLock lock = redissonClient.getLock(this.getLockKey(cacheKey));
-        lock.lock();
-        try {
-            Object object = bucket.get();
-            if (ObjectUtils.isNotNullOrEmpty(object)) {
-                return object;
-            }
-            return redisCacheObject(pjp, bucket, cache.expire(), cache.timeUnit());
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    private Object handleHash(ProceedingJoinPoint pjp, Cache cache) throws Throwable {
-        EvaluationContext context = this.getContext(pjp);
-        String hashKey = this.populateHashKey(cache.hashKey(), context);
-        String cacheKey = this.populateCacheKey(cache.key(), cache.prefix(), context);
-        RMapCache<String, Object> map = redissonClient.getMapCache(cacheKey);
-        Object obj = map.get(hashKey);
-        if (ObjectUtils.isNotNullOrEmpty(obj)) {
-            return obj;
-        }
-        RLock lock = redissonClient.getLock(this.getLockKey(cacheKey));
-        lock.lock();
-        try {
-            obj = map.get(hashKey);
-            if (ObjectUtils.isNotNullOrEmpty(obj)) {
-                return obj;
-            }
-            return redisCacheObject(pjp, map, hashKey, cache.expire(), cache.timeUnit());
-        } finally {
-            lock.unlock();
-        }
+    @Around(value = "anyMethod() && @annotation(cachePut)")
+    public Object aroundAdvice4Method(ProceedingJoinPoint pjp, CachePut cachePut) throws Throwable {
+        return this.handleCachePut(cachePut, pjp);
     }
 
     @Override
@@ -128,5 +74,61 @@ public class CacheAspect extends AbstractCacheAspect {
     @Override
     protected RedisProperties redisProperties() {
         return this.redisProperties;
+    }
+
+    /**
+     * 处理缓存更新
+     *
+     * @param cachePut 缓存更新注解
+     * @param pjp      切点
+     * @return Object
+     */
+    private Object handleCachePut(CachePut cachePut, ProceedingJoinPoint pjp) throws Throwable {
+        // 获取缓存key
+        DataTypeEnum type = cachePut.type();
+        if (Objects.requireNonNull(type) == DataTypeEnum.HASH) {
+            return this.handleHash(pjp, cachePut);
+        }
+        return this.handleGeneral(pjp, cachePut);
+    }
+
+    /**
+     * 处理普通缓存更新
+     *
+     * @param pjp      切点
+     * @param cachePut 缓存更新注解
+     * @return Object
+     */
+    private Object handleGeneral(ProceedingJoinPoint pjp, CachePut cachePut) throws Throwable {
+        String cacheKey = this.populateCacheKey(cachePut.key(), cachePut.prefix(), pjp);
+        RBucket<Object> bucket = redissonClient.getBucket(cacheKey);
+        RLock lock = redissonClient.getLock(this.getLockKey(cacheKey));
+        lock.lock();
+        try {
+            return redisCacheObject(pjp, bucket, cachePut.expire(), cachePut.timeUnit());
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * 处理hash缓存更新
+     *
+     * @param pjp      切点
+     * @param cachePut 缓存更新注解
+     * @return Object
+     */
+    private Object handleHash(ProceedingJoinPoint pjp, CachePut cachePut) throws Throwable {
+        EvaluationContext context = this.getContext(pjp);
+        String hashKey = this.populateHashKey(cachePut.hashKey(), context);
+        String cacheKey = this.populateCacheKey(cachePut.key(), cachePut.prefix(), context);
+        RMapCache<String, Object> map = redissonClient.getMapCache(cacheKey);
+        RLock lock = redissonClient.getLock(this.getLockKey(cacheKey));
+        lock.lock();
+        try {
+            return redisCacheObject(pjp, map, hashKey, cachePut.expire(), cachePut.timeUnit());
+        } finally {
+            lock.unlock();
+        }
     }
 }

@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.redis.autoconfig.aop;
 
+import io.github.fishlikewater.raiden.core.DateUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.core.constant.CommonConstants;
@@ -25,9 +26,15 @@ import io.github.fishlikewater.spring.boot.raiden.core.ExpressionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.redisson.api.RBucket;
+import org.redisson.api.RMapCache;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
 /**
  * {@code AbstractCacheAspect}
@@ -53,6 +60,14 @@ public abstract class AbstractCacheAspect implements CacheComposite {
      */
     protected abstract RedisProperties redisProperties();
 
+    /**
+     * 获取缓存key
+     *
+     * @param key    key
+     * @param prefix 前缀
+     * @param pjp    切点
+     * @return 缓存key
+     */
     protected String populateCacheKey(String key, String prefix, ProceedingJoinPoint pjp) {
         RaidenExceptionCheck.INSTANCE.isNotNull(key, "key.is.not.found");
         // 判断key 是否为el表达式
@@ -71,6 +86,14 @@ public abstract class AbstractCacheAspect implements CacheComposite {
         return cacheKey;
     }
 
+    /**
+     * 获取缓存key
+     *
+     * @param key     key
+     * @param prefix  前缀
+     * @param context 上下文
+     * @return 缓存key
+     */
     protected String populateCacheKey(String key, String prefix, EvaluationContext context) {
         RaidenExceptionCheck.INSTANCE.isNotNull(key, "key.is.not.found");
         // 判断key 是否为el表达式
@@ -88,6 +111,13 @@ public abstract class AbstractCacheAspect implements CacheComposite {
         return cacheKey;
     }
 
+    /**
+     * 获取缓存hashKey
+     *
+     * @param hashKey hashKey
+     * @param context 上下文
+     * @return 缓存hashKey
+     */
     protected String populateHashKey(String hashKey, EvaluationContext context) {
         RaidenExceptionCheck.INSTANCE.isNotNull(hashKey, "hashKey.is.not.found");
         // 判断key 是否为el表达式
@@ -97,6 +127,12 @@ public abstract class AbstractCacheAspect implements CacheComposite {
         return hashKey;
     }
 
+    /**
+     * 获取上下文
+     *
+     * @param pjp 切点
+     * @return 上下文
+     */
     protected EvaluationContext getContext(ProceedingJoinPoint pjp) {
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
         String[] parameterNames = this.parameterNameDiscoverer().getParameterNames(methodSignature.getMethod());
@@ -109,5 +145,53 @@ public abstract class AbstractCacheAspect implements CacheComposite {
             context.setVariable(parameterNames[i], args[i]);
         }
         return context;
+    }
+
+    /**
+     * 缓存对象
+     *
+     * @param pjp      切点
+     * @param bucket   缓存对象
+     * @param expire   缓存时间
+     * @param timeUnit 时间单位
+     * @return 缓存对象
+     */
+    protected Object redisCacheObject(ProceedingJoinPoint pjp,
+                                      RBucket<Object> bucket,
+                                      long expire,
+                                      TimeUnit timeUnit) throws Throwable {
+        Object result = pjp.proceed();
+        if (expire <= 0) {
+            bucket.set(result, this.redisProperties().getCache().getExpirationTime());
+        } else {
+            ChronoUnit chronoUnit = DateUtils.convertToChronoUnit(timeUnit);
+            bucket.set(result, Duration.of(expire, chronoUnit));
+        }
+        return result;
+    }
+
+    /**
+     * 缓存对象
+     *
+     * @param pjp      切点
+     * @param map      缓存对象
+     * @param hashKey  hashKey
+     * @param expire   缓存时间
+     * @param timeUnit 时间单位
+     * @return 缓存对象
+     */
+    protected Object redisCacheObject(ProceedingJoinPoint pjp,
+                                      RMapCache<String, Object> map,
+                                      String hashKey,
+                                      long expire,
+                                      TimeUnit timeUnit) throws Throwable {
+        Object result = pjp.proceed();
+        if (expire <= 0) {
+            Duration expirationTime = this.redisProperties().getCache().getExpirationTime();
+            map.put(hashKey, result, expirationTime.toSeconds(), TimeUnit.SECONDS);
+        } else {
+            map.put(hashKey, result, expire, timeUnit);
+        }
+        return result;
     }
 }
