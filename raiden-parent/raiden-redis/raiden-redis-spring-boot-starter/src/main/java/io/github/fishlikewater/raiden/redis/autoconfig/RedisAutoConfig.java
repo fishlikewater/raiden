@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 
 /**
@@ -38,6 +39,12 @@ import org.springframework.core.ParameterNameDiscoverer;
 @AutoConfiguration
 @EnableConfigurationProperties(RedisProperties.class)
 public class RedisAutoConfig {
+
+    @Bean
+    @ConditionalOnProperty(prefix = "raiden.redis", name = "enabled", havingValue = "true")
+    public ParameterNameDiscoverer parameterNameDiscoverer() {
+        return new DefaultParameterNameDiscoverer();
+    }
 
     @Bean
     @ConditionalOnProperty(prefix = "raiden.redis", name = "enabled", havingValue = "true")
