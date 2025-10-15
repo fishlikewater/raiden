@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.redis.autoconfig;
 
 import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheAspect;
 import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheInvalidateAspect;
+import io.github.fishlikewater.raiden.redis.autoconfig.aop.CachePutAspect;
 import io.github.fishlikewater.raiden.redis.core.RedisUtils;
 import io.github.fishlikewater.raiden.redis.core.RedissonUtils;
 import io.github.fishlikewater.raiden.redis.core.delay.DelayQueue;
@@ -86,5 +87,11 @@ public class RedisAutoConfig {
         return new CacheInvalidateAspect(redissonClient, properties, parameterNameDiscoverer);
     }
 
-    // ---------------------------------------------------------------- cache update
+    @Bean
+    @ConditionalOnProperty(prefix = "raiden.redis.cache", name = "enabled", havingValue = "true")
+    public CachePutAspect cachePutAspect(RedisProperties properties, RedissonClient redissonClient, ParameterNameDiscoverer parameterNameDiscoverer) {
+        return new CachePutAspect(redissonClient, properties, parameterNameDiscoverer);
+    }
+
+    // ---------------------------------------------------------------- cache aop
 }
