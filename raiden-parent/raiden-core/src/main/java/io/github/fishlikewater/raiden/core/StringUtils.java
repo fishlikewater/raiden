@@ -638,4 +638,24 @@ public final class StringUtils {
         sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
+
+    /**
+     * 集合转字符串
+     *
+     * @param collection 集合
+     * @param function   转换函数
+     * @param separator  分隔符
+     * @return 集合转字符串
+     */
+    public static <T> String join(Collection<T> collection, Function<T, String> function, String separator) {
+        if (collection == null || collection.isEmpty()) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (T item : collection) {
+            sb.append(function.apply(item)).append(separator);
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
 }
