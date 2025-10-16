@@ -87,7 +87,7 @@ public class Tree<K extends Serializable, V> implements Serializable {
                                                                   Function<T, K> keyFunc,
                                                                   Function<T, K> parentKeyFunc,
                                                                   Function<T, V> valueFunc,
-                                                                  Function<V, Boolean> disabledFunc) {
+                                                                  Function<T, Boolean> disabledFunc) {
         List<K> keys = new ArrayList<>();
         Set<K> parentKeys = new HashSet<>();
         for (T item : list) {
@@ -124,7 +124,7 @@ public class Tree<K extends Serializable, V> implements Serializable {
                                                                    Function<T, K> keyFunc,
                                                                    Function<T, K> parentKeyFunc,
                                                                    Function<T, V> valueFunc,
-                                                                   Function<V, Boolean> disabledFunc) {
+                                                                   Function<T, Boolean> disabledFunc) {
         K id = node.getId();
         List<T> children = LambdaUtils.filter(list, t -> ObjectUtils.equals(parentKeyFunc.apply(t), id));
         if (ObjectUtils.isNotNullOrEmpty(children)) {
@@ -154,7 +154,7 @@ public class Tree<K extends Serializable, V> implements Serializable {
                                                                                    Function<T, K> keyFunc,
                                                                                    Function<T, K> parentKeyFunc,
                                                                                    Function<T, V> valueFunc,
-                                                                                   Function<V, Boolean> disabledFunc) {
+                                                                                   Function<T, Boolean> disabledFunc) {
         List<T> children = LambdaUtils.filter(list, t -> parentKeys.contains(parentKeyFunc.apply(t)));
         return LambdaUtils.toList(children, t -> buildTreeNode(t, keyFunc, valueFunc, disabledFunc));
     }
@@ -174,12 +174,12 @@ public class Tree<K extends Serializable, V> implements Serializable {
     private static <T, K extends Serializable, V> TreeNode<K, V> buildTreeNode(T t,
                                                                                Function<T, K> keyFunc,
                                                                                Function<T, V> valueFunc,
-                                                                               Function<V, Boolean> disabledFunc) {
+                                                                               Function<T, Boolean> disabledFunc) {
         return TreeNode.<K, V>builder()
                 .id(keyFunc.apply(t))
                 .value(valueFunc.apply(t))
                 .leaf(false)
-                .disabled(disabledFunc.apply(valueFunc.apply(t)))
+                .disabled(disabledFunc.apply(t))
                 .children(null)
                 .build();
     }
