@@ -239,6 +239,18 @@ public final class ObjectUtils {
      * @param target 待获取对象
      * @param lambda 函数
      * @param <T>    目标对象类型
+     * @return return
+     */
+    public static <T, R> T notNullGetter(R target, LambdaFunction<R, T> lambda) {
+        return notNullGetter(target, lambda, null);
+    }
+
+    /**
+     * 获取对象属性
+     *
+     * @param target 待获取对象
+     * @param lambda 函数
+     * @param <T>    目标对象类型
      * @param <R>    目标属性类型
      * @return return
      */
