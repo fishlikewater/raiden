@@ -15,23 +15,16 @@
  */
 package io.github.fishlikewater.raiden.redis.autoconfig.aop;
 
-import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.redis.autoconfig.RedisProperties;
 import io.github.fishlikewater.raiden.redis.core.annotation.CacheInvalidate;
-import io.github.fishlikewater.raiden.redis.core.enums.DataTypeEnum;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.redisson.api.RBucket;
-import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.annotation.Order;
-import org.springframework.expression.EvaluationContext;
-
-import java.util.Objects;
 
 /**
  * {@code CacheInvalidateAspect}
@@ -44,16 +37,14 @@ import java.util.Objects;
 @Aspect
 @Order(2)
 @ConditionalOnBean(RedissonClient.class)
-public class CacheInvalidateAspect extends AbstractCacheAspect {
-
-    private final RedissonClient redissonClient;
+public class CacheInvalidateAspect extends AbstractCacheHandler {
 
     private final RedisProperties redisProperties;
 
     private final ParameterNameDiscoverer parameterNameDiscoverer;
 
     public CacheInvalidateAspect(RedissonClient redissonClient, RedisProperties redisProperties, ParameterNameDiscoverer parameterNameDiscoverer) {
-        this.redissonClient = redissonClient;
+        super(redissonClient);
         this.redisProperties = redisProperties;
         this.parameterNameDiscoverer = parameterNameDiscoverer;
     }
@@ -64,46 +55,7 @@ public class CacheInvalidateAspect extends AbstractCacheAspect {
 
     @Around(value = "anyMethod() && @annotation(cacheInvalidate)")
     public Object aroundAdvice4Method(ProceedingJoinPoint pjp, CacheInvalidate cacheInvalidate) throws Throwable {
-        return this.cleanCache(cacheInvalidate, pjp);
-    }
-
-    private Object cleanCache(CacheInvalidate cacheInvalidate, ProceedingJoinPoint pjp) throws Throwable {
-        // 获取缓存key
-        DataTypeEnum type = cacheInvalidate.type();
-        if (Objects.requireNonNull(type) == DataTypeEnum.HASH) {
-            return this.cleanHash(pjp, cacheInvalidate);
-        }
-        return this.handleGeneral(pjp, cacheInvalidate);
-    }
-
-    private Object handleGeneral(ProceedingJoinPoint pjp, CacheInvalidate cacheInvalidate) throws Throwable {
-        boolean allEntries = cacheInvalidate.allEntries();
-        if (allEntries) {
-            redissonClient.getKeys().deleteByPattern(StringUtils.format("{}:{}", cacheInvalidate.prefix(), "*"));
-            return pjp.proceed();
-        }
-        String cacheKey = this.populateCacheKey(cacheInvalidate.key(), cacheInvalidate.prefix(), pjp);
-        RBucket<Object> bucket = redissonClient.getBucket(cacheKey);
-        if (bucket.isExists()) {
-            bucket.delete();
-        }
-        return pjp.proceed();
-    }
-
-    private Object cleanHash(ProceedingJoinPoint pjp, CacheInvalidate cacheInvalidate) throws Throwable {
-        EvaluationContext context = this.getContext(pjp);
-        String cacheKey = this.populateCacheKey(cacheInvalidate.key(), cacheInvalidate.prefix(), context);
-        boolean allEntries = cacheInvalidate.allEntries();
-        RMapCache<String, Object> map = redissonClient.getMapCache(cacheKey);
-        if (allEntries) {
-            map.delete();
-            return pjp.proceed();
-        }
-        String hashKey = this.populateHashKey(cacheInvalidate.hashKey(), context);
-        if (map.isExists()) {
-            map.remove(hashKey);
-        }
-        return pjp.proceed();
+        return this.cleanCache(cacheInvalidate, pjp, true);
     }
 
     @Override

@@ -15,7 +15,11 @@
  */
 package io.github.fishlikewater.raiden.redis.autoconfig.aop;
 
+import io.github.fishlikewater.raiden.core.ObjectUtils;
 import io.github.fishlikewater.raiden.redis.autoconfig.RedisProperties;
+import io.github.fishlikewater.raiden.redis.core.annotation.Cache;
+import io.github.fishlikewater.raiden.redis.core.annotation.CacheInvalidate;
+import io.github.fishlikewater.raiden.redis.core.annotation.CacheMulti;
 import io.github.fishlikewater.raiden.redis.core.annotation.CachePut;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -27,22 +31,22 @@ import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.annotation.Order;
 
 /**
- * {@code CachePutAspect}
- * 缓存更新切面
+ * {@code CacheMultiAspect}
+ * 缓存多步操作
  *
  * @author zhangxiang
- * @since 2025/10/14
+ * @since 2025/10/17
  */
 @Aspect
-@Order(3)
+@Order(4)
 @ConditionalOnBean(RedissonClient.class)
-public class CachePutAspect extends AbstractCacheHandler {
+public class CacheMultiAspect extends AbstractCacheHandler {
 
     private final RedisProperties redisProperties;
 
     private final ParameterNameDiscoverer parameterNameDiscoverer;
 
-    public CachePutAspect(RedissonClient redissonClient, RedisProperties redisProperties, ParameterNameDiscoverer parameterNameDiscoverer) {
+    public CacheMultiAspect(RedissonClient redissonClient, RedisProperties redisProperties, ParameterNameDiscoverer parameterNameDiscoverer) {
         super(redissonClient);
         this.redisProperties = redisProperties;
         this.parameterNameDiscoverer = parameterNameDiscoverer;
@@ -52,9 +56,9 @@ public class CachePutAspect extends AbstractCacheHandler {
     public void anyMethod() {
     }
 
-    @Around(value = "anyMethod() && @annotation(cachePut)")
-    public Object aroundAdvice4Method(ProceedingJoinPoint pjp, CachePut cachePut) throws Throwable {
-        return this.handleCachePut(cachePut, pjp, null);
+    @Around(value = "anyMethod() && @annotation(cacheMulti)")
+    public Object aroundAdvice4Method(ProceedingJoinPoint pjp, CacheMulti cacheMulti) throws Throwable {
+        return this.handleCacheMulti(cacheMulti, pjp);
     }
 
     @Override
@@ -65,5 +69,36 @@ public class CachePutAspect extends AbstractCacheHandler {
     @Override
     protected RedisProperties redisProperties() {
         return this.redisProperties;
+    }
+
+    private Object handleCacheMulti(CacheMulti cacheMulti, ProceedingJoinPoint pjp) throws Throwable {
+        CacheInvalidate[] cacheInvalidates = cacheMulti.cacheInvalidate();
+        Cache[] caches = cacheMulti.cache();
+        CachePut[] puts = cacheMulti.put();
+        if (ObjectUtils.isNotNullOrEmpty(cacheInvalidates)) {
+            for (CacheInvalidate cacheInvalidate : cacheInvalidates) {
+                this.cleanCache(cacheInvalidate, pjp, false);
+            }
+        }
+
+        if (ObjectUtils.isNullOrEmpty(caches) && ObjectUtils.isNullOrEmpty(puts)) {
+            return pjp.proceed();
+        }
+
+        Object result = null;
+        if (ObjectUtils.isNotNullOrEmpty(puts)) {
+            result = pjp.proceed();
+            for (CachePut cachePut : puts) {
+                this.handleCachePut(cachePut, pjp, result);
+            }
+        }
+
+        if (ObjectUtils.isNotNullOrEmpty(caches)) {
+            for (Cache cache : caches) {
+                this.handleCache(cache, pjp, result);
+            }
+        }
+
+        return result;
     }
 }

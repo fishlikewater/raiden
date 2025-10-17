@@ -76,9 +76,7 @@ public abstract class AbstractCacheAspect implements CacheComposite {
             key = ExpressionUtils.getExpressionValue(context, key, String.class);
         }
 
-        if (StringUtils.isBlank(prefix)) {
-            prefix = this.redisProperties().getCache().getPrefix();
-        }
+        prefix = this.getPrefix(prefix);
         String cacheKey = key;
         if (StringUtils.isNotBlank(prefix)) {
             cacheKey = StringUtils.format("{}:{}", prefix, key);
@@ -101,9 +99,7 @@ public abstract class AbstractCacheAspect implements CacheComposite {
             key = ExpressionUtils.getExpressionValue(context, key, String.class);
         }
 
-        if (StringUtils.isBlank(prefix)) {
-            prefix = this.redisProperties().getCache().getPrefix();
-        }
+        prefix = this.getPrefix(prefix);
         String cacheKey = key;
         if (StringUtils.isNotBlank(prefix)) {
             cacheKey = StringUtils.format("{}:{}", prefix, key);
@@ -165,17 +161,16 @@ public abstract class AbstractCacheAspect implements CacheComposite {
     /**
      * 缓存对象
      *
-     * @param pjp      切点
+     * @param result   结果
      * @param bucket   缓存对象
      * @param expire   缓存时间
      * @param timeUnit 时间单位
      * @return 缓存对象
      */
-    protected Object redisCacheObject(ProceedingJoinPoint pjp,
+    protected Object redisCacheObject(Object result,
                                       RBucket<Object> bucket,
                                       long expire,
                                       TimeUnit timeUnit) throws Throwable {
-        Object result = pjp.proceed();
         if (expire <= 0) {
             bucket.set(result, this.redisProperties().getCache().getExpirationTime());
         } else {
@@ -188,19 +183,18 @@ public abstract class AbstractCacheAspect implements CacheComposite {
     /**
      * 缓存对象
      *
-     * @param pjp      切点
+     * @param result   结果
      * @param map      缓存对象
      * @param hashKey  hashKey
      * @param expire   缓存时间
      * @param timeUnit 时间单位
      * @return 缓存对象
      */
-    protected Object redisCacheObject(ProceedingJoinPoint pjp,
+    protected Object redisCacheObject(Object result,
                                       RMapCache<String, Object> map,
                                       String hashKey,
                                       long expire,
                                       TimeUnit timeUnit) throws Throwable {
-        Object result = pjp.proceed();
         if (expire <= 0) {
             Duration expirationTime = this.redisProperties().getCache().getExpirationTime();
             map.put(hashKey, result, expirationTime.toSeconds(), TimeUnit.SECONDS);
@@ -208,5 +202,19 @@ public abstract class AbstractCacheAspect implements CacheComposite {
             map.put(hashKey, result, expire, timeUnit);
         }
         return result;
+    }
+
+    /**
+     * 获取缓存前缀
+     *
+     * @param prefix 前缀
+     * @return 缓存前缀
+     */
+    protected String getPrefix(String prefix) {
+        if (StringUtils.isBlank(prefix)) {
+            return this.redisProperties().getCache().getPrefix();
+        }
+
+        return prefix;
     }
 }

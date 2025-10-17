@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.redis.autoconfig;
 
 import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheAspect;
 import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheInvalidateAspect;
+import io.github.fishlikewater.raiden.redis.autoconfig.aop.CacheMultiAspect;
 import io.github.fishlikewater.raiden.redis.autoconfig.aop.CachePutAspect;
 import io.github.fishlikewater.raiden.redis.core.RedisUtils;
 import io.github.fishlikewater.raiden.redis.core.RedissonUtils;
@@ -91,6 +92,12 @@ public class RedisAutoConfig {
     @ConditionalOnProperty(prefix = "raiden.redis.cache", name = "enabled", havingValue = "true")
     public CachePutAspect cachePutAspect(RedisProperties properties, RedissonClient redissonClient, ParameterNameDiscoverer parameterNameDiscoverer) {
         return new CachePutAspect(redissonClient, properties, parameterNameDiscoverer);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "raiden.redis.cache", name = "enabled", havingValue = "true")
+    public CacheMultiAspect cacheMultiAspect(RedisProperties properties, RedissonClient redissonClient, ParameterNameDiscoverer parameterNameDiscoverer) {
+        return new CacheMultiAspect(redissonClient, properties, parameterNameDiscoverer);
     }
 
     // ---------------------------------------------------------------- cache aop
