@@ -362,6 +362,31 @@ public final class StringUtils {
     }
 
     /**
+     * 将字符串切分为List
+     *
+     * @param str    字符串
+     * @param mapper 映射
+     * @return 切分后的List
+     */
+    public static <T> List<T> splitList(String str, Function<String, T> mapper) {
+        List<String> list = splitList(str);
+        return LambdaUtils.toList(list, mapper);
+    }
+
+    /**
+     * 将字符串切分为List
+     *
+     * @param str       字符串
+     * @param separator 分隔符
+     * @param mapper    映射
+     * @return 切分后的List
+     */
+    public static <T> List<T> splitList(String str, String separator, Function<String, T> mapper) {
+        List<String> list = splitList(str, separator);
+        return LambdaUtils.toList(list, mapper);
+    }
+
+    /**
      * 清理空白字符
      *
      * @param str 被清理的字符串
