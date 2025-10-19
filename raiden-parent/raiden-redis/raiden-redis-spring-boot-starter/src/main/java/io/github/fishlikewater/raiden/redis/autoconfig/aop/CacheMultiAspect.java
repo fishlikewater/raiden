@@ -52,7 +52,7 @@ public class CacheMultiAspect extends AbstractCacheHandler {
         this.parameterNameDiscoverer = parameterNameDiscoverer;
     }
 
-    @Pointcut(value = "@annotation(io.github.fishlikewater.raiden.redis.core.annotation.CachePut)")
+    @Pointcut(value = "@annotation(io.github.fishlikewater.raiden.redis.core.annotation.CacheMulti)")
     public void anyMethod() {
     }
 
