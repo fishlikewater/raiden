@@ -38,6 +38,10 @@ public final class StringUtils {
 
     private static final String[] EMPTY_STRING_ARRAY = {};
 
+    public static final String SPACE = " ";
+
+    public static final String EMPTY = "";
+
     /**
      * <p>判断字符串是否为空</p>
      * <p>例:</p>
@@ -465,6 +469,23 @@ public final class StringUtils {
                 return Character.toLowerCase(string.charAt(0)) + string.substring(1);
             } else {
                 return string.toLowerCase();
+            }
+        }
+        return string;
+    }
+
+    /**
+     * 首字母大写
+     *
+     * @param string 原始字符串
+     * @return 首字母小写字符串
+     */
+    public static String upperFirst(String string) {
+        if (StringUtils.isNotBlank(string)) {
+            if (string.length() > 1) {
+                return Character.toUpperCase(string.charAt(0)) + string.substring(1);
+            } else {
+                return string.toUpperCase();
             }
         }
         return string;

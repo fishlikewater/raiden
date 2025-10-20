@@ -72,7 +72,8 @@ public class RedisTest {
         final RedissonClient redissonClient = getRedissonClient();
         RedisUtils.init(redissonClient);
         RedisUtils.setAtomicValue("com:github:fishlikewater:redis:test:atomic", 1);
-        RedisUtils.incrAtomicValue("com:github:fishlikewater:redis:test:atomic");
+        long l = RedisUtils.incrAtomicValue("com:github:fishlikewater:redis:test:atomic");
+        System.out.println(l);
     }
 
     @Test

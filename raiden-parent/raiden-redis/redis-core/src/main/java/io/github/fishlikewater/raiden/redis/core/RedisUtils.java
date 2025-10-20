@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.redis.core;
 
+import io.github.fishlikewater.raiden.core.StringUtils;
 import io.github.fishlikewater.raiden.core.exception.RaidenExceptionCheck;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -120,7 +121,7 @@ public class RedisUtils {
      * @param key   缓存的键值
      * @param value 缓存的值
      */
-    public static <T> void setCacheObject(final String key, final T value) {
+    public static <T> void setCacheObject(String key, T value) {
         setCacheObject(key, value, false);
     }
 
@@ -132,7 +133,7 @@ public class RedisUtils {
      * @param isSaveTtl 是否保留TTL有效期(例如: set之前ttl剩余90 set之后还是为90)
      * @since Redis 6.X 以上使用 setAndKeepTTL 兼容 5.X 方案
      */
-    public static <T> void setCacheObject(final String key, final T value, final boolean isSaveTtl) {
+    public static <T> void setCacheObject(String key, T value, boolean isSaveTtl) {
         RBucket<T> bucket = getClient().getBucket(key);
         if (isSaveTtl) {
             try {
@@ -157,7 +158,7 @@ public class RedisUtils {
      * @param value    缓存的值
      * @param duration 时间
      */
-    public static <T> void setCacheObject(final String key, final T value, final Duration duration) {
+    public static <T> void setCacheObject(String key, T value, Duration duration) {
         RBatch batch = getClient().createBatch();
         RBucketAsync<T> bucket = batch.getBucket(key);
         bucket.setAsync(value);
@@ -172,7 +173,7 @@ public class RedisUtils {
      * @param value 缓存的值
      * @return set成功或失败
      */
-    public static <T> boolean setObjectIfAbsent(final String key, final T value, final Duration duration) {
+    public static <T> boolean setObjectIfAbsent(String key, T value, Duration duration) {
         RBucket<T> bucket = getClient().getBucket(key);
         return bucket.setIfAbsent(value, duration);
     }
@@ -184,7 +185,7 @@ public class RedisUtils {
      * @param value 缓存的值
      * @return set成功或失败
      */
-    public static <T> boolean setObjectIfExists(final String key, final T value, final Duration duration) {
+    public static <T> boolean setObjectIfExists(String key, T value, Duration duration) {
         RBucket<T> bucket = getClient().getBucket(key);
         return bucket.setIfExists(value, duration);
     }
@@ -197,7 +198,7 @@ public class RedisUtils {
      * @param key      缓存的键值
      * @param listener 监听器配置
      */
-    public static <T> void addObjectListener(final String key, final ObjectListener listener) {
+    public static <T> void addObjectListener(String key, ObjectListener listener) {
         RBucket<T> result = getClient().getBucket(key);
         result.addListener(listener);
     }
@@ -209,7 +210,7 @@ public class RedisUtils {
      * @param timeout 超时时间
      * @return true=设置成功；false=设置失败
      */
-    public static boolean expire(final String key, final long timeout) {
+    public static boolean expire(String key, long timeout) {
         return expire(key, Duration.ofSeconds(timeout));
     }
 
@@ -220,7 +221,7 @@ public class RedisUtils {
      * @param duration 超时时间
      * @return true=设置成功；false=设置失败
      */
-    public static boolean expire(final String key, final Duration duration) {
+    public static boolean expire(String key, Duration duration) {
         RBucket rBucket = getClient().getBucket(key);
         return rBucket.expire(duration);
     }
@@ -231,7 +232,7 @@ public class RedisUtils {
      * @param key 缓存键值
      * @return 缓存键值对应的数据
      */
-    public static <T> T getCacheObject(final String key) {
+    public static <T> T getCacheObject(String key) {
         RBucket<T> rBucket = getClient().getBucket(key);
         return rBucket.get();
     }
@@ -242,7 +243,7 @@ public class RedisUtils {
      * @param key 缓存键值
      * @return 剩余存活时间
      */
-    public static <T> long getTimeToLive(final String key) {
+    public static <T> long getTimeToLive(String key) {
         RBucket<T> rBucket = getClient().getBucket(key);
         return rBucket.remainTimeToLive();
     }
@@ -252,7 +253,7 @@ public class RedisUtils {
      *
      * @param key 缓存的键值
      */
-    public static boolean deleteObject(final String key) {
+    public static boolean deleteObject(String key) {
         return getClient().getBucket(key).delete();
     }
 
@@ -261,7 +262,7 @@ public class RedisUtils {
      *
      * @param collection 多个对象
      */
-    public static void deleteObject(final Collection collection) {
+    public static void deleteObject(Collection collection) {
         RBatch batch = getClient().createBatch();
         collection.forEach(t -> batch.getBucket(t.toString()).deleteAsync());
         batch.execute();
@@ -272,7 +273,7 @@ public class RedisUtils {
      *
      * @param key 缓存的键值
      */
-    public static boolean isExistsObject(final String key) {
+    public static boolean isExistsObject(String key) {
         return getClient().getBucket(key).isExists();
     }
 
@@ -283,7 +284,7 @@ public class RedisUtils {
      * @param dataList 待缓存的List数据
      * @return 缓存的对象
      */
-    public static <T> boolean setCacheList(final String key, final List<T> dataList) {
+    public static <T> boolean setCacheList(String key, List<T> dataList) {
         RList<T> rList = getClient().getList(key);
         return rList.addAll(dataList);
     }
@@ -295,7 +296,7 @@ public class RedisUtils {
      * @param data 待缓存的数据
      * @return 缓存的对象
      */
-    public static <T> boolean addCacheList(final String key, final T data) {
+    public static <T> boolean addCacheList(String key, T data) {
         RList<T> rList = getClient().getList(key);
         return rList.add(data);
     }
@@ -308,7 +309,7 @@ public class RedisUtils {
      * @param key      缓存的键值
      * @param listener 监听器配置
      */
-    public static <T> void addListListener(final String key, final ObjectListener listener) {
+    public static <T> void addListListener(String key, ObjectListener listener) {
         RList<T> rList = getClient().getList(key);
         rList.addListener(listener);
     }
@@ -319,7 +320,7 @@ public class RedisUtils {
      * @param key 缓存的键值
      * @return 缓存键值对应的数据
      */
-    public static <T> List<T> getCacheList(final String key) {
+    public static <T> List<T> getCacheList(String key) {
         RList<T> rList = getClient().getList(key);
         return rList.readAll();
     }
@@ -332,7 +333,7 @@ public class RedisUtils {
      * @param to   截止下标
      * @return 缓存键值对应的数据
      */
-    public static <T> List<T> getCacheListRange(final String key, int form, int to) {
+    public static <T> List<T> getCacheListRange(String key, int form, int to) {
         RList<T> rList = getClient().getList(key);
         return rList.range(form, to);
     }
@@ -344,7 +345,7 @@ public class RedisUtils {
      * @param dataSet 缓存的数据
      * @return 缓存数据的对象
      */
-    public static <T> boolean setCacheSet(final String key, final Set<T> dataSet) {
+    public static <T> boolean setCacheSet(String key, Set<T> dataSet) {
         RSet<T> rSet = getClient().getSet(key);
         return rSet.addAll(dataSet);
     }
@@ -356,7 +357,7 @@ public class RedisUtils {
      * @param data 待缓存的数据
      * @return 缓存的对象
      */
-    public static <T> boolean addCacheSet(final String key, final T data) {
+    public static <T> boolean addCacheSet(String key, T data) {
         RSet<T> rSet = getClient().getSet(key);
         return rSet.add(data);
     }
@@ -369,7 +370,7 @@ public class RedisUtils {
      * @param key      缓存的键值
      * @param listener 监听器配置
      */
-    public static <T> void addSetListener(final String key, final ObjectListener listener) {
+    public static <T> void addSetListener(String key, ObjectListener listener) {
         RSet<T> rSet = getClient().getSet(key);
         rSet.addListener(listener);
     }
@@ -380,7 +381,7 @@ public class RedisUtils {
      * @param key 缓存的key
      * @return set对象
      */
-    public static <T> Set<T> getCacheSet(final String key) {
+    public static <T> Set<T> getCacheSet(String key) {
         RSet<T> rSet = getClient().getSet(key);
         return rSet.readAll();
     }
@@ -391,7 +392,7 @@ public class RedisUtils {
      * @param key     缓存的键值
      * @param dataMap 缓存的数据
      */
-    public static <T> void setCacheMap(final String key, final Map<String, T> dataMap) {
+    public static <T> void setCacheMap(String key, Map<String, T> dataMap) {
         if (dataMap != null) {
             RMap<String, T> rMap = getClient().getMap(key);
             rMap.putAll(dataMap);
@@ -406,7 +407,7 @@ public class RedisUtils {
      * @param key      缓存的键值
      * @param listener 监听器配置
      */
-    public static <T> void addMapListener(final String key, final ObjectListener listener) {
+    public static <T> void addMapListener(String key, ObjectListener listener) {
         RMap<String, T> rMap = getClient().getMap(key);
         rMap.addListener(listener);
     }
@@ -417,7 +418,7 @@ public class RedisUtils {
      * @param key 缓存的键值
      * @return map对象
      */
-    public static <T> Map<String, T> getCacheMap(final String key) {
+    public static <T> Map<String, T> getCacheMap(String key) {
         RMap<String, T> rMap = getClient().getMap(key);
         return rMap.getAll(rMap.keySet());
     }
@@ -428,7 +429,7 @@ public class RedisUtils {
      * @param key 缓存的键值
      * @return key列表
      */
-    public static <T> Set<String> getCacheMapKeySet(final String key) {
+    public static <T> Set<String> getCacheMapKeySet(String key) {
         RMap<String, T> rMap = getClient().getMap(key);
         return rMap.keySet();
     }
@@ -440,7 +441,7 @@ public class RedisUtils {
      * @param hKey  Hash键
      * @param value 值
      */
-    public static <T> void setCacheMapValue(final String key, final String hKey, final T value) {
+    public static <T> void setCacheMapValue(String key, String hKey, T value) {
         RMap<String, T> rMap = getClient().getMap(key);
         rMap.put(hKey, value);
     }
@@ -452,7 +453,7 @@ public class RedisUtils {
      * @param hKey Hash键
      * @return Hash中的对象
      */
-    public static <T> T getCacheMapValue(final String key, final String hKey) {
+    public static <T> T getCacheMapValue(String key, String hKey) {
         RMap<String, T> rMap = getClient().getMap(key);
         return rMap.get(hKey);
     }
@@ -464,7 +465,7 @@ public class RedisUtils {
      * @param hKey Hash键
      * @return Hash中的对象
      */
-    public static <T> T delCacheMapValue(final String key, final String hKey) {
+    public static <T> T delCacheMapValue(String key, String hKey) {
         RMap<String, T> rMap = getClient().getMap(key);
         return rMap.remove(hKey);
     }
@@ -475,7 +476,7 @@ public class RedisUtils {
      * @param key   Redis键
      * @param hKeys Hash键
      */
-    public static <T> void delMultiCacheMapValue(final String key, final Set<String> hKeys) {
+    public static <T> void delMultiCacheMapValue(String key, Set<String> hKeys) {
         RBatch batch = getClient().createBatch();
         RMapAsync<String, T> rMap = batch.getMap(key);
         for (String hKey : hKeys) {
@@ -491,7 +492,7 @@ public class RedisUtils {
      * @param hKeys Hash键集合
      * @return Hash对象集合
      */
-    public static <K, V> Map<K, V> getMultiCacheMapValue(final String key, final Set<K> hKeys) {
+    public static <K, V> Map<K, V> getMultiCacheMapValue(String key, Set<K> hKeys) {
         RMap<K, V> rMap = getClient().getMap(key);
         return rMap.getAll(hKeys);
     }
@@ -546,7 +547,7 @@ public class RedisUtils {
      * @param pattern 字符串前缀
      * @return 对象列表
      */
-    public static Collection<String> keys(final String pattern) {
+    public static Collection<String> keys(String pattern) {
         Stream<String> stream = getClient().getKeys().getKeysStreamByPattern(pattern);
         return stream.collect(Collectors.toList());
     }
@@ -556,8 +557,18 @@ public class RedisUtils {
      *
      * @param pattern 字符串前缀
      */
-    public static void deleteKeys(final String pattern) {
+    public static void deleteKeys(String pattern) {
         getClient().getKeys().deleteByPattern(pattern);
+    }
+
+    /**
+     * 删除缓存的基本对象
+     *
+     * @param prefix 前缀
+     * @param key    键
+     */
+    public static void deleteKey(String prefix, String key) {
+        getClient().getKeys().delete(StringUtils.format("{}:{}", prefix, key));
     }
 
     /**
