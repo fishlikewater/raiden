@@ -122,6 +122,44 @@ public class LambdaUtils {
      * 将集合中的元素映射到新的集合中
      *
      * @param collection 集合
+     * @param mapper1    映射函数
+     * @param mapper2    映射函数
+     * @param <T>        新集合元素类型
+     * @param <E>        旧集合元素类型
+     * @return 新集合
+     */
+    public static <T, E, R> List<R> toList(Collection<E> collection, Function<E, T> mapper1, Function<T, R> mapper2) {
+        return collection
+                .stream()
+                .map(mapper1)
+                .map(mapper2)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 将集合中的元素映射到新的集合中
+     *
+     * @param collection 集合
+     * @param mapper     映射函数
+     * @param consumer   处理函数
+     * @param <T>        新集合元素类型
+     * @param <E>        旧集合元素类型
+     * @return 新集合
+     */
+    public static <T, E> List<T> toList(Collection<E> collection, Function<E, T> mapper, Consumer<T> consumer) {
+        return collection
+                .stream()
+                .map(mapper)
+                .peek(consumer)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 将集合中的元素映射到新的集合中
+     *
+     * @param collection 集合
      * @param predicate  过滤条件
      * @param mapper     映射函数
      * @param <T>        新集合元素类型
