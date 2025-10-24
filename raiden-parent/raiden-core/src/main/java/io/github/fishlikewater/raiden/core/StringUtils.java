@@ -503,6 +503,45 @@ public final class StringUtils {
     }
 
     /**
+     * 比较两个字符串是否不相等
+     *
+     * @param str1 字符串1
+     * @param str2 字符串2
+     * @return 是否相等
+     */
+    public static boolean notEquals(String str1, String str2) {
+        return !equals(str1, str2);
+    }
+
+    /**
+     * 判断字符串是否相等
+     *
+     * @param source 源字符串
+     * @param target 目标字符串
+     * @return 是否相等
+     */
+    public static boolean anyEquals(String source, String... target) {
+        for (String string : target) {
+            if (equals(source, string)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 判断字符串是否不相等
+     *
+     * @param source 源字符串
+     * @param target 目标字符串
+     * @return 是否相等
+     */
+    public static boolean allNotEquals(String source, String... target) {
+        return !anyEquals(source, target);
+    }
+
+    /**
      * 判断字符串是否以指定字符串结尾
      *
      * @param currentValue 当前值

@@ -166,7 +166,7 @@ public class LambdaUtils {
      * @param <E>        旧集合元素类型
      * @return 新集合
      */
-    public static <T, E> List<T> toList(Collection<E> collection, Predicate<E> predicate, Function<E, T> mapper) {
+    public static <T, E> List<T> toFilterList(Collection<E> collection, Predicate<E> predicate, Function<E, T> mapper) {
         return collection
                 .stream()
                 .filter(predicate)

@@ -94,4 +94,14 @@ public class StringUtilsTest {
         String url1 = StringUtils.urlJoinParam(url, Map.of("a", "1"));
         Assert.isTrue(StringUtils.equals(url1, "https://www.baidu.com?a=1"), "urlJoinParam with error");
     }
+
+    @Test
+    public void anyEquals() {
+        Assert.isTrue(StringUtils.anyEquals("1", "1", "2"), "anyEquals with error");
+    }
+
+    @Test
+    public void anyNotEquals() {
+        Assert.isTrue(StringUtils.allNotEquals("0", "1", "2"), "anyEquals with error");
+    }
 }

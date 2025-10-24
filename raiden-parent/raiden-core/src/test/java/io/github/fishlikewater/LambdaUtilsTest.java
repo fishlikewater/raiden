@@ -45,7 +45,7 @@ public class LambdaUtilsTest {
     @Test
     public void testLambda2() {
         List<Integer> integerList = List.of(1, 2, 4, 8);
-        List<Integer> list = LambdaUtils.toList(integerList, it -> it > 2, integer -> integer * 2);
+        List<Integer> list = LambdaUtils.toFilterList(integerList, it -> it > 2, integer -> integer * 2);
         Assert.assertEquals(8, (int) list.getFirst());
     }
 
