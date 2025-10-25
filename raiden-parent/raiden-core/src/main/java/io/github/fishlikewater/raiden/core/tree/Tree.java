@@ -17,6 +17,7 @@ package io.github.fishlikewater.raiden.core.tree;
 
 import io.github.fishlikewater.raiden.core.LambdaUtils;
 import io.github.fishlikewater.raiden.core.ObjectUtils;
+import io.github.fishlikewater.raiden.core.model.SmartMap;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -77,6 +79,25 @@ public class Tree<K extends Serializable, V> implements Serializable {
      * @param keyFunc       id
      * @param parentKeyFunc 父id
      * @param valueFunc     value
+     * @param <T>           数据类型
+     * @param <K>           id
+     * @param <V>           value
+     * @return 树
+     */
+    public static <T, K extends Serializable, V> Tree<K, V> build(List<T> list,
+                                                                  Function<T, K> keyFunc,
+                                                                  Function<T, K> parentKeyFunc,
+                                                                  Function<T, V> valueFunc) {
+        return build(list, keyFunc, parentKeyFunc, valueFunc, t -> false);
+    }
+
+    /**
+     * 构建树
+     *
+     * @param list          数据
+     * @param keyFunc       id
+     * @param parentKeyFunc 父id
+     * @param valueFunc     value
      * @param disabledFunc  禁用
      * @param <T>           数据类型
      * @param <K>           id
@@ -88,6 +109,50 @@ public class Tree<K extends Serializable, V> implements Serializable {
                                                                   Function<T, K> parentKeyFunc,
                                                                   Function<T, V> valueFunc,
                                                                   Function<T, Boolean> disabledFunc) {
+        return build(list, keyFunc, parentKeyFunc, valueFunc, disabledFunc, null);
+    }
+
+    /**
+     * 构建树
+     *
+     * @param list          数据
+     * @param keyFunc       id
+     * @param parentKeyFunc 父id
+     * @param valueFunc     value
+     * @param extra         额外信息
+     * @param <T>           数据类型
+     * @param <K>           id
+     * @param <V>           value
+     * @return 树
+     */
+    public static <T, K extends Serializable, V> Tree<K, V> build(List<T> list,
+                                                                  Function<T, K> keyFunc,
+                                                                  Function<T, K> parentKeyFunc,
+                                                                  Function<T, V> valueFunc,
+                                                                  BiConsumer<T, SmartMap<String, Object>> extra) {
+        return build(list, keyFunc, parentKeyFunc, valueFunc, t -> false, extra);
+    }
+
+    /**
+     * 构建树
+     *
+     * @param list          数据
+     * @param keyFunc       id
+     * @param parentKeyFunc 父id
+     * @param valueFunc     value
+     * @param disabledFunc  禁用
+     * @param extra         额外信息
+     * @param <T>           数据类型
+     * @param <K>           id
+     * @param <V>           value
+     * @return 树
+     */
+    public static <T, K extends Serializable, V> Tree<K, V> build(List<T> list,
+                                                                  Function<T, K> keyFunc,
+                                                                  Function<T, K> parentKeyFunc,
+                                                                  Function<T, V> valueFunc,
+                                                                  Function<T, Boolean> disabledFunc,
+                                                                  BiConsumer<T, SmartMap<String, Object>> extra) {
         List<K> keys = new ArrayList<>();
         Set<K> parentKeys = new HashSet<>();
         for (T item : list) {
@@ -97,11 +162,12 @@ public class Tree<K extends Serializable, V> implements Serializable {
             parentKeys.add(parentKey);
         }
         keys.forEach(parentKeys::remove);
-        List<TreeNode<K, V>> nodes = getTreeNode(parentKeys, list, keyFunc, parentKeyFunc, valueFunc, disabledFunc);
-        LambdaUtils.handle(nodes, node -> addChildren(node, list, keyFunc, parentKeyFunc, valueFunc, disabledFunc));
+        List<TreeNode<K, V>> nodes = getTreeNode(parentKeys, list, keyFunc, parentKeyFunc, valueFunc, disabledFunc, extra);
+        LambdaUtils.handle(nodes, node -> addChildren(node, list, keyFunc, parentKeyFunc, valueFunc, disabledFunc, extra));
         return Tree.<K, V>builder()
                 .nodes(nodes)
                 .build();
+
     }
 
     // ----------------------------------------------------------------
@@ -115,6 +181,7 @@ public class Tree<K extends Serializable, V> implements Serializable {
      * @param parentKeyFunc 父id
      * @param valueFunc     value
      * @param disabledFunc  禁用
+     * @param extra         额外信息
      * @param <T>           数据类型
      * @param <K>           id
      * @param <V>           value
@@ -124,14 +191,15 @@ public class Tree<K extends Serializable, V> implements Serializable {
                                                                    Function<T, K> keyFunc,
                                                                    Function<T, K> parentKeyFunc,
                                                                    Function<T, V> valueFunc,
-                                                                   Function<T, Boolean> disabledFunc) {
+                                                                   Function<T, Boolean> disabledFunc,
+                                                                   BiConsumer<T, SmartMap<String, Object>> extra) {
         K id = node.getId();
         List<T> children = LambdaUtils.filter(list, t -> ObjectUtils.equals(parentKeyFunc.apply(t), id));
         if (ObjectUtils.isNotNullOrEmpty(children)) {
-            List<TreeNode<K, V>> treeNodes = LambdaUtils.toList(children, t -> buildTreeNode(t, keyFunc, valueFunc, disabledFunc));
+            List<TreeNode<K, V>> treeNodes = LambdaUtils.toList(children, t -> buildTreeNode(t, keyFunc, valueFunc, disabledFunc, extra));
             node.setLeaf(true);
             node.setChildren(treeNodes);
-            LambdaUtils.handle(treeNodes, cNode -> addChildren(cNode, list, keyFunc, parentKeyFunc, valueFunc, disabledFunc));
+            LambdaUtils.handle(treeNodes, cNode -> addChildren(cNode, list, keyFunc, parentKeyFunc, valueFunc, disabledFunc, extra));
         }
     }
 
@@ -144,6 +212,7 @@ public class Tree<K extends Serializable, V> implements Serializable {
      * @param parentKeyFunc 父id函数
      * @param valueFunc     value
      * @param disabledFunc  禁用
+     * @param extra         额外信息
      * @param <T>           数据类型
      * @param <K>           id
      * @param <V>           value
@@ -154,9 +223,10 @@ public class Tree<K extends Serializable, V> implements Serializable {
                                                                                    Function<T, K> keyFunc,
                                                                                    Function<T, K> parentKeyFunc,
                                                                                    Function<T, V> valueFunc,
-                                                                                   Function<T, Boolean> disabledFunc) {
+                                                                                   Function<T, Boolean> disabledFunc,
+                                                                                   BiConsumer<T, SmartMap<String, Object>> extra) {
         List<T> children = LambdaUtils.filter(list, t -> parentKeys.contains(parentKeyFunc.apply(t)));
-        return LambdaUtils.toList(children, t -> buildTreeNode(t, keyFunc, valueFunc, disabledFunc));
+        return LambdaUtils.toList(children, t -> buildTreeNode(t, keyFunc, valueFunc, disabledFunc, extra));
     }
 
     /**
@@ -166,6 +236,7 @@ public class Tree<K extends Serializable, V> implements Serializable {
      * @param keyFunc      id
      * @param valueFunc    value
      * @param disabledFunc 禁用
+     * @param extra        额外信息
      * @param <T>          数据类型
      * @param <K>          id
      * @param <V>          value
@@ -174,13 +245,25 @@ public class Tree<K extends Serializable, V> implements Serializable {
     private static <T, K extends Serializable, V> TreeNode<K, V> buildTreeNode(T t,
                                                                                Function<T, K> keyFunc,
                                                                                Function<T, V> valueFunc,
-                                                                               Function<T, Boolean> disabledFunc) {
-        return TreeNode.<K, V>builder()
+                                                                               Function<T, Boolean> disabledFunc,
+                                                                               BiConsumer<T, SmartMap<String, Object>> extra) {
+        TreeNode<K, V> treeNode = TreeNode.<K, V>builder()
                 .id(keyFunc.apply(t))
                 .value(valueFunc.apply(t))
                 .leaf(false)
-                .disabled(disabledFunc.apply(t))
+                .disabled(!ObjectUtils.isNullOrEmpty(disabledFunc) && disabledFunc.apply(t))
                 .children(null)
                 .build();
+
+        if (ObjectUtils.isNullOrEmpty(extra)) {
+            return treeNode;
+        }
+
+        if (ObjectUtils.isNullOrEmpty(treeNode.getExtra())) {
+            treeNode.setExtra(new SmartMap<>());
+        }
+        extra.accept(t, treeNode.getExtra());
+
+        return treeNode;
     }
 }

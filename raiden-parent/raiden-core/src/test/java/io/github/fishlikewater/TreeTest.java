@@ -43,7 +43,12 @@ public class TreeTest {
                 TestTreeModel::getId,
                 TestTreeModel::getParentId,
                 TestTreeModel::getName,
-                t -> t.getName().equals("一"));
+                t -> {
+                    return t.getName().equals("一");
+                },
+                (t, m) -> {
+                    m.put("extra", t.getName());
+                });
 
         System.out.println(tree);
     }
