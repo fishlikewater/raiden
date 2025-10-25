@@ -15,6 +15,7 @@
  */
 package io.github.fishlikewater.raiden.core.tree;
 
+import io.github.fishlikewater.raiden.core.model.SmartMap;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -59,6 +60,11 @@ public class TreeNode<K, V> implements Serializable {
      * 禁用
      */
     private boolean disabled;
+
+    /**
+     * 额外的信息
+     */
+    private SmartMap<String, Object> extra;
 
     /**
      * 子节点
